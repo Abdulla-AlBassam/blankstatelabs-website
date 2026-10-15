@@ -133,77 +133,6 @@ svg.jaba { fill: currentColor; display: block; }
 @media (max-width: 520px) { .pA { grid-template-columns: minmax(0, 1fr); } .pA > div { min-height: 0; } }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* pillar icons: bigger, and the options he is choosing between (2026-10-15) */
-.pi { width: 56px; height: 56px; stroke-width: 1; }
-.ivar > span { display: none; }
-:root[data-sec="vault"] [data-g="sec"] [data-o="vault"], :root[data-sec="padlock"] [data-g="sec"] [data-o="padlock"],
-:root[data-sec="bars"] [data-g="sec"] [data-o="bars"], :root[data-sec="plate"] [data-g="sec"] [data-o="plate"],
-:root[data-ai="burst"] [data-g="ai"] [data-o="burst"], :root[data-ai="pulse"] [data-g="ai"] [data-o="pulse"],
-:root[data-ai="scatter"] [data-g="ai"] [data-o="scatter"], :root[data-ai="sweep"] [data-g="ai"] [data-o="sweep"] { display: block; }
-.pi .acc-s { stroke: var(--accent); }
-/* security: vault door turns its handle and locks */
-.pi .spin-lock { transform-origin: 20px 20px; animation: vault 6s var(--ease) infinite; }
-@keyframes vault { 0%, 15% { transform: rotate(0); } 40%, 80% { transform: rotate(120deg); } 100% { transform: rotate(0); } }
-/* security: padlock shackle drops and closes */
-.pi .shackle { animation: shackle 5s var(--ease) infinite; }
-@keyframes shackle { 0%, 15% { transform: translateY(-4px); } 35%, 85% { transform: translateY(0); } 100% { transform: translateY(-4px); } }
-/* security: cell bars slide down into place */
-.pi .bar { stroke-dasharray: 1; animation: bars 6s var(--ease) infinite; }
-@keyframes bars { 0%, 10% { stroke-dashoffset: 1; } 35%, 85% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 1; } }
-/* security: armour plate riveted, then sealed */
-.pi .rivet { fill: var(--accent); stroke: none; opacity: 0; animation: rivet 6s ease infinite; }
-@keyframes rivet { 0%, 8% { opacity: 0; } 14%, 88% { opacity: 1; } 100% { opacity: 0; } }
-.pi .seal { stroke: var(--accent); stroke-dasharray: 1; animation: pseal 6s ease-in-out infinite; }
-@keyframes pseal { 0%, 35% { stroke-dashoffset: 1; } 60%, 88% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 1; } }
-/* AI: short streaks shoot outward from the core */
-.pi .ray { stroke-dasharray: .35 1; stroke-dashoffset: .35; animation: ray 1.1s cubic-bezier(.2, .6, .3, 1) infinite; }
-@keyframes ray { from { stroke-dashoffset: .35; opacity: 1; } to { stroke-dashoffset: -1; opacity: .2; } }
-/* AI: all lines burst out together, then fade */
-.pi .pulse-g { transform-origin: 20px 20px; animation: pulse 1.6s cubic-bezier(.1, .7, .3, 1) infinite; }
-@keyframes pulse { 0% { transform: scale(.2); opacity: 0; } 15% { opacity: 1; } 70%, 100% { transform: scale(1); opacity: 0; } }
-/* AI: particles fly out in every direction */
-.pi .mote { fill: var(--ink); stroke: none; animation: mote 1.4s cubic-bezier(.15, .7, .3, 1) infinite; }
-.pi .mote:nth-child(3n) { fill: var(--accent); }
-@keyframes mote { from { transform: none; opacity: 1; } to { transform: translate(var(--dx), var(--dy)); opacity: 0; } }
-/* AI: lines fire one after another round the dial, very fast */
-.pi .fan { opacity: .08; animation: fan 1.2s linear infinite; }
-@keyframes fan { 0% { opacity: 1; stroke: var(--accent); } 60%, 100% { opacity: .08; stroke: var(--ink); } }
-
-/* accent colour for the icons and the wave's echo line (options; the old bronze is gone) */
-:root[data-acc="choc"] { --accent: #4e3426; --accent-rgb: 78, 52, 38; }
-:root[data-acc="graphite"] { --accent: #4a4643; --accent-rgb: 74, 70, 67; }
-:root[data-acc="ink"] { --accent: var(--ink); --accent-rgb: var(--ink-rgb); }
-:root[data-acc="taupe"] { --accent: #85786d; --accent-rgb: 133, 120, 109; }
-:root[data-mode="dark"][data-acc="choc"] { --accent: #9a7b67; --accent-rgb: 154, 123, 103; }
-:root[data-mode="dark"][data-acc="graphite"] { --accent: #a29d98; --accent-rgb: 162, 157, 152; }
-:root[data-mode="dark"][data-acc="taupe"] { --accent: #b5a99e; --accent-rgb: 181, 169, 158; }
-
-/* top bar background, shown only once a page is scrolled (options) */
-header.top::before { content: ""; position: absolute; inset: 0; z-index: -1; opacity: 0; pointer-events: none; transition: opacity .4s ease; }
-:root[data-scrolled] header.top::before { opacity: 1; }
-:root[data-bar="fade"] header.top::before { bottom: -36px; background: linear-gradient(var(--page) 55%, transparent); }
-:root[data-bar="frost"] header.top::before { background: color-mix(in srgb, var(--page) 70%, transparent); backdrop-filter: blur(14px) saturate(1.1); -webkit-backdrop-filter: blur(14px) saturate(1.1); border-bottom: 1px solid var(--line); }
-:root[data-bar="solid"] header.top::before { background: var(--page); border-bottom: 1px solid var(--line); }
-:root[data-bar="grain"] header.top::before { bottom: -28px; background: var(--speck) 0 0 / 40px 40px, linear-gradient(var(--page) 60%, transparent);
-  -webkit-mask: linear-gradient(#000 60%, transparent); mask: linear-gradient(#000 60%, transparent); }
-
-/* ---------- review panel (only for picking options, not part of the design) ---------- */
-.rv-open { position: fixed; z-index: 11; left: 50%; transform: translateX(-50%); bottom: calc(env(safe-area-inset-bottom, 0px) + 18px);
-  appearance: none; border: 0; border-radius: 999px; padding: 9px 16px; background: var(--chrome-bg); color: var(--chrome-fg);
-  font-family: var(--f-mono); font-size: .72rem; cursor: pointer; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
-.rv { position: fixed; z-index: 12; left: 50%; transform: translateX(-50%); bottom: calc(env(safe-area-inset-bottom, 0px) + 18px); width: min(620px, calc(100vw - 32px));
-  background: var(--chrome-bg); color: var(--chrome-fg); border: 1px solid var(--chrome-line); border-radius: 14px; padding: 12px 14px;
-  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); font-family: var(--f-mono); font-size: .72rem; display: grid; gap: 10px; }
-.rv[hidden], .rv-open[hidden] { display: none; }
-.rv .hd { display: flex; justify-content: space-between; align-items: center; color: var(--chrome-dim); }
-.rv .grp { display: grid; grid-template-columns: 7.5em minmax(0, 1fr); gap: 8px; align-items: center; }
-.rv .grp > span { color: var(--chrome-dim); }
-.rv .opts { display: flex; flex-wrap: wrap; gap: 4px; }
-.rv button { appearance: none; border: 0; background: transparent; color: var(--chrome-dim); font: inherit; padding: 6px 10px; border-radius: 999px; cursor: pointer; white-space: nowrap; }
-.rv button:hover { color: var(--chrome-fg); }
-.rv button[aria-pressed="true"] { background: var(--chrome-fg); color: #1a1512; }
-@media (max-width: 480px) { .rv .grp { grid-template-columns: minmax(0, 1fr); gap: 4px; } }
-
 /* clients */
 .f-ctiles { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
 .f-ctiles > div { border: 1px solid var(--line); background: var(--tint); padding: clamp(20px, 3vw, 30px); display: grid; gap: .8rem; align-content: start; min-height: 260px; }
@@ -340,8 +269,8 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
       <h2 class="display" style="font-size:clamp(1.8rem,3.4vw,3rem)">Our Pillars</h2>
       <div class="pA">
         <div><div class="ptop"><span class="num">I</span><svg class="pi" viewBox="0 0 40 40" aria-hidden="true"><circle cx="7" cy="20" r="3"/><circle cx="33" cy="20" r="3"/><line class="dim" x1="10" y1="20" x2="30" y2="20"/><circle class="acc" cx="10" cy="20" r="1.8"><animate attributeName="cx" values="10;30;10" dur="4.5s" repeatCount="indefinite" calcMode="spline" keySplines=".6 0 .4 1;.6 0 .4 1"/></circle></svg></div><span></span><h3>Direct correspondence</h3><p>Clients correspond directly with the engineer responsible for delivery. Questions receive considered answers without delay.</p></div>
-        <div><div class="ptop"><span class="num">II</span><span class="ivar" data-g="sec"><span data-o="vault"><svg class="pi" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="15"/><circle class="dim" cx="20" cy="20" r="11"/><circle class="acc" cx="33.00" cy="20.00" r=".9"/><circle class="acc" cx="29.19" cy="29.19" r=".9"/><circle class="acc" cx="20.00" cy="33.00" r=".9"/><circle class="acc" cx="10.81" cy="29.19" r=".9"/><circle class="acc" cx="7.00" cy="20.00" r=".9"/><circle class="acc" cx="10.81" cy="10.81" r=".9"/><circle class="acc" cx="20.00" cy="7.00" r=".9"/><circle class="acc" cx="29.19" cy="10.81" r=".9"/><g class="spin-lock"><circle cx="20" cy="20" r="2.4"/><path d="M20 17.6V12M22.1 21.2l4.8 2.8M17.9 21.2l-4.8 2.8"/></g></svg></span><span data-o="padlock"><svg class="pi" viewBox="0 0 40 40" aria-hidden="true"><g class="shackle"><path d="M13.5 18v-5a6.5 6.5 0 0 1 13 0v5"/></g><rect x="9.5" y="18" width="21" height="16" rx="1.5"/><circle class="acc" cx="20" cy="24.5" r="1.8"/><path d="M20 26v3.5"/></svg></span><span data-o="bars"><svg class="pi" viewBox="0 0 40 40" aria-hidden="true"><rect x="7" y="6" width="26" height="28"/><path class="dim" d="M7 13h26"/><path class="bar" pathLength="1" style="animation-delay:0.00s" d="M11.50 13V34"/><path class="bar" pathLength="1" style="animation-delay:0.12s" d="M17.17 13V34"/><path class="bar" pathLength="1" style="animation-delay:0.24s" d="M22.84 13V34"/><path class="bar" pathLength="1" style="animation-delay:0.36s" d="M28.51 13V34"/><path class="acc-s" d="M7 13h26"/></svg></span><span data-o="plate"><svg class="pi" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 4.5 33.5 12.3v15.4L20 35.5 6.5 27.7V12.3z"/><path class="dim" d="M20 10.5 28.3 15.3v9.4L20 29.5l-8.3-4.8v-9.4z"/><circle class="rivet" style="animation-delay:0.00s" cx="20" cy="7.6" r="1.1"/><circle class="rivet" style="animation-delay:0.25s" cx="30.8" cy="13.8" r="1.1"/><circle class="rivet" style="animation-delay:0.50s" cx="30.8" cy="26.2" r="1.1"/><circle class="rivet" style="animation-delay:0.75s" cx="20" cy="32.4" r="1.1"/><circle class="rivet" style="animation-delay:1.00s" cx="9.2" cy="26.2" r="1.1"/><circle class="rivet" style="animation-delay:1.25s" cx="9.2" cy="13.8" r="1.1"/><path class="seal" pathLength="1" d="M20 10.5 28.3 15.3v9.4L20 29.5l-8.3-4.8v-9.4z"/></svg></span></span></div><span></span><h3>Security by design</h3><p>A background in cybersecurity informs every engagement. Security is established at the outset, never retrofitted.</p></div>
-        <div><div class="ptop"><span class="num">III</span><span class="ivar" data-g="ai"><span data-o="burst"><svg class="pi" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="2.2"/><path class="ray" pathLength="1" style="animation-delay:0.00s" d="M23.47 20.45L32.89 21.69"/><path class="ray" pathLength="1" style="animation-delay:0.61s" d="M22.78 22.13L33.50 30.34"/><path class="ray" pathLength="1" style="animation-delay:0.22s" d="M21.34 23.23L24.99 32.01"/><path class="ray" pathLength="1" style="animation-delay:0.83s" d="M19.55 23.47L17.80 36.86"/><path class="ray" pathLength="1" style="animation-delay:0.39s" d="M17.87 22.78L12.10 30.32"/><path class="ray" pathLength="1" style="animation-delay:0.99s" d="M16.77 21.34L4.30 26.52"/><path class="ray" pathLength="1" style="animation-delay:0.11s" d="M16.53 19.55L7.11 18.31"/><path class="ray" pathLength="1" style="animation-delay:0.72s" d="M17.22 17.87L6.50 9.66"/><path class="ray" pathLength="1" style="animation-delay:0.33s" d="M18.66 16.77L15.01 7.99"/><path class="ray" pathLength="1" style="animation-delay:0.94s" d="M20.45 16.53L22.20 3.14"/><path class="ray" pathLength="1" style="animation-delay:0.50s" d="M22.13 17.22L27.90 9.68"/><path class="ray" pathLength="1" style="animation-delay:1.10s" d="M23.23 18.66L35.70 13.48"/></svg></span><span data-o="pulse"><svg class="pi" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="2.2"/><g class="pulse-g"><path d="M24.00 20.00L38.00 20.00"/><path d="M23.70 21.53L31.09 24.59"/><path d="M22.83 22.83L30.61 30.61"/><path d="M21.53 23.70L26.89 36.63"/><path d="M20.00 24.00L20.00 32.00"/><path d="M18.47 23.70L14.26 33.86"/><path d="M17.17 22.83L7.27 32.73"/><path d="M16.30 21.53L8.91 24.59"/><path d="M16.00 20.00L5.00 20.00"/><path d="M16.30 18.47L3.37 13.11"/><path d="M17.17 17.17L11.51 11.51"/><path d="M18.47 16.30L14.26 6.14"/><path d="M20.00 16.00L20.00 2.00"/><path d="M21.53 16.30L24.59 8.91"/><path d="M22.83 17.17L30.61 9.39"/><path d="M23.70 18.47L36.63 13.11"/></g></svg></span><span data-o="scatter"><svg class="pi" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="2"/><circle class="mote" style="--dx:11.76px;--dy:2.38px;animation-delay:0.00s" cx="20" cy="20" r="0.8"/><circle class="mote" style="--dx:13.65px;--dy:8.35px;animation-delay:0.77s" cx="20" cy="20" r="1.1"/><circle class="mote" style="--dx:9.14px;--dy:11.47px;animation-delay:0.28s" cx="20" cy="20" r="1.1"/><circle class="mote" style="--dx:4.24px;--dy:12.64px;animation-delay:1.05s" cx="20" cy="20" r="0.8"/><circle class="mote" style="--dx:-0.31px;--dy:12.00px;animation-delay:0.49s" cx="20" cy="20" r="1.1"/><circle class="mote" style="--dx:-5.85px;--dy:14.89px;animation-delay:1.26s" cx="20" cy="20" r="1.1"/><circle class="mote" style="--dx:-9.71px;--dy:10.99px;animation-delay:0.14s" cx="20" cy="20" r="0.8"/><circle class="mote" style="--dx:-11.71px;--dy:6.37px;animation-delay:0.91s" cx="20" cy="20" r="1.1"/><circle class="mote" style="--dx:-11.87px;--dy:1.78px;animation-delay:0.42s" cx="20" cy="20" r="1.1"/><circle class="mote" style="--dx:-15.68px;--dy:-3.18px;animation-delay:1.19s" cx="20" cy="20" r="0.8"/><circle class="mote" style="--dx:-12.51px;--dy:-7.65px;animation-delay:0.63s" cx="20" cy="20" r="1.1"/><circle class="mote" style="--dx:-8.31px;--dy:-10.43px;animation-delay:1.40s" cx="20" cy="20" r="1.1"/><circle class="mote" style="--dx:-3.82px;--dy:-11.38px;animation-delay:0.00s" cx="20" cy="20" r="0.8"/><circle class="mote" style="--dx:0.41px;--dy:-15.99px;animation-delay:0.77s" cx="20" cy="20" r="1.1"/><circle class="mote" style="--dx:5.37px;--dy:-13.65px;animation-delay:0.28s" cx="20" cy="20" r="1.1"/><circle class="mote" style="--dx:8.83px;--dy:-9.99px;animation-delay:1.05s" cx="20" cy="20" r="0.8"/><circle class="mote" style="--dx:10.54px;--dy:-5.73px;animation-delay:0.49s" cx="20" cy="20" r="1.1"/><circle class="mote" style="--dx:15.82px;--dy:-2.38px;animation-delay:1.26s" cx="20" cy="20" r="1.1"/></svg></span><span data-o="sweep"><svg class="pi" viewBox="0 0 40 40" aria-hidden="true"><circle class="dim" cx="20" cy="20" r="17"/><circle cx="20" cy="20" r="2"/><path class="fan" style="animation-delay:0.00s" d="M20.00 16.50L20.00 5.00"/><path class="fan" style="animation-delay:0.10s" d="M21.75 16.97L27.50 7.01"/><path class="fan" style="animation-delay:0.20s" d="M23.03 18.25L32.99 12.50"/><path class="fan" style="animation-delay:0.30s" d="M23.50 20.00L35.00 20.00"/><path class="fan" style="animation-delay:0.40s" d="M23.03 21.75L32.99 27.50"/><path class="fan" style="animation-delay:0.50s" d="M21.75 23.03L27.50 32.99"/><path class="fan" style="animation-delay:0.60s" d="M20.00 23.50L20.00 35.00"/><path class="fan" style="animation-delay:0.70s" d="M18.25 23.03L12.50 32.99"/><path class="fan" style="animation-delay:0.80s" d="M16.97 21.75L7.01 27.50"/><path class="fan" style="animation-delay:0.90s" d="M16.50 20.00L5.00 20.00"/><path class="fan" style="animation-delay:1.00s" d="M16.97 18.25L7.01 12.50"/><path class="fan" style="animation-delay:1.10s" d="M18.25 16.97L12.50 7.01"/></svg></span></span></div><span></span><h3>AI-augmented delivery</h3><p>Advanced AI tooling accelerates routine work. Every output is reviewed and verified by the engineer.</p></div>
+        <div><div class="ptop"><span class="num">II</span><svg class="pi" viewBox="0 0 40 40" aria-hidden="true"><path class="draw" pathLength="1" d="M20 5 9 9.5v9c0 7 4.8 12.6 11 15 6.2-2.4 11-8 11-15v-9z"/><path class="chk" pathLength="1" d="M15 19.5l3.5 3.5 7-7.5"/></svg></div><span></span><h3>Security by design</h3><p>A background in cybersecurity informs every engagement. Security is established at the outset, never retrofitted.</p></div>
+        <div><div class="ptop"><span class="num">III</span><svg class="pi" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="3.5"/><circle class="dim" cx="20" cy="20" r="13" stroke-dasharray="1.5 3"/><g class="orb"><circle class="acc" cx="33" cy="20" r="2"/></g></svg></div><span></span><h3>AI-augmented delivery</h3><p>Advanced AI tooling accelerates routine work. Every output is reviewed and verified by the engineer.</p></div>
         <div><div class="ptop"><span class="num">IV</span><svg class="pi" viewBox="0 0 40 40" aria-hidden="true"><path d="M5 20C10 11 14 11 18 20S26 29 35 20"><animate attributeName="d" dur="6s" repeatCount="indefinite" values="M5 20C10 11 14 11 18 20S26 29 35 20;M5 20C10 20 14 20 18 20S26 20 35 20;M5 20C10 11 14 11 18 20S26 29 35 20" calcMode="spline" keySplines=".6 0 .4 1;.6 0 .4 1"/></path><circle class="acc" cx="35" cy="20" r="1.8"/></svg></div><span></span><h3>Considered design</h3><p>Interfaces are refined, intuitive and dependable from the first use.</p></div>
       </div>
     </div>
@@ -415,15 +344,6 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
   </div>
 </section>
 
-<button type="button" class="rv-open" id="rvOpen">Review options</button>
-<div class="rv" id="rv" hidden role="dialog" aria-label="Review options">
-  <div class="hd"><span>Review options (only for you, not on the real site)</span><button type="button" id="rvClose">Close</button></div>
-  <div class="grp"><span>Security icon</span><div class="opts" data-key="sec"><button data-v="vault">1 Vault</button><button data-v="padlock">2 Padlock</button><button data-v="bars">3 Bars</button><button data-v="plate">4 Armour plate</button></div></div>
-  <div class="grp"><span>AI icon</span><div class="opts" data-key="ai"><button data-v="burst">1 Streaks</button><button data-v="pulse">2 Burst</button><button data-v="scatter">3 Particles</button><button data-v="sweep">4 Sweep</button></div></div>
-  <div class="grp"><span>Icon colour</span><div class="opts" data-key="acc"><button data-v="choc">1 Chocolate</button><button data-v="graphite">2 Graphite</button><button data-v="ink">3 Ink</button><button data-v="taupe">4 Taupe</button></div></div>
-  <div class="grp"><span>Top bar</span><div class="opts" data-key="bar"><button data-v="fade">1 Fade</button><button data-v="frost">2 Frosted</button><button data-v="solid">3 Solid</button><button data-v="grain">4 Grain</button></div></div>
-</div>
-
 <script>
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const root = document.documentElement;
@@ -433,25 +353,6 @@ document.getElementById("addr").textContent = CONTACT_EMAIL;
 
 // the shader still takes the old object and pointer inputs; the plain hero keeps them fixed
 const objNow = 0, mNow = [.78, .62];
-
-// ---------- review options (only for picking; remove once chosen) ----------
-const OPT_DEFAULTS = { sec: "vault", ai: "burst", acc: "choc", bar: "frost" };
-const opts = { ...OPT_DEFAULTS };
-try { const saved = JSON.parse(localStorage.getItem("bsl-review") || "{}"); for (const k in OPT_DEFAULTS) if (saved[k] && document.querySelector(`.opts[data-key="${k}"] button[data-v="${saved[k]}"]`)) opts[k] = saved[k]; } catch (e) {}
-function applyOpt(key, val) {
-  opts[key] = val; root.dataset[key] = val;
-  document.querySelectorAll(`.opts[data-key="${key}"] button`).forEach(b => b.setAttribute("aria-pressed", b.dataset.v === val ? "true" : "false"));
-  try { localStorage.setItem("bsl-review", JSON.stringify(opts)); } catch (e) {}
-}
-Object.keys(OPT_DEFAULTS).forEach(k => applyOpt(k, opts[k]));
-document.querySelectorAll(".opts").forEach(g => g.addEventListener("click", e => { const b = e.target.closest("button"); if (b) applyOpt(g.dataset.key, b.dataset.v); }));
-const rv = document.getElementById("rv"), rvOpen = document.getElementById("rvOpen");
-rvOpen.addEventListener("click", () => { rv.hidden = false; rvOpen.hidden = true; });
-document.getElementById("rvClose").addEventListener("click", () => { rv.hidden = true; rvOpen.hidden = false; rvOpen.focus(); });
-
-// the top bar gets its background once the open page is scrolled
-document.querySelectorAll(".view").forEach(v => v.addEventListener("scroll", () => { if (v.classList.contains("on")) root.toggleAttribute("data-scrolled", v.scrollTop > 8); }, { passive: true }));
-addEventListener("hashchange", () => root.removeAttribute("data-scrolled"));
 
 // ---------- views ----------
 const views = document.querySelectorAll(".view");
