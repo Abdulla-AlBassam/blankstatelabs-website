@@ -18,6 +18,7 @@
   --line: rgba(32, 24, 19, .22);
   --tint: rgba(32, 24, 19, .06);
   --page: #d6d2cc;
+  --solid: var(--ink); --on-solid: var(--page);
   --ink-rgb: 32, 24, 19; --accent: #85786d; --accent-rgb: 133, 120, 109;
   --card: rgba(222, 218, 212, .97);
   --field: rgba(255, 255, 255, .18);
@@ -32,7 +33,7 @@
   --ease: cubic-bezier(.65, 0, .35, 1);
   --speck: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><filter id='f'><feTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='4'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 9 -4.2'/></filter><rect width='40' height='40' filter='url(%23f)'/></svg>");
 }
-:root[data-mode="dark"] { --ink: #efe7dc; --muted: rgba(239, 231, 220, .64); --line: rgba(239, 231, 220, .2); --tint: rgba(239, 231, 220, .07); --page: #1a1512; --ink-rgb: 239, 231, 220; --accent: #b5a99e; --accent-rgb: 181, 169, 158; --card: rgba(34, 28, 24, .97); --field: rgba(255, 255, 255, .03); color-scheme: dark; }
+:root[data-mode="dark"] { --ink: #efe7dc; --muted: rgba(239, 231, 220, .64); --line: rgba(239, 231, 220, .2); --tint: rgba(239, 231, 220, .07); --page: #1a1512; --solid: #5a4334; --on-solid: #efe7dc; --ink-rgb: 239, 231, 220; --accent: #b5a99e; --accent-rgb: 181, 169, 158; --card: rgba(34, 28, 24, .97); --field: rgba(255, 255, 255, .03); color-scheme: dark; }
 html, body { height: 100%; }
 body { background: var(--page); color: var(--ink); font-family: var(--f-body); overflow: hidden; transition: background .6s ease, color .6s ease; }
 canvas { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
@@ -93,12 +94,16 @@ header.top { position: fixed; top: 0; left: 0; right: 0; z-index: 5; display: fl
 .brandbig { font-family: var(--f-display); font-weight: 400; font-size: clamp(2.2rem, 7vw, 7rem); letter-spacing: .04em; text-transform: uppercase; line-height: 1.02; margin: 0; }
 .side { font-size: .74rem; font-weight: 500; letter-spacing: .09em; text-transform: uppercase; line-height: 1.4; display: grid; gap: .8rem; }
 .side .dim { opacity: .65; }
+@media (min-width: 861px) { .side { font-size: .92rem; gap: .9rem; } }
 
 .stack { display: grid; gap: 1.4rem; align-content: start; justify-items: start; }
 
 
 /* about (signed off 2026-10-15: "Field" layout with the "Signal" wave) */
-.inner { max-width: 1240px; display: grid; gap: clamp(36px, 6vw, 80px); }
+.inner { display: grid; gap: clamp(36px, 6vw, 80px); }
+.inner > * { width: 100%; max-width: 1240px; }
+.inner > .body { max-width: 60ch; }
+.inner > .svc-wrap { justify-self: end; }
 .inner .stack { display: grid; gap: 1.3rem; align-content: start; justify-items: start; }
 .inner .eyebrow { margin: 0; }
 .lab { font-size: .68rem; font-weight: 500; letter-spacing: .15em; text-transform: uppercase; color: var(--muted); margin: 0; }
@@ -115,7 +120,7 @@ svg.jaba { fill: currentColor; display: block; }
 .s-viz .cap.a { left: clamp(14px, 3vw, 32px); } .s-viz .cap.c { right: clamp(14px, 3vw, 32px); }
 .f-tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
 .f-tiles > div { background: var(--tint); border: 1px solid var(--line); border-radius: 2px; padding: 20px; display: grid; gap: .8rem; align-content: start; min-height: 190px; }
-.f-tiles > div:first-child { grid-column: span 2; grid-row: span 2; background: var(--ink); color: var(--page); border-color: var(--ink); align-content: end; }
+.f-tiles > div:first-child { grid-column: span 2; grid-row: span 2; background: var(--solid); color: var(--on-solid); border-color: var(--solid); align-content: end; }
 .f-tiles > div:first-child .svc-desc { color: inherit; opacity: .72; }
 .f-tiles > div:first-child .svc-name { font-size: clamp(1.6rem, 2.6vw, 2.3rem); }
 .f-tiles > div:first-child svg.ic { width: 34px; height: 34px; }
@@ -153,21 +158,17 @@ svg.jaba { fill: currentColor; display: block; }
 .pi .pulse-g path { stroke-dasharray: 1; animation: ripple 1.6s ease-in-out infinite; animation-delay: calc(var(--k) * .1s); }
 @keyframes ripple { 0%, 100% { stroke-dashoffset: .7; } 50% { stroke-dashoffset: 0; } }
 
-/* top bar background, shown only once a page is scrolled: a fade with a light grain */
-header.top::before { content: ""; position: absolute; inset: 0; z-index: -1; opacity: 0; pointer-events: none; transition: opacity .4s ease; }
-:root[data-scrolled] header.top::before { opacity: 1; }
-header.top::before { bottom: -28px; background: linear-gradient(var(--page) 60%, transparent); }
-header.top::after { content: ""; position: absolute; inset: 0 0 -28px; z-index: -1; opacity: 0; pointer-events: none; transition: opacity .4s ease; background: currentColor;
-  -webkit-mask: var(--speck) 0 0 / 40px 40px, linear-gradient(#000 40%, transparent); -webkit-mask-composite: source-in; mask: var(--speck) 0 0 / 40px 40px, linear-gradient(#000 40%, transparent); mask-composite: intersect; }
-:root[data-scrolled] header.top::after { opacity: .13; }
 
 
 /* clients */
 .f-ctiles { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
 .f-ctiles > div { border: 1px solid var(--line); background: var(--tint); padding: clamp(20px, 3vw, 30px); display: grid; gap: .8rem; align-content: start; min-height: 260px; }
-.f-ctiles > div:first-child { place-content: center; justify-items: center; background: var(--ink); color: var(--page); text-align: center; }
+.f-ctiles > div:first-child { place-content: center; justify-items: center; background: var(--solid); color: var(--on-solid); border-color: var(--solid); text-align: center; }
 .f-ctiles > div:first-child svg.jaba { width: 96px; height: 96px; }
-.f-ctiles > div:first-child .lab { color: inherit; opacity: .7; }
+.f-ctiles > div:first-child .svc-name { font-size: clamp(1.5rem, 2.4vw, 2rem); }
+.f-ctiles.jaba-right > div:first-child { grid-auto-flow: column; align-items: center; gap: 1.4rem; text-align: left; }
+.f-ctiles.jaba-right > div:first-child svg.jaba { width: 80px; height: 80px; }
+.f-ctiles.jaba-bare > div:first-child { background: none; border-color: transparent; color: inherit; }
 @media (max-width: 860px) { .f-ctiles { grid-template-columns: minmax(0, 1fr); } .f-ctiles > div { min-height: 0; } }
 
 /* contact */
@@ -191,10 +192,10 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
 .chips input { position: absolute; opacity: 0; width: 1px; height: 1px; }
 .chips span { display: inline-block; border: 1px solid var(--line); border-radius: 999px; padding: 7px 14px; cursor: pointer; transition: background .25s ease, color .25s ease, border-color .25s ease; }
 .chips label:hover span { border-color: currentColor; }
-.chips input:checked + span { background: var(--ink); color: var(--page); border-color: var(--ink); }
+.chips input:checked + span { background: var(--solid); color: var(--on-solid); border-color: var(--solid); }
 .chips input:focus-visible + span { outline: 1px solid currentColor; outline-offset: 3px; }
 .send { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
-.send button { appearance: none; border: 1px solid var(--ink); background: var(--ink); color: var(--page); border-radius: 999px; padding: 12px 26px; font: inherit; font-size: .74rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; cursor: pointer; transition: opacity .3s ease; }
+.send button { appearance: none; border: 1px solid var(--solid); background: var(--solid); color: var(--on-solid); border-radius: 999px; padding: 12px 26px; font: inherit; font-size: .74rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; cursor: pointer; transition: opacity .3s ease; }
 .send button:hover { opacity: .85; }
 .send button:focus-visible { outline: 1px solid var(--ink); outline-offset: 4px; }
 .status { font-size: .9rem; color: var(--muted); margin: 0; }
@@ -283,8 +284,8 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
       </div>
       <div class="s-viz"><canvas id="signal" aria-hidden="true"></canvas></div>
     </div>
-    <p class="body">The practice is led by a single principal engineer. Clients correspond directly with the person responsible for delivery, which ensures continuity, accountability and prompt decisions. Every engagement begins from a blank state: requirements are established from first principles, never adapted from a template.</p>
-    <div class="stack">
+    <p class="body">The lab is led by a single principal engineer. Clients correspond directly with the person responsible for delivery, which ensures continuity, accountability and prompt decisions. No two clients or engagements are alike, so each is approached on its own terms, with the client's vision for the product guiding the work at every stage.</p>
+    <div class="stack svc-wrap">
       <div class="f-tiles">
     <div><svg class="ic" aria-hidden="true"><use href="#i-auto"/></svg><h3 class="svc-name">AI automation</h3><p class="svc-desc">Design and deployment of automated workflows that remove repetitive manual processes from daily operations.</p></div>
     <div><svg class="ic" aria-hidden="true"><use href="#i-agent"/></svg><h3 class="svc-name">AI agents and assistants</h3><p class="svc-desc">Intelligent agents and assistants built around an organisation's own data, systems and procedures.</p></div>
@@ -296,7 +297,7 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
     <div><svg class="ic" aria-hidden="true"><use href="#i-web"/></svg><h3 class="svc-name">Corporate websites</h3><p class="svc-desc">Considered, high-performance websites that represent the organisation with clarity.</p></div>
       </div>
     </div>
-    <div class="stack" style="gap:1.6rem">
+    <div class="stack pillars" style="gap:1.6rem">
       <h2 class="display" style="font-size:clamp(1.8rem,3.4vw,3rem)">Our Pillars</h2>
       <div class="pA">
         <div><div class="ptop"><span class="num">I</span><svg class="pi" viewBox="0 0 40 40" aria-hidden="true"><circle cx="7" cy="20" r="3"/><circle cx="33" cy="20" r="3"/><line class="dim" x1="10" y1="20" x2="30" y2="20"/><circle class="acc" cx="10" cy="20" r="1.8"><animate attributeName="cx" values="10;30;10" dur="4.5s" repeatCount="indefinite" calcMode="spline" keySplines=".6 0 .4 1;.6 0 .4 1"/></circle></svg></div><span></span><h3>Direct correspondence</h3><p>Clients correspond directly with the engineer responsible for delivery. Questions receive considered answers without delay.</p></div>
@@ -315,8 +316,8 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
       <h2 class="display">Selected engagements</h2>
       <p class="body">Engagements are undertaken directly by the principal engineer, from initial requirements through to delivery and continued support.</p>
     </div>
-    <div class="f-ctiles">
-      <div><svg class="jaba" role="img" aria-label="Jaba logo"><use href="#jaba" width="100%" height="100%"/></svg><h3 class="svc-name">Jaba</h3><span class="lab">Travel and Experiences in the Kingdom of Saudi Arabia</span></div>
+    <div class="f-ctiles jaba-below">
+      <div><svg class="jaba" role="img" aria-label="Jaba logo"><use href="#jaba" width="100%" height="100%"/></svg><h3 class="svc-name">Jaba</h3></div>
       <div><svg class="ic" aria-hidden="true"><use href="#i-web"/></svg><span class="mono">Web</span><h3 class="svc-name">Corporate website</h3><p class="svc-desc">Design and engineering of the company's public website, with ongoing maintenance and support.</p></div>
       <div><svg class="ic" aria-hidden="true"><use href="#i-layers"/></svg><span class="mono">System</span><h3 class="svc-name">Back-of-house platform</h3><p class="svc-desc">An internal operations system used by the team to manage day-to-day activity behind the scenes.</p></div>
     </div>
@@ -339,8 +340,8 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
 <section class="view" data-view="contact" aria-label="Contact">
   <div class="contact">
     <div class="stack">
-      <h2 class="display">Tell us about your project</h2>
-      <p class="body">Every message is read and answered by the engineer who will do the work.</p>
+      <h2 class="display" data-pick="cta">Let's build something together</h2>
+      <p class="body">Fill out the form and an engineer will be in touch within 24 hours.</p>
       <div class="mail">
         <p class="eyebrow" style="margin:0">Or email</p>
         <span class="addr" id="addr">enquire@blankstatelabs.com</span>
@@ -387,13 +388,11 @@ document.getElementById("addr").textContent = CONTACT_EMAIL;
 const objNow = 0, mNow = [.78, .62];
 
 // the top bar gets its background once the open page is scrolled
-document.querySelectorAll(".view").forEach(v => v.addEventListener("scroll", () => { if (v.classList.contains("on")) root.toggleAttribute("data-scrolled", v.scrollTop > 8); }, { passive: true }));
-addEventListener("hashchange", () => root.removeAttribute("data-scrolled"));
 
 // ---------- views ----------
 const views = document.querySelectorAll(".view");
 const tabLinks = document.querySelectorAll(".tabs a");
-let calmTarget = 0, calmNow = 0;
+let calmTarget = 0, calmNow = 0, sideTarget = 0, sideNow = 0;
 function route() {
   const name = (location.hash || "#home").slice(1);
   const target = document.querySelector(`.view[data-view="${name}"]`) ? name : "home";
@@ -404,6 +403,7 @@ function route() {
   });
   tabLinks.forEach(a => { if (a.getAttribute("href") === "#" + target) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
   calmTarget = target === "home" ? 0 : 1;
+  sideTarget = 0;
   if (reduce) { calmNow = calmTarget; frame(performance.now()); }
 }
 addEventListener("hashchange", route);
@@ -495,13 +495,21 @@ document.getElementById("enquiry").addEventListener("submit", e => {
     .finally(() => { btn.disabled = false; });
 });
 
+// ---------- grain follows the About page: left while the services are in view, right again at Our Pillars ----------
+const aboutView = document.querySelector('section[data-view="about"]'), svcWrap = aboutView.querySelector(".svc-wrap"), pillars = aboutView.querySelector(".pillars");
+aboutView.addEventListener("scroll", () => {
+  const line = innerHeight * .55;
+  sideTarget = svcWrap.getBoundingClientRect().top < line && pillars.getBoundingClientRect().top > line ? 1 : 0;
+  if (reduce) { sideNow = sideTarget; frame(performance.now()); }
+}, { passive: true });
+
 // ---------- background ----------
 const glc = document.getElementById("gl");
 const gl = glc.getContext("webgl", { antialias: false });
 
 const FRAG = `
 precision highp float;
-uniform vec2 r; uniform float t; uniform float dark; uniform float obj; uniform float calm; uniform vec2 m; uniform float fol;
+uniform vec2 r; uniform float t; uniform float dark; uniform float obj; uniform float calm; uniform vec2 m; uniform float fol; uniform float side;
 float h(vec2 p){vec3 q=fract(vec3(p.xyx)*.1031);q+=dot(q,q.yzx+33.33);return fract((q.x+q.y)*q.z);}
 float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x),f.y);}
 float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<5;i++){v+=a*n(p);p=p*2.03+vec2(3.1,1.7);a*=.5;}return v;}
@@ -648,13 +656,13 @@ float traces(vec3 p){
 }
 
 void main(){
- vec2 uv=gl_FragCoord.xy/r; float a=r.x/r.y; float x=uv.x; float tt=t*.04;
+ vec2 uv=gl_FragCoord.xy/r; float a=r.x/r.y; float x=mix(uv.x,1.-uv.x,side); float tt=t*.04;
 
  vec3 topL=mix(vec3(.80,.78,.75),vec3(.87,.85,.82),uv.y), topD=mix(vec3(.10,.085,.075),vec3(.15,.125,.105),uv.y);
  vec3 top=mix(topL,topD,dark);
  vec3 band=mix(vec3(.12,.094,.078),vec3(.82,.76,.68),dark);
  vec3 low=mix(vec3(.55,.42,.32),vec3(.42,.31,.23),dark);
- float line=-.26+.64*x-calm*.55+.06*sin(x*3.1+tt*3.)+.035*sin(x*7.3-tt*5.);
+ float line=-.26+.64*x-calm*.4+.06*sin(x*3.1+tt*3.)+.035*sin(x*7.3-tt*5.);
  line+=(fbm(vec2(x*2.,tt))-.5)*.12;
  float fv=fol*(1.-calm);
  line+=fv*.035*exp(-pow((x-m.x)*a/.18,2.));
@@ -713,7 +721,7 @@ if (gl) {
   gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
   const pl = gl.getAttribLocation(prog, "p"); gl.enableVertexAttribArray(pl); gl.vertexAttribPointer(pl, 2, gl.FLOAT, false, 0, 0);
-  ["r", "t", "dark", "obj", "calm", "m", "fol"].forEach(k => U[k] = gl.getUniformLocation(prog, k));
+  ["r", "t", "dark", "obj", "calm", "m", "fol", "side"].forEach(k => U[k] = gl.getUniformLocation(prog, k));
 }
 
 // ---------- light / dark ----------
@@ -748,6 +756,8 @@ function frame(now) {
   if (Math.abs(darkTarget - darkNow) < .002) darkNow = darkTarget;
   calmNow += (calmTarget - calmNow) * Math.min(1, dt * 3);
   if (Math.abs(calmTarget - calmNow) < .002) calmNow = calmTarget;
+  sideNow += (sideTarget - sideNow) * Math.min(1, dt * 2.2);
+  if (Math.abs(sideTarget - sideNow) < .002) sideNow = sideTarget;
   if (gl) {
     gl.uniform2f(U.r, W, H);
     gl.uniform1f(U.t, reduce ? 12 : (now - t0) / 1000);
@@ -755,6 +765,7 @@ function frame(now) {
     gl.uniform1f(U.obj, objNow);
     gl.uniform1f(U.calm, calmNow);
     gl.uniform1f(U.fol, 0);
+    gl.uniform1f(U.side, sideNow);
     gl.uniform2f(U.m, mNow[0], mNow[1]);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
   }
