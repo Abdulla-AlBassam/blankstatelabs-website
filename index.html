@@ -778,5 +778,27 @@ setTimeout(sigStart, 30);
 calmNow = calmTarget;
 requestAnimationFrame(frame);
 </script>
+
+<style>
+/* scroll reveal on About us (picked 2026-10-16): services sharpen from a soft blur, pillars unveil from the top down */
+.rvl { transition: opacity .9s ease, transform .9s var(--ease), filter .9s ease, clip-path 1s var(--ease); transition-delay: var(--d, 0s); }
+.rvl.focus:not(.shown) { opacity: 0; filter: blur(10px); }
+.rvl.unveil { clip-path: inset(0 0 0 0); }
+.rvl.unveil:not(.shown) { clip-path: inset(0 0 100% 0); opacity: .2; transform: translateY(10px); }
+@media (prefers-reduced-motion: reduce) { .rvl { transition: none; } .rvl:not(.shown) { opacity: 1 !important; transform: none !important; filter: none !important; clip-path: none !important; } }
+</style>
+<script>
+(() => {
+  const about = document.querySelector('section[data-view="about"]'), els = [];
+  [[".f-tiles > div", "focus"], [".pillars > .display", "unveil"], [".pA > div", "unveil"]].forEach(([sel, kind]) =>
+    about.querySelectorAll(sel).forEach((el, i) => { el.classList.add("rvl", kind); el.style.setProperty("--d", (i % 4) * .09 + "s"); els.push(el); }));
+  // checked by position on scroll, so the blur and clip can't hide an element from the check
+  const check = () => { const lim = innerHeight * .92; els.forEach(el => { if (!el.classList.contains("shown") && el.getBoundingClientRect().top < lim) el.classList.add("shown"); }); };
+  about.addEventListener("scroll", check, { passive: true });
+  const arm = () => { els.forEach(el => el.classList.remove("shown")); requestAnimationFrame(() => requestAnimationFrame(check)); };
+  addEventListener("hashchange", () => { if (location.hash === "#about") arm(); });
+  arm();
+})();
+</script>
 </body>
 </html>
