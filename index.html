@@ -132,7 +132,7 @@ svg.jaba { fill: currentColor; display: block; }
 @media (max-width: 520px) { .f-tiles { grid-template-columns: minmax(0, 1fr); } .f-tiles > div { min-height: 0; } .f-tiles > div:first-child { grid-column: auto; grid-row: auto; } }
 /* Our Pillars (signed off 2026-10-15: "Pillars" style, no vertical lines, animated icon beside each numeral) */
 .pA { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
-.pA > div { display: grid; grid-template-rows: auto 1fr auto auto; gap: 1rem; min-height: 360px; padding: 0 clamp(14px, 1.6vw, 22px); background: var(--tint);
+.pA > div { display: grid; grid-template-rows: auto 1fr auto auto; gap: 1rem; min-height: 360px; padding: 0 clamp(14px, 1.6vw, 22px); background: color-mix(in srgb, var(--ink) 7%, var(--page));
   border-top: 6px solid var(--ink); border-bottom: 6px solid var(--ink); box-shadow: inset 0 1px 0 0 var(--page), inset 0 3px 0 0 var(--ink), inset 0 -1px 0 0 var(--page), inset 0 -3px 0 0 var(--ink); }
 .pA .ptop { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding-top: 1.4rem; }
 .pA .num { font-family: var(--f-display); font-size: clamp(3rem, 5vw, 4.6rem); line-height: 1; }
@@ -166,7 +166,7 @@ svg.jaba { fill: currentColor; display: block; }
 
 /* clients */
 .f-ctiles { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
-.f-ctiles > div { border: 1px solid var(--line); background: var(--tint); padding: clamp(20px, 3vw, 30px); display: grid; gap: .8rem; align-content: start; min-height: 260px; }
+.f-ctiles > div { border: 1px solid var(--line); background: color-mix(in srgb, var(--ink) 7%, var(--page)); padding: clamp(20px, 3vw, 30px); display: grid; gap: .8rem; align-content: start; min-height: 260px; }
 .f-ctiles > div:first-child { place-content: center; justify-items: center; background: var(--solid); color: var(--on-solid); border-color: var(--solid); text-align: center; }
 .f-ctiles > div:first-child svg.jaba { width: 96px; height: 96px; }
 .f-ctiles > div:first-child .svc-name { font-size: clamp(1.5rem, 2.4vw, 2rem); }
@@ -186,7 +186,7 @@ form.enquiry { display: grid; gap: 1.6rem; }
 .f { display: grid; gap: .5rem; min-width: 0; position: relative; align-content: start; }
 .f > label, .f legend, .f .lab { font-size: .68rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); padding: 0; }
 .opt { text-transform: none; letter-spacing: 0; opacity: .8; }
-.f input, .f textarea { width: 100%; background: var(--field); border: 0; border-bottom: 1px solid var(--line); color: inherit; font: inherit; font-size: 1rem; padding: .65rem .2rem; border-radius: 0; outline: none; transition: border-color .3s ease; }
+.f input, .f textarea { width: 100%; background: color-mix(in srgb, var(--ink) 3%, var(--page)); border: 0; border-bottom: 1px solid var(--line); color: inherit; font: inherit; font-size: 1rem; padding: .65rem .2rem; border-radius: 0; outline: none; transition: border-color .3s ease; }
 .f textarea { min-height: 7.5rem; resize: vertical; line-height: 1.5; }
 .f input:focus, .f textarea:focus { border-bottom-color: currentColor; }
 .f input[aria-invalid="true"], .f textarea[aria-invalid="true"] { border-bottom-color: #a4502f; }
@@ -206,7 +206,7 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
 
 /* ---------- custom dropdown: shared ---------- */
 .dd { position: relative; }
-.dd-btn { appearance: none; width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--field); border: 0; border-bottom: 1px solid var(--line);
+.dd-btn { appearance: none; width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px; background: color-mix(in srgb, var(--ink) 3%, var(--page)); border: 0; border-bottom: 1px solid var(--line);
   color: inherit; font: inherit; font-size: 1rem; padding: .65rem .2rem; cursor: pointer; text-align: left; transition: border-color .3s ease; }
 .dd-btn:hover, .dd.open .dd-btn { border-bottom-color: currentColor; }
 .dd-btn:focus-visible { outline: 1px solid currentColor; outline-offset: 3px; }
