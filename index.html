@@ -412,22 +412,32 @@ const sig = document.getElementById("signal"), sc = sig.getContext("2d");
 let sW = 0, sH = 0, sRun = false;
 function sigSize() { const r = sig.getBoundingClientRect(), dpr = Math.min(2, devicePixelRatio || 1); sW = r.width; sH = r.height; sig.width = Math.max(1, sW * dpr); sig.height = Math.max(1, sH * dpr); sc.setTransform(dpr, 0, 0, dpr, 0, 0); }
 const smoothstep = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
-function sigDraw(t) {
-  const cs = getComputedStyle(root), ink = cs.getPropertyValue("--ink-rgb").trim(), acc = cs.getPropertyValue("--accent-rgb").trim(), mid = sH * .5;
-  sc.clearRect(0, 0, sW, sH);
-  for (let pass = 0; pass < 2; pass++) {
+// Loom (picked 2026-10-17): tangled threads straighten into one even bundle, then loosen again.
+// The clock restarts whenever About us opens, so it always begins messy.
+let loomT0 = 0;
+const lerp = (a, b, k) => a + (b - a) * k;
+const ease = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+const cyc = (t, len) => { const p = (t / len) % 1; return p < .12 ? 0 : p < .45 ? ease((p - .12) / .33) : p < .85 ? 1 : 1 - ease((p - .85) / .15); };
+function sigDraw(now) {
+  const cs = getComputedStyle(root), ink = cs.getPropertyValue("--ink-rgb").trim(), W = sW, H = sH, n = 9;
+  const t = reduce ? 6000 : now - loomT0, k = cyc(t, 10000);
+  // the loose curves can reach 1.4x their scale, so this keeps every tip inside the canvas with a little room
+  const amp = (H * .5 - 4) / 1.4;
+  sc.clearRect(0, 0, W, H);
+  for (let j = 0; j < n; j++) {
     sc.beginPath();
-    for (let x = 0; x <= sW; x += 2) {
-      const u = x / sW, calm = smoothstep(.25, .75, u), ph = t * .0012;
-      const noise = (Math.sin(x * .21 + ph * 3.1) * .5 + Math.sin(x * .047 - ph * 2) * .7 + Math.sin(x * .9 + ph * 7) * .3) * (1 - calm);
-      const y = mid + (noise + Math.sin(u * 22 - ph * 2) * calm * .55) * sH * .32 + (pass ? 3 : 0);
+    for (let x = 0; x <= W; x += 3) {
+      const u = x / W, settle = smoothstep(.15, .85, u + (k - .5) * .6), ph = t * .0009 + j * 1.7;
+      const wild = (Math.sin(x * .013 + ph) * .55 + Math.sin(x * .031 - ph * 1.3 + j) * .35 + Math.sin(x * .007 + j * 2.1) * .5) * amp;
+      const lane = H * .5 + (j - (n - 1) / 2) * H * .055;
+      const y = lerp(H * .5 + wild, lane, settle);
       x ? sc.lineTo(x, y) : sc.moveTo(x, y);
     }
-    sc.strokeStyle = pass ? `rgba(${acc},.35)` : `rgba(${ink},.85)`; sc.lineWidth = pass ? 1 : 1.1; sc.stroke();
+    sc.strokeStyle = j === 4 ? `rgba(${ink},.9)` : `rgba(${ink},.38)`; sc.lineWidth = j === 4 ? 1.2 : 1; sc.stroke();
   }
 }
 function sigLoop(t) { if (root.dataset.view !== "about") { sRun = false; return; } sigDraw(reduce ? 9000 : t); if (reduce) { sRun = false; return; } requestAnimationFrame(sigLoop); }
-function sigStart() { if (root.dataset.view !== "about") return; sigSize(); if (!sRun) { sRun = true; requestAnimationFrame(sigLoop); } }
+function sigStart() { if (root.dataset.view !== "about") return; sigSize(); if (!sRun) { sRun = true; loomT0 = performance.now(); requestAnimationFrame(sigLoop); } }
 addEventListener("hashchange", () => setTimeout(sigStart, 30));
 addEventListener("resize", () => { if (root.dataset.view === "about") { sigSize(); if (reduce) sigDraw(9000); } });
 
