@@ -78,7 +78,7 @@ header.top { position: fixed; top: 0; left: 0; right: 0; z-index: 5; display: fl
 :root[data-view="contact"] .cta-slot { display: none; }
 
 /* ---------- views ---------- */
-.view { position: fixed; inset: 0; overflow-y: auto; overscroll-behavior: contain; display: none; opacity: 0; transition: opacity .5s ease;
+.view { position: fixed; inset: 0; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; display: none; opacity: 0; transition: opacity .5s ease;
   padding: calc(env(safe-area-inset-top, 0px) + 112px) var(--gutter) calc(env(safe-area-inset-bottom, 0px) + 110px); }
 .view.on { display: block; }
 .view.in { opacity: 1; }
@@ -112,14 +112,14 @@ header.top { position: fixed; top: 0; left: 0; right: 0; z-index: 5; display: fl
 .svc-desc { color: var(--muted); font-size: .94rem; line-height: 1.55; margin: 0; }
 svg.ic { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
 svg.jaba { fill: currentColor; display: block; }
-.x-hero { display: grid; gap: clamp(20px, 3vw, 36px); }
+.x-hero { display: grid; grid-template-columns: minmax(0, 1fr); gap: clamp(20px, 3vw, 36px); }
 .x-hero .txt { display: grid; gap: 1rem; }
-.s-viz { position: relative; }
+.s-viz { position: relative; width: 100vw; margin-left: calc(-1 * var(--gutter)); }
 .s-viz canvas { position: static; inset: auto; display: block; width: 100%; height: clamp(150px, 18vw, 220px); }
 .s-viz .cap { position: absolute; bottom: 8px; font-family: var(--f-mono); font-size: .68rem; color: var(--muted); letter-spacing: .02em; }
 .s-viz .cap.a { left: clamp(14px, 3vw, 32px); } .s-viz .cap.c { right: clamp(14px, 3vw, 32px); }
 .f-tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
-.f-tiles > div { background: var(--tint); border: 1px solid var(--line); border-radius: 2px; padding: 20px; display: grid; gap: .8rem; align-content: start; min-height: 190px; }
+.f-tiles > div { background: color-mix(in srgb, var(--ink) 7%, var(--page)); border: 1px solid var(--line); border-radius: 2px; padding: 20px; display: grid; gap: .8rem; align-content: start; min-height: 190px; }
 .f-tiles > div:first-child { grid-column: span 2; grid-row: span 2; background: var(--solid); color: var(--on-solid); border-color: var(--solid); align-content: end; }
 .f-tiles > div:first-child .svc-desc { color: inherit; opacity: .72; }
 .f-tiles > div:first-child .svc-name { font-size: clamp(1.6rem, 2.6vw, 2.3rem); }
