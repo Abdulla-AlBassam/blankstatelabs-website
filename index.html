@@ -8,7 +8,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%2210%2014%2080%2080%22%3E%3Cstyle%3Epath%7Bfill%3A%23201813%3Bstroke%3A%23201813%7D%40media%20%28prefers-color-scheme%3Adark%29%7Bpath%7Bfill%3A%23efe7dc%3Bstroke%3A%23efe7dc%7D%7D%3C/style%3E%3Cpath%20d%3D%22M30%2076A20%2020%200%200%201%2070%2076Z%22%20stroke%3D%22none%22/%3E%3Cpath%20d%3D%22M15%2076A35%2035%200%200%201%2085%2076%22%20fill%3D%22none%22%20stroke-linecap%3D%22round%22%20stroke-width%3D%2210%22/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Hanken+Grotesk:wght@400;500&family=IBM+Plex+Mono:wght@400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Hanken+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400&display=swap">
 <style>
 /* Layout: fixed header (logo, name that slides in on inner pages, two tabs, contact button, grain-moon toggle) over one live dune background.
    Four views swap in place: home, About us, Our clients, Contact. */
@@ -57,11 +57,11 @@ header.top { position: fixed; top: 0; left: 0; right: 0; z-index: 5; display: fl
 .right { display: flex; align-items: center; gap: clamp(14px, 3vw, 40px); }
 .tabs { display: flex; gap: clamp(14px, 3vw, 40px); }
 .tabs a { position: relative; color: inherit; text-decoration: none; font-size: .72rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; opacity: var(--tab-o, .8); padding-block: 4px; white-space: nowrap; transition: opacity .35s ease; }
-/* the page you're on: full strength with a hairline underneath; the other tab steps back */
+/* the page you're on: full strength and bold; the other tab steps back. The hidden bold copy keeps the width steady so nothing shifts. */
 .tabs:has([aria-current="page"]) { --tab-o: .45; }
-.tabs a::after { content: ""; position: absolute; left: 0; right: .14em; bottom: -1px; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform .6s var(--ease); }
-.tabs a[aria-current="page"] { opacity: 1; }
-.tabs a[aria-current="page"]::after { transform: scaleX(1); }
+.tabs a { display: inline-flex; flex-direction: column; }
+.tabs a::after { content: attr(data-t); font-weight: 700; height: 0; overflow: hidden; visibility: hidden; }
+.tabs a[aria-current="page"] { opacity: 1; font-weight: 700; }
 .tabs:hover a, .tabs:focus-within a { opacity: .28; }
 .tabs a:hover, .tabs a:focus-visible { opacity: 1; outline: none; }
 
@@ -223,30 +223,50 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
 .totop svg { width: 10px; height: 10px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
 .totop:focus-visible { outline: 1px solid currentColor; outline-offset: 4px; }
 
-/* About us: plain text links to what's further down. Three placements on trial (2026-10-18), switched by root data-jump. */
-.jump { display: none; gap: clamp(20px, 3vw, 36px); align-items: center; }
-.jump button { appearance: none; border: 0; background: none; padding: 0 0 4px; color: inherit; cursor: pointer; font: inherit; font-size: clamp(1.02rem, 1.4vw, 1.2rem);
-  display: inline-flex; align-items: center; gap: 10px; position: relative; }
-.jump button::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: currentColor; opacity: .45; transition: opacity .3s ease; }
-.jump button:hover::after, .jump button:focus-visible::after { opacity: 1; }
-.jump button:focus-visible { outline: none; }
-.jump svg { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; transition: transform .45s var(--ease); }
-.jump button:hover svg { transform: translateY(3px); }
+/* About us: plain text links to what's further down. Two placements x five looks on trial (2026-10-18), switched by root data-jump and data-jlook. */
+.jump { display: none; gap: clamp(22px, 3vw, 40px); align-items: center; flex-wrap: wrap; }
+.jump button { appearance: none; border: 0; background: none; padding: 0; color: inherit; cursor: pointer; font: inherit; font-size: clamp(1.02rem, 1.4vw, 1.2rem);
+  display: inline-flex; align-items: baseline; gap: 12px; position: relative; }
+.jump button:focus-visible { outline: 1px solid currentColor; outline-offset: 6px; }
+.jump .n, .jump .sep { display: none; }
+.jump .w { position: relative; }
 /* A: under the opening paragraph */
-:root[data-jump="under"] .jump[data-j="under"] { display: flex; margin-top: .6rem; }
-/* B: pinned to the bottom-left corner until you start scrolling */
-.jump[data-j="corner"] { position: fixed; left: var(--gutter); bottom: calc(env(safe-area-inset-bottom, 0px) + 26px); z-index: 4; transition: opacity .5s ease; }
-:root[data-view="about"][data-jump="corner"] .jump[data-j="corner"] { display: flex; }
-:root.scrolled .jump[data-j="corner"] { opacity: 0; pointer-events: none; }
+:root[data-jump="under"] .jump[data-j="under"] { display: flex; margin-top: .9rem; }
 /* C: top right, level with the headline */
 .x-hero .txt { position: relative; }
 :root[data-jump="top"] .jump[data-j="top"] { display: flex; position: absolute; right: 0; top: .9rem; }
 @media (max-width: 860px) { :root[data-jump="top"] .jump[data-j="top"] { position: static; } }
+/* 1 Rule: a short line leads into each word and stretches on hover */
+:root[data-jlook="rule"] .jump button::before { content: ""; align-self: center; width: 18px; height: 1px; background: currentColor; opacity: .6; transition: width .5s var(--ease), opacity .3s ease; }
+:root[data-jlook="rule"] .jump button:hover::before { width: 34px; opacity: 1; }
+/* 2 Index: small numbers in the accent colour, like a contents page */
+:root[data-jlook="index"] .jump .n { display: inline; font-family: var(--f-mono); font-size: .7em; color: var(--accent); letter-spacing: .04em; transition: color .3s ease; }
+:root[data-jlook="index"] .jump .w::after { content: ""; position: absolute; left: 0; right: 0; bottom: -3px; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform .5s var(--ease); }
+:root[data-jlook="index"] .jump button:hover .w::after { transform: scaleX(1); }
+:root[data-jlook="index"] .jump button:hover .n { color: currentColor; }
+/* 3 Brackets: monospace, technical; the brackets open out on hover */
+:root[data-jlook="brackets"] .jump button { font-family: var(--f-mono); font-size: clamp(.78rem, 1vw, .86rem); text-transform: uppercase; letter-spacing: .12em; gap: 0; }
+:root[data-jlook="brackets"] .jump button::before, :root[data-jlook="brackets"] .jump button::after { color: var(--accent); transition: transform .45s var(--ease), color .3s ease; }
+:root[data-jlook="brackets"] .jump button::before { content: "["; margin-right: .7em; }
+:root[data-jlook="brackets"] .jump button::after { content: "]"; margin-left: .7em; }
+:root[data-jlook="brackets"] .jump button:hover::before { transform: translateX(-4px); color: currentColor; }
+:root[data-jlook="brackets"] .jump button:hover::after { transform: translateX(4px); color: currentColor; }
+/* 4 Caps: small spaced capitals like the top bar, split by a hairline; a line draws in on hover */
+:root[data-jlook="caps"] .jump { gap: clamp(16px, 2vw, 22px); }
+:root[data-jlook="caps"] .jump button { font-size: .74rem; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; }
+:root[data-jlook="caps"] .jump .sep { display: block; width: 1px; height: 13px; background: currentColor; opacity: .35; }
+:root[data-jlook="caps"] .jump .w::after { content: ""; position: absolute; left: 0; right: .16em; bottom: -5px; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform .5s var(--ease); }
+:root[data-jlook="caps"] .jump button:hover .w::after { transform: scaleX(1); }
+/* 5 Serif: the words set in the headline typeface with a fine underline that darkens on hover */
+:root[data-jlook="serif"] .jump button { font-family: var(--f-display); font-size: clamp(1.25rem, 1.9vw, 1.6rem); }
+:root[data-jlook="serif"] .jump .w { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .28em; text-decoration-color: rgba(var(--ink-rgb), .3); transition: text-decoration-color .3s ease; }
+:root[data-jlook="serif"] .jump button:hover .w { text-decoration-color: currentColor; }
 /* preview only: the switcher */
-.jump-pick { position: fixed; right: 12px; bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); z-index: 6; display: none; align-items: center; gap: 5px; padding: 5px; border-radius: 999px;
+.jump-pick { position: fixed; right: 12px; bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); z-index: 6; display: none; flex-direction: column; align-items: flex-end; gap: 5px; padding: 6px; border-radius: 18px;
   background: var(--chrome-bg); color: var(--chrome-fg); font-size: .6rem; letter-spacing: .1em; text-transform: uppercase; box-shadow: 0 8px 30px rgba(0,0,0,.25); }
+.jump-pick div { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; justify-content: flex-end; }
 :root[data-view="about"] .jump-pick { display: flex; }
-@media (max-width: 860px) { .jump-pick { bottom: auto; right: 50%; transform: translateX(50%); top: calc(env(safe-area-inset-top, 0px) + 70px); } }
+@media (max-width: 860px) { .jump-pick { bottom: auto; right: 8px; left: 8px; align-items: center; top: calc(env(safe-area-inset-top, 0px) + 66px); } .jump-pick div { justify-content: center; } }
 .jump-pick span { padding: 0 6px; color: var(--chrome-dim); }
 .jump-pick button { appearance: none; border: 1px solid var(--chrome-line); background: none; color: inherit; font: inherit; letter-spacing: inherit; border-radius: 999px; padding: 6px 10px; cursor: pointer; white-space: nowrap; }
 .jump-pick button[aria-pressed="true"] { background: var(--chrome-fg); color: #181412; }
@@ -310,7 +330,7 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
     <span class="name">Blank State Labs</span>
   </a>
   <div class="right">
-    <nav class="tabs" aria-label="Main"><a href="#about">About us</a><a href="#clients">Our clients</a></nav>
+    <nav class="tabs" aria-label="Main"><a href="#about" data-t="About us">About us</a><a href="#clients" data-t="Our clients">Our clients</a></nav>
     <div class="cta-slot"><a class="cta" href="#contact">Enquire</a></div>
     <button type="button" class="tg" aria-label="Switch to dark mode"></button>
   </div>
@@ -334,8 +354,8 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
       <div class="txt">
         <h2 class="display">Engineering for organisations that expect precision.</h2>
         <p class="lede">Blank State Labs is a Bahrain-based software engineering and consultancy firm specialising in AI automation, intelligent systems and bespoke software. We advise, architect, engineer, audit and test end to end, with every engagement held to the highest standard.</p>
-        <nav class="jump" data-j="under" aria-label="On this page"><button type="button" data-go="services">Services<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M5 1v8M1.5 5.5 5 9l3.5-3.5"/></svg></button><button type="button" data-go="pillars">Pillars<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M5 1v8M1.5 5.5 5 9l3.5-3.5"/></svg></button></nav>
-        <nav class="jump" data-j="top" aria-label="On this page"><button type="button" data-go="services">Services<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M5 1v8M1.5 5.5 5 9l3.5-3.5"/></svg></button><button type="button" data-go="pillars">Pillars<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M5 1v8M1.5 5.5 5 9l3.5-3.5"/></svg></button></nav>
+        <nav class="jump" data-j="under" aria-label="On this page"><button type="button" data-go="services"><span class="n">01</span><span class="w">Services</span></button><i class="sep" aria-hidden="true"></i><button type="button" data-go="pillars"><span class="n">02</span><span class="w">Pillars</span></button></nav>
+        <nav class="jump" data-j="top" aria-label="On this page"><button type="button" data-go="services"><span class="n">01</span><span class="w">Services</span></button><i class="sep" aria-hidden="true"></i><button type="button" data-go="pillars"><span class="n">02</span><span class="w">Pillars</span></button></nav>
       </div>
       <div class="s-viz"><canvas id="signal" aria-hidden="true"></canvas></div>
     </div>
@@ -392,8 +412,7 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
 </svg>
 
 <!-- About us: links down to Services and Pillars (B placement); preview switcher -->
-<nav class="jump" data-j="corner" aria-label="On this page"><button type="button" data-go="services">Services<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M5 1v8M1.5 5.5 5 9l3.5-3.5"/></svg></button><button type="button" data-go="pillars">Pillars<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M5 1v8M1.5 5.5 5 9l3.5-3.5"/></svg></button></nav>
-<div class="jump-pick"><span>Links</span><button type="button" data-v="under">A · Under text</button><button type="button" data-v="corner">B · Corner</button><button type="button" data-v="top">C · Top right</button></div>
+<div class="jump-pick"><div data-k="jump"><span>Place</span><button type="button" data-v="under">A · Under text</button><button type="button" data-v="top">C · Top right</button></div><div data-k="jlook"><span>Look</span><button type="button" data-v="rule">1 · Rule</button><button type="button" data-v="index">2 · Index</button><button type="button" data-v="brackets">3 · Brackets</button><button type="button" data-v="caps">4 · Caps</button><button type="button" data-v="serif">5 · Serif</button></div></div>
 
 <!-- Contact -->
 <section class="view" data-view="contact" aria-label="Contact">
@@ -528,12 +547,12 @@ document.querySelectorAll(".totop").forEach(b => b.addEventListener("click", () 
     const el = document.getElementById(b.dataset.go);
     scrollTo({ top: el.getBoundingClientRect().top + scrollY - 96, behavior: reduce ? "auto" : "smooth" });
   }));
-  const mark = () => root.classList.toggle("scrolled", scrollY > 80);
-  addEventListener("scroll", mark, { passive: true }); addEventListener("hashchange", () => setTimeout(mark, 60));
-  // preview only: pick between the placements
-  const pick = document.querySelector(".jump-pick"), set = v => { root.dataset.jump = v; pick.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.dataset.v === v)); };
-  pick.addEventListener("click", e => { const b = e.target.closest("button"); if (b) set(b.dataset.v); });
-  set("under");
+  // preview only: pick a placement and a look
+  document.querySelectorAll(".jump-pick [data-k]").forEach(g => {
+    const set = v => { root.dataset[g.dataset.k] = v; g.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.dataset.v === v)); };
+    g.addEventListener("click", e => { const b = e.target.closest("button"); if (b) set(b.dataset.v); });
+    set(g.querySelector("button").dataset.v);
+  });
 })();
 
 // ---------- custom dropdowns ----------
