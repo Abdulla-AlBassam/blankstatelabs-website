@@ -34,9 +34,11 @@
   --speck: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><filter id='f'><feTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='4'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 9 -4.2'/></filter><rect width='40' height='40' filter='url(%23f)'/></svg>");
 }
 :root[data-mode="dark"] { --ink: #efe7dc; --muted: rgba(239, 231, 220, .64); --line: rgba(239, 231, 220, .2); --tint: rgba(239, 231, 220, .07); --page: #1a1512; --solid: #5a4334; --on-solid: #efe7dc; --ink-rgb: 239, 231, 220; --accent: #b5a99e; --accent-rgb: 181, 169, 158; --card: rgba(34, 28, 24, .97); --field: rgba(255, 255, 255, .03); color-scheme: dark; }
-html, body { height: 100%; }
-body { background: var(--page); color: var(--ink); font-family: var(--f-body); overflow: hidden; transition: background .6s ease, color .6s ease; }
-canvas { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+/* The page itself scrolls (not a fixed box inside it), so phone browsers can run the page under their see-through toolbars.
+   The background canvas is sized to the tallest the screen gets (100lvh), so it still covers once the toolbars shrink away. */
+html { background: var(--page); transition: background .6s ease; }
+body { margin: 0; background: var(--page); color: var(--ink); font-family: var(--f-body); overflow-x: hidden; transition: background .6s ease, color .6s ease; }
+canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; height: 100lvh; display: block; }
 ::selection { background: var(--ink); color: var(--page); }
 
 /* ---------- header ---------- */
@@ -82,8 +84,9 @@ header.top { position: fixed; top: 0; left: 0; right: 0; z-index: 5; display: fl
 :root[data-view="contact"] .cta-slot { display: none; }
 
 /* ---------- views ---------- */
-.view { position: fixed; inset: 0; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; display: none; opacity: 0; transition: opacity .5s ease;
+.view { position: relative; min-height: 100vh; min-height: 100svh; overflow-x: hidden; display: none; opacity: 0; transition: opacity .5s ease;
   padding: calc(env(safe-area-inset-top, 0px) + 112px) var(--gutter) calc(env(safe-area-inset-bottom, 0px) + 110px); }
+.view { box-sizing: border-box; }
 .view.on { display: block; }
 .view.in { opacity: 1; }
 .view.home.on { display: flex; flex-direction: column; justify-content: center; }
@@ -154,15 +157,35 @@ svg.jaba { fill: currentColor; display: block; }
 /* pillar icons (picked 2026-10-15): padlock for security, rippling burst for AI */
 .pi { width: 64px; height: 64px; stroke-width: .9; }
 .pi .acc-s { stroke: var(--accent); }
-/* security: padlock shackle drops and closes */
-.pi .shackle { animation: shackle 5s var(--ease) infinite; }
-@keyframes shackle { 0%, 15% { transform: translateY(-4px); } 35%, 85% { transform: translateY(0); } 100% { transform: translateY(-4px); } }
+
+/* security (2026-10-18): a burglar runs up, the lock snaps shut, he slumps and wanders off. Drawn frame by frame in the script. */
+.pi.burgle { width: 115px; overflow: hidden; }
+.pi.burgle .cap { fill: var(--ink); stroke: none; }
+.pi.burgle .mask { fill: var(--accent); stroke: none; }
 
 /* AI burst: each line stretches in turn, so a ripple runs round the circle */
 .pi .pulse-g path { stroke-dasharray: 1; animation: ripple 1.6s ease-in-out infinite; animation-delay: calc(var(--k) * .1s); }
 @keyframes ripple { 0%, 100% { stroke-dashoffset: .7; } 50% { stroke-dashoffset: 0; } }
 
 
+
+/* service icons (2026-10-18): each moves slowly and quietly, like the pillar icons.
+   The tiles copy their icon in from the symbol (see script), so these rules reach the parts. */
+.f-tiles svg.ic * { transform-origin: 12px 12px; }
+.f-tiles .a-turn { animation: a-turn 7s var(--ease) infinite; }
+@keyframes a-turn { 0%, 55% { transform: rotate(0); } 80%, 100% { transform: rotate(180deg); } }
+.f-tiles .a-orbit { animation: spin 16s linear infinite; }
+.f-tiles .a-core { animation: a-core 4s ease-in-out infinite; }
+@keyframes a-core { 0%, 100% { transform: scale(1); } 50% { transform: scale(.72); } }
+.f-tiles .a-scan { animation: a-scan 5s ease-in-out infinite alternate; }
+@keyframes a-scan { from { transform: translateY(-7px); } to { transform: translateY(5px); } }
+.f-tiles .a-tick { stroke-dasharray: 1; animation: pchk 6s ease-in-out infinite; }
+.f-tiles .a-lay { animation: a-lay 5s var(--ease) infinite; }
+@keyframes a-lay { 0%, 20%, 100% { transform: translateY(0); } 45%, 70% { transform: translateY(var(--dy)); } }
+.f-tiles .a-wire, .f-tiles .a-type { stroke-dasharray: 1; animation: pdraw 6s ease-in-out infinite; animation-delay: var(--w, 0s); }
+.f-tiles .a-mer { animation: a-mer 6s ease-in-out infinite; }
+@keyframes a-mer { 0%, 100% { transform: scaleX(1); } 50% { transform: scaleX(.12); } }
+@media (prefers-reduced-motion: reduce) { .f-tiles svg.ic * { animation: none !important; stroke-dashoffset: 0 !important; } }
 
 /* clients */
 .f-ctiles { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
@@ -199,10 +222,16 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
 .chips input:checked + span { background: var(--solid); color: var(--on-solid); border-color: var(--solid); }
 .chips input:focus-visible + span { outline: 1px solid currentColor; outline-offset: 3px; }
 .send { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
-.send button { appearance: none; border: 1px solid var(--solid); background: var(--solid); color: var(--on-solid); border-radius: 999px; padding: 12px 26px; font: inherit; font-size: .74rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; cursor: pointer; transition: opacity .3s ease; }
-.send button:hover { opacity: .85; }
+.send button, .totop { appearance: none; border: 1px solid currentColor; background: transparent; color: inherit; border-radius: 999px; padding: 12px 26px; font: inherit; font-size: .74rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; cursor: pointer; transition: background .3s ease, opacity .3s ease; }
+.send button:hover, .totop:hover { background: var(--tint); }
 .send button:focus-visible { outline: 1px solid var(--ink); outline-offset: 4px; }
 .status { font-size: .9rem; color: var(--muted); margin: 0; }
+
+/* back to top: waits at the foot of each inner page and fades in once you've scrolled to the bottom */
+.totop { display: flex; align-items: center; gap: 10px; margin: clamp(48px, 8vw, 96px) auto 0; padding: 11px 22px; font-size: .7rem; opacity: 0; transform: translateY(8px); pointer-events: none; transition: opacity .6s ease, transform .6s var(--ease), background .3s ease; }
+.totop.show { opacity: 1; transform: none; pointer-events: auto; }
+.totop svg { width: 10px; height: 10px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+.totop:focus-visible { outline: 1px solid currentColor; outline-offset: 4px; }
 
 /* ---------- custom dropdown: shared ---------- */
 .dd { position: relative; }
@@ -270,9 +299,9 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
 <!-- Home -->
 <main class="view home" data-view="home" aria-label="Home">
   <div class="copy">
-    <h1 class="brandbig">Blank State<br>Labs</h1>
+    <h1 class="brandbig">Blank State</h1>
     <div class="side">
-      <span id="tagline">Software engineering<br>&amp; consultancy</span>
+      <span id="tagline">Software engineering<br>&amp; consultancy lab</span>
       <span class="dim">Est. 2026</span>
     </div>
   </div>
@@ -293,9 +322,9 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
       <div class="f-tiles">
     <div><svg class="ic" aria-hidden="true"><use href="#i-auto"/></svg><h3 class="svc-name">AI automation</h3><p class="svc-desc">Design and deployment of automated workflows that remove repetitive manual processes from daily operations.</p></div>
     <div><svg class="ic" aria-hidden="true"><use href="#i-agent"/></svg><h3 class="svc-name">AI agents and assistants</h3><p class="svc-desc">Intelligent agents and assistants built around an organisation's own data, systems and procedures.</p></div>
+    <div><svg class="ic" aria-hidden="true"><use href="#i-layers"/></svg><h3 class="svc-name">Enterprise and internal platforms</h3><p class="svc-desc">Bespoke operational systems that support teams behind the scenes.</p></div>
     <div><svg class="ic" aria-hidden="true"><use href="#i-doc"/></svg><h3 class="svc-name">Document and data intelligence</h3><p class="svc-desc">Automated extraction, classification and analysis of documents and records at scale.</p></div>
     <div><svg class="ic" aria-hidden="true"><use href="#i-shield"/></svg><h3 class="svc-name">Secure systems engineering</h3><p class="svc-desc">Software designed with security as a founding requirement, informed by a background in cybersecurity.</p></div>
-    <div><svg class="ic" aria-hidden="true"><use href="#i-layers"/></svg><h3 class="svc-name">Enterprise and internal platforms</h3><p class="svc-desc">Bespoke operational systems that support teams behind the scenes.</p></div>
     <div><svg class="ic" aria-hidden="true"><use href="#i-link"/></svg><h3 class="svc-name">Systems integration</h3><p class="svc-desc">Connection of existing software, APIs and data sources into a single, coherent workflow.</p></div>
     <div><svg class="ic" aria-hidden="true"><use href="#i-app"/></svg><h3 class="svc-name">Web and mobile applications</h3><p class="svc-desc">Customer-facing applications engineered for reliability and ease of use.</p></div>
     <div><svg class="ic" aria-hidden="true"><use href="#i-web"/></svg><h3 class="svc-name">Corporate websites</h3><p class="svc-desc">Considered, high-performance websites that represent the organisation with clarity.</p></div>
@@ -305,7 +334,7 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
       <h2 class="display" style="font-size:clamp(1.8rem,3.4vw,3rem)">Our Pillars</h2>
       <div class="pA">
         <div><div class="ptop"><span class="num">I</span><svg class="pi" viewBox="0 0 40 40" aria-hidden="true"><circle cx="7" cy="20" r="3"/><circle cx="33" cy="20" r="3"/><line class="dim" x1="10" y1="20" x2="30" y2="20"/><circle class="acc" cx="10" cy="20" r="1.8"><animate attributeName="cx" values="10;30;10" dur="4.5s" repeatCount="indefinite" calcMode="spline" keySplines=".6 0 .4 1;.6 0 .4 1"/></circle></svg></div><span></span><h3>Direct correspondence</h3><p>Clients correspond directly with the engineer responsible for delivery. Questions receive considered answers without delay.</p></div>
-        <div><div class="ptop"><span class="num">II</span><svg class="pi" viewBox="0 0 40 40" aria-hidden="true"><g class="shackle"><path d="M13.5 18v-5a6.5 6.5 0 0 1 13 0v5"/></g><rect x="9.5" y="18" width="21" height="16" rx="1.5"/><circle class="acc" cx="20" cy="24.5" r="1.8"/><path d="M20 26v3.5"/></svg></div><span></span><h3>Security by design</h3><p>A background in cybersecurity informs every engagement. Security is established at the outset, never retrofitted.</p></div>
+        <div><div class="ptop"><span class="num">II</span><svg class="pi burgle" viewBox="0 0 72 40" aria-hidden="true"><g id="thief"><g id="t-top"><path class="sack" d="M-1.2-17.8c-3.2-.6-6.2 1.2-6.2 4.4 0 2.6 2 4 4.4 4s4-1.6 3.6-4.2M-1.2-17.8l-1.5 1.6"/><path d="M0-18.6V-9"/><g id="t-head"><circle cx="0" cy="-22" r="3.2"/><path class="cap" d="M-3.3-22.4a3.3 3.3 0 0 1 6.6 0z"/><rect class="mask" x="-3.3" y="-22.2" width="6.6" height="2.2" rx=".6"/></g><path id="t-armb" d="M0-16v7"/><path id="t-armf" d="M0-16v7"/></g><path id="t-lega" d="M0-9v9"/><path id="t-legb" d="M0-9v9"/></g><g id="lk"><path id="lk-sh" d="M53.5 20v-5a5.5 5.5 0 0 1 11 0v5"/><rect x="50" y="20" width="18" height="15" rx="1.5"/><circle id="lk-key" class="acc" cx="59" cy="25.8" r="1.6"/><path d="M59 27.2v3.3"/></g></svg></div><span></span><h3>Security by design</h3><p>A background in cybersecurity informs every engagement. Security is established at the outset, never retrofitted.</p></div>
         <div><div class="ptop"><span class="num">III</span><svg class="pi" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="2.2"/><g class="pulse-g"><path pathLength="1" style="--k:0" d="M24.00 20.00L38.00 20.00"/><path pathLength="1" style="--k:1" d="M23.70 21.53L31.09 24.59"/><path pathLength="1" style="--k:2" d="M22.83 22.83L30.61 30.61"/><path pathLength="1" style="--k:3" d="M21.53 23.70L26.89 36.63"/><path pathLength="1" style="--k:4" d="M20.00 24.00L20.00 32.00"/><path pathLength="1" style="--k:5" d="M18.47 23.70L14.26 33.86"/><path pathLength="1" style="--k:6" d="M17.17 22.83L7.27 32.73"/><path pathLength="1" style="--k:7" d="M16.30 21.53L8.91 24.59"/><path pathLength="1" style="--k:8" d="M16.00 20.00L5.00 20.00"/><path pathLength="1" style="--k:9" d="M16.30 18.47L3.37 13.11"/><path pathLength="1" style="--k:10" d="M17.17 17.17L11.51 11.51"/><path pathLength="1" style="--k:11" d="M18.47 16.30L14.26 6.14"/><path pathLength="1" style="--k:12" d="M20.00 16.00L20.00 2.00"/><path pathLength="1" style="--k:13" d="M21.53 16.30L24.59 8.91"/><path pathLength="1" style="--k:14" d="M22.83 17.17L30.61 9.39"/><path pathLength="1" style="--k:15" d="M23.70 18.47L36.63 13.11"/></g></svg></div><span></span><h3>AI-augmented delivery</h3><p>Advanced AI tooling accelerates routine work. Every output is reviewed and verified by the engineer.</p></div>
         <div><div class="ptop"><span class="num">IV</span><svg class="pi" viewBox="0 0 40 40" aria-hidden="true"><path d="M5 20C10 11 14 11 18 20S26 29 35 20"><animate attributeName="d" dur="6s" repeatCount="indefinite" values="M5 20C10 11 14 11 18 20S26 29 35 20;M5 20C10 20 14 20 18 20S26 20 35 20;M5 20C10 11 14 11 18 20S26 29 35 20" calcMode="spline" keySplines=".6 0 .4 1;.6 0 .4 1"/></path><circle class="acc" cx="35" cy="20" r="1.8"/></svg></div><span></span><h3>Considered design</h3><p>Interfaces are refined, intuitive and dependable from the first use.</p></div>
       </div>
@@ -329,14 +358,14 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="jaba" viewBox="78.28 143.77 146.87 146.87"><path d="M214.35 268.6C214.29 268.87 214.08 269.09 213.81 269.16C213.75 269.18 213.68 269.19 213.61 269.19C213.4 269.19 213.2 269.11 213.06 268.96C210.68 266.48 208.24 263.92 205.76 261.31C173.67 227.64 133.74 185.73 89.68 176.36C89.33 176.28 89.08 175.97 89.08 175.61L89.08 170.75C88.63 164.95 91.32 159.37 95.95 156.53C96.15 156.41 96.4 156.38 96.62 156.47C142.94 174.09 177.37 211.05 210.65 246.79L214.55 250.98C214.68 251.12 214.76 251.3 214.76 251.5L214.76 260.26C214.74 261.04 214.75 261.83 214.76 262.6C214.79 264.57 214.81 266.61 214.35 268.6M208.79 277.04C208.79 277.04 208.78 277.04 208.78 277.05C205.91 279.58 201.05 280.02 196.41 280.02C195.16 280.02 193.92 279.98 192.74 279.95C191.01 279.91 189.38 279.87 188.07 279.94C187.81 279.96 187.57 279.83 187.42 279.63C181.62 271.86 176.13 264.87 170.63 258.26C157.05 242.33 144.5 228.31 128.59 218.24C123.43 215.23 117.36 212.06 110.98 212.73C107.95 213.07 105.72 214.5 104.52 216.87C103.04 219.81 103.38 223.95 105.4 227.43C106.66 229.81 108.22 232.07 109.73 234.25C111.35 236.58 113.01 238.98 114.34 241.57C121.5 254.46 126.68 268.3 130.38 278.92C130.46 279.15 130.43 279.41 130.28 279.62C130.14 279.82 129.91 279.94 129.66 279.94L116.15 279.94C115.81 279.94 115.52 279.72 115.42 279.4C110.82 264.39 103.69 245.41 89.31 231.8C89.16 231.65 89.08 231.45 89.08 231.24L89.08 184.62C89.08 184.39 89.18 184.17 89.37 184.02C89.56 183.88 89.8 183.82 90.03 183.88C131.26 194.23 169.93 234.93 201.01 267.63C203.7 270.47 206.33 273.23 208.88 275.9C209.03 276.05 209.11 276.27 209.09 276.49C209.07 276.7 208.96 276.9 208.79 277.04M176.9 279.51C176.78 279.77 176.51 279.94 176.22 279.94L139.91 279.94C139.59 279.94 139.3 279.73 139.19 279.42C133.53 262.67 128.27 250.22 122.14 239.05C120.07 235.33 118.07 232.15 116.03 229.33L115.56 228.65C113.91 226.3 112.04 223.65 111.82 220.63C111.8 220.4 111.89 220.18 112.06 220.02C112.23 219.86 112.46 219.79 112.69 219.82C133.07 222.83 163.41 261.58 176.36 278.12L176.82 278.7C177 278.93 177.03 279.24 176.9 279.51M106.61 279.62C106.46 279.82 106.24 279.94 105.99 279.94L103.78 279.94L103.7 279.94C99.59 279.94 95.79 278.25 93.01 275.19C90.07 271.94 88.63 267.53 89.08 263.08L89.08 261.83L89.08 259.18L89.08 245.38C89.08 245.05 89.29 244.75 89.6 244.65C89.91 244.55 90.26 244.66 90.45 244.93C97 253.82 102.16 264.63 106.72 278.94C106.79 279.17 106.75 279.43 106.61 279.62M113.7 154.85C113.78 154.5 114.09 154.26 114.45 154.26L169.65 154.26C170.02 154.26 170.34 154.52 170.4 154.89C175.12 181.54 191.54 204.49 214.34 216.28C214.6 216.42 214.76 216.68 214.76 216.96L214.76 237.75C214.76 238.07 214.56 238.35 214.27 238.46C214.18 238.5 214.09 238.51 213.99 238.51C213.78 238.51 213.58 238.43 213.43 238.27C181.56 204.16 152.09 174.41 114.11 155.71C113.79 155.55 113.62 155.19 113.7 154.85M179 154.54C179.15 154.36 179.36 154.26 179.59 154.26L193.94 154.26C194.32 154.26 194.64 154.53 194.7 154.9C196.89 168.87 204.1 181.87 214.48 190.57C214.65 190.71 214.76 190.93 214.76 191.15L214.76 206.43C214.76 206.71 214.6 206.96 214.36 207.1C214.25 207.16 214.12 207.19 213.99 207.19C213.85 207.19 213.71 207.15 213.58 207.08C195.83 195.89 183.17 176.97 178.84 155.17C178.8 154.95 178.86 154.71 179 154.54M203.44 155.03C203.64 154.85 203.91 154.78 204.17 154.86C210.35 156.6 214.8 162.54 214.76 168.96L214.76 177.71C214.76 178.04 214.55 178.32 214.24 178.43C214.16 178.46 214.08 178.48 213.99 178.48C213.76 178.48 213.54 178.37 213.39 178.19C208.36 171.87 204.84 164.11 203.21 155.74C203.16 155.48 203.25 155.21 203.44 155.03M223 255.94L223 238.51C223 229.11 223 219.72 223 210.32C223.01 196.4 223.01 182.48 222.99 168.56L222.99 168.54C223.15 162.22 220.88 156.42 216.62 152.21C212.33 147.97 206.45 145.77 200.09 146.01C199.76 146.01 104.73 146.01 103.77 146.01C101.66 146 99.57 146.22 97.57 146.65C91.2 147.96 85.86 152.02 83.29 157.51C80.81 162.35 80.72 167.97 80.83 172.86L80.83 261.34C80.28 269.91 82.29 276.89 86.65 281.59C90.65 285.89 96.4 288.11 103.73 288.18C104.51 288.1 107.21 288.07 111.36 288.07C116.36 288.07 123.45 288.11 131.79 288.17C159.17 288.34 204.92 288.64 207.97 287.18C208.06 287.1 208.17 287.03 208.3 287C216.82 284.68 222.99 275.99 222.98 266.33C223.01 264.19 223.01 262.01 223 259.9C223 258.58 223 257.26 223 255.94"/></symbol>
-  <symbol id="i-auto" viewBox="0 0 24 24"><path d="M20 12a8 8 0 0 1-14.3 4.9M4 12a8 8 0 0 1 14.3-4.9"/><path d="M18.6 3.4v3.9h-3.9M5.4 20.6v-3.9h3.9"/><circle cx="12" cy="12" r="1.6"/></symbol>
-  <symbol id="i-agent" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><circle cx="12" cy="12" r="8.4" stroke-dasharray="1.6 2.8"/><path d="M12 1.6v2.6M12 19.8v2.6M1.6 12h2.6M19.8 12h2.6"/></symbol>
-  <symbol id="i-doc" viewBox="0 0 24 24"><path d="M6 2.5h8.5l3.5 3.5v15.5H6z"/><path d="M14.5 2.5V6H18"/><path d="M3 13.5h18"/><path d="M9 9.5h4M9 17h6"/></symbol>
-  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 2.5 4.5 5.4v6.1c0 4.5 3.2 8.4 7.5 10 4.3-1.6 7.5-5.5 7.5-10V5.4z"/><path d="M9 12.2l2.1 2.1 4-4.2"/></symbol>
-  <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3 2.5 8 12 13l9.5-5z"/><path d="M2.5 12 12 17l9.5-5M2.5 16 12 21l9.5-5"/></symbol>
-  <symbol id="i-link" viewBox="0 0 24 24"><circle cx="5" cy="12" r="2.4"/><circle cx="19" cy="5" r="2.4"/><circle cx="19" cy="19" r="2.4"/><path d="M7.2 11 16.8 6M7.2 13l9.6 5"/></symbol>
-  <symbol id="i-app" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="1.5"/><path d="M3 8.5h18M7 13h6M7 16h4"/></symbol>
-  <symbol id="i-web" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.7 5.6 3.7 9s-1.2 6.4-3.7 9c-2.5-2.6-3.7-5.6-3.7-9S9.5 5.6 12 3z"/></symbol>
+  <symbol id="i-auto" viewBox="0 0 24 24"><g class="a-turn"><path d="M20 12a8 8 0 0 1-14.3 4.9M4 12a8 8 0 0 1 14.3-4.9"/><path d="M18.6 3.4v3.9h-3.9M5.4 20.6v-3.9h3.9"/></g><circle cx="12" cy="12" r="1.6"/></symbol>
+  <symbol id="i-agent" viewBox="0 0 24 24"><circle class="a-core" cx="12" cy="12" r="3.2"/><circle class="a-orbit" cx="12" cy="12" r="8.4" stroke-dasharray="1.6 2.8"/><path d="M12 1.6v2.6M12 19.8v2.6M1.6 12h2.6M19.8 12h2.6"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 24 24"><path d="M6 2.5h8.5l3.5 3.5v15.5H6z"/><path d="M14.5 2.5V6H18"/><path d="M9 9.5h4M9 17h6"/><path class="a-scan" d="M3 13.5h18"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 2.5 4.5 5.4v6.1c0 4.5 3.2 8.4 7.5 10 4.3-1.6 7.5-5.5 7.5-10V5.4z"/><path class="a-tick" pathLength="1" d="M9 12.2l2.1 2.1 4-4.2"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path class="a-lay" style="--dy:-1.8px" d="M12 3 2.5 8 12 13l9.5-5z"/><path class="a-lay" style="--dy:-.8px" d="M2.5 12 12 17l9.5-5"/><path d="M2.5 16 12 21l9.5-5"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><circle cx="5" cy="12" r="2.4"/><circle cx="19" cy="5" r="2.4"/><circle cx="19" cy="19" r="2.4"/><path class="a-wire" pathLength="1" d="M7.2 11 16.8 6"/><path class="a-wire" pathLength="1" style="--w:.6s" d="M7.2 13l9.6 5"/></symbol>
+  <symbol id="i-app" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="1.5"/><path d="M3 8.5h18"/><path class="a-type" pathLength="1" d="M7 13h6"/><path class="a-type" pathLength="1" style="--w:.7s" d="M7 16h4"/></symbol>
+  <symbol id="i-web" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path class="a-mer" d="M12 3c2.5 2.6 3.7 5.6 3.7 9s-1.2 6.4-3.7 9c-2.5-2.6-3.7-5.6-3.7-9S9.5 5.6 12 3z"/></symbol>
 </svg>
 
 <!-- Contact -->
@@ -381,6 +410,8 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
 </section>
 
 <script>
+// a back-to-top button at the foot of each inner page
+document.querySelectorAll('.view:not(.home)').forEach(v => v.insertAdjacentHTML("beforeend", '<button type="button" class="totop"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M5 9V1M1.5 4.5 5 1l3.5 3.5"/></svg>Back to top</button>'));
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const root = document.documentElement;
 // Change this one line to change the contact address everywhere on the page.
@@ -401,7 +432,7 @@ function route() {
   const target = document.querySelector(`.view[data-view="${name}"]`) ? name : "home";
   root.dataset.view = target;
   views.forEach(v => {
-    if (v.dataset.view === target) { v.classList.add("on"); v.scrollTop = 0; requestAnimationFrame(() => requestAnimationFrame(() => v.classList.add("in"))); }
+    if (v.dataset.view === target) { v.classList.add("on"); scrollTo(0, 0); requestAnimationFrame(() => requestAnimationFrame(() => v.classList.add("in"))); }
     else v.classList.remove("on", "in");
   });
   tabLinks.forEach(a => { if (a.getAttribute("href") === "#" + target) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
@@ -444,6 +475,56 @@ function sigLoop(t) { if (root.dataset.view !== "about") { sRun = false; return;
 function sigStart() { if (root.dataset.view !== "about") return; sigSize(); if (!sRun) { sRun = true; loomT0 = performance.now(); requestAnimationFrame(sigLoop); } }
 addEventListener("hashchange", () => setTimeout(sigStart, 30));
 addEventListener("resize", () => { if (root.dataset.view === "about") { sigSize(); if (reduce) sigDraw(9000); } });
+
+// ---------- service icons: copy each symbol in, so its parts can animate ----------
+document.querySelectorAll(".f-tiles svg.ic").forEach(svg => {
+  const sym = document.querySelector(svg.querySelector("use").getAttribute("href"));
+  svg.setAttribute("viewBox", sym.getAttribute("viewBox"));
+  svg.innerHTML = sym.innerHTML;
+});
+
+// ---------- back to top ----------
+function topCheck() {
+  const v = document.querySelector(".view.on"), b = v && v.querySelector(".totop");
+  if (!b) return;
+  const scrolled = scrollY > 160, atEnd = scrollY + innerHeight >= document.documentElement.scrollHeight - 60;
+  b.classList.toggle("show", scrolled && atEnd);
+}
+addEventListener("scroll", topCheck, { passive: true });
+addEventListener("resize", topCheck);
+addEventListener("hashchange", () => setTimeout(topCheck, 60));
+document.querySelectorAll(".totop").forEach(b => b.addEventListener("click", () => scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" })));
+
+// ---------- Security by design: the burglar ----------
+(() => {
+  const $ = id => document.getElementById(id), thief = $("thief"), top = $("t-top"), head = $("t-head"), armF = $("t-armf"), armB = $("t-armb"), legA = $("t-lega"), legB = $("t-legb"), sh = $("lk-sh"), key = $("lk-key");
+  const L = 9.4, cl = x => Math.min(1, Math.max(0, x)), seg = (t, a, b) => cl((t - a) / (b - a)), sm = x => x * x * (3 - 2 * x);
+  function draw(ms) {
+    const t = (ms / 1000) % L;
+    let x, face = 1, amp = 0, hz = 0, lean = 0, reach = 0, slump = 0, bob = 0;
+    if (t < 2) { x = lerp(-10, 42, 1 - Math.pow(1 - t / 2, 2)); amp = 34 * (1 - seg(t, 1.5, 2)); hz = 3.6; lean = 12 * (1 - seg(t, 1.4, 2)); }   // runs in
+    else if (t < 2.9) { x = 42; reach = sm(seg(t, 2.3, 2.75)); }                                                                    // reaches for it
+    else if (t < 3.3) { const k = seg(t, 2.9, 3.3); x = 42 - 3 * sm(k); bob = -2.2 * Math.sin(Math.PI * k); reach = 1 - sm(seg(t, 2.9, 3.05)); } // the lock snaps, he jumps back
+    else if (t < 5) { x = 39; slump = sm(seg(t, 3.5, 4.3)); }                                                                       // slumps
+    else { x = 39; slump = 1; face = 1 - 2 * sm(seg(t, 5, 5.35)); const k = seg(t, 5.35, 8.6); x = lerp(39, -12, k); amp = k > 0 && k < 1 ? 16 : 0; hz = 1.5; } // turns and trudges off
+    const sw = Math.sin((ms / 1000) * Math.PI * 2 * hz) * amp;
+    bob += amp ? -Math.abs(Math.sin((ms / 1000) * Math.PI * 2 * hz)) * (amp / 34) : 0;
+    thief.setAttribute("transform", `translate(${x.toFixed(2)} ${(36 + bob + slump * .6).toFixed(2)}) scale(${face.toFixed(3)} 1)`);
+    top.setAttribute("transform", `rotate(${(lean + slump * 9).toFixed(1)} 0 -9)`);
+    head.setAttribute("transform", `translate(${(slump * .9).toFixed(2)} ${(slump * 1.3).toFixed(2)}) rotate(${(slump * 24).toFixed(1)} 0 -22)`);
+    armF.setAttribute("transform", `rotate(${(-sw * .9 - 8 - reach * 76 + slump * 10).toFixed(1)} 0 -16)`);
+    armB.setAttribute("transform", `rotate(${(sw * .9 + 10 - slump * 4).toFixed(1)} 0 -16)`);
+    legA.setAttribute("transform", `rotate(${(sw + 7).toFixed(1)} 0 -9)`);
+    legB.setAttribute("transform", `rotate(${(-sw - 7).toFixed(1)} 0 -9)`);
+    // shackle: up while he approaches, drops shut as his hand arrives, lifts again once he's gone
+    const open = t < 2.75 ? 1 : t < 2.9 ? 1 - sm(seg(t, 2.75, 2.9)) : t > 8.8 ? sm(seg(t, 8.8, 9.3)) : 0;
+    sh.setAttribute("transform", `translate(0 ${(-5 * open).toFixed(2)})`);
+    key.setAttribute("r", (1.6 + 1.1 * Math.sin(Math.PI * seg(t, 2.9, 3.5))).toFixed(2));
+  }
+  if (reduce) { draw(4500); return; }
+  const loop = now => { if (root.dataset.view === "about") draw(now); requestAnimationFrame(loop); };
+  requestAnimationFrame(loop);
+})();
 
 // ---------- custom dropdowns ----------
 let ddCount = 0;
@@ -510,7 +591,8 @@ document.getElementById("enquiry").addEventListener("submit", e => {
 
 // ---------- grain follows the About page: left while the services are in view, right again at Our Pillars ----------
 const aboutView = document.querySelector('section[data-view="about"]'), svcWrap = aboutView.querySelector(".svc-wrap"), pillars = aboutView.querySelector(".pillars");
-aboutView.addEventListener("scroll", () => {
+addEventListener("scroll", () => {
+  if (root.dataset.view !== "about") return;
   const line = innerHeight * .55;
   sideTarget = svcWrap.getBoundingClientRect().top < line && pillars.getBoundingClientRect().top > line ? 1 : 0;
   if (reduce) { sideNow = sideTarget; frame(performance.now()); }
@@ -808,7 +890,7 @@ requestAnimationFrame(frame);
     about.querySelectorAll(sel).forEach((el, i) => { el.classList.add("rvl", kind); el.style.setProperty("--d", (i % 4) * .09 + "s"); els.push(el); }));
   // checked by position on scroll, so the blur and clip can't hide an element from the check
   const check = () => { const lim = innerHeight * .92; els.forEach(el => { if (!el.classList.contains("shown") && el.getBoundingClientRect().top < lim) el.classList.add("shown"); }); };
-  about.addEventListener("scroll", check, { passive: true });
+  addEventListener("scroll", () => { if (root.dataset.view === "about") check(); }, { passive: true });
   const arm = () => { els.forEach(el => el.classList.remove("shown")); requestAnimationFrame(() => requestAnimationFrame(check)); };
   addEventListener("hashchange", () => { if (location.hash === "#about") arm(); });
   arm();
