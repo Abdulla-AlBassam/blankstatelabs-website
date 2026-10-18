@@ -158,10 +158,9 @@ svg.jaba { fill: currentColor; display: block; }
 .pi { width: 64px; height: 64px; stroke-width: .9; }
 .pi .acc-s { stroke: var(--accent); }
 
-/* security (2026-10-18): a burglar runs up, the lock snaps shut, he slumps and wanders off. Drawn frame by frame in the script. */
-.pi.burgle { width: 115px; overflow: hidden; }
-.pi.burgle .cap { fill: var(--ink); stroke: none; }
-.pi.burgle .mask { fill: var(--accent); stroke: none; }
+/* security: padlock shackle drops and closes */
+.pi .shackle { animation: shackle 5s var(--ease) infinite; }
+@keyframes shackle { 0%, 15% { transform: translateY(-4px); } 35%, 85% { transform: translateY(0); } 100% { transform: translateY(-4px); } }
 
 /* AI burst: each line stretches in turn, so a ripple runs round the circle */
 .pi .pulse-g path { stroke-dasharray: 1; animation: ripple 1.6s ease-in-out infinite; animation-delay: calc(var(--k) * .1s); }
@@ -334,7 +333,7 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
       <h2 class="display" style="font-size:clamp(1.8rem,3.4vw,3rem)">Our Pillars</h2>
       <div class="pA">
         <div><div class="ptop"><span class="num">I</span><svg class="pi" viewBox="0 0 40 40" aria-hidden="true"><circle cx="7" cy="20" r="3"/><circle cx="33" cy="20" r="3"/><line class="dim" x1="10" y1="20" x2="30" y2="20"/><circle class="acc" cx="10" cy="20" r="1.8"><animate attributeName="cx" values="10;30;10" dur="4.5s" repeatCount="indefinite" calcMode="spline" keySplines=".6 0 .4 1;.6 0 .4 1"/></circle></svg></div><span></span><h3>Direct correspondence</h3><p>Clients correspond directly with the engineer responsible for delivery. Questions receive considered answers without delay.</p></div>
-        <div><div class="ptop"><span class="num">II</span><svg class="pi burgle" viewBox="0 0 72 40" aria-hidden="true"><g id="thief"><g id="t-top"><path class="sack" d="M-1.2-17.8c-3.2-.6-6.2 1.2-6.2 4.4 0 2.6 2 4 4.4 4s4-1.6 3.6-4.2M-1.2-17.8l-1.5 1.6"/><path d="M0-18.6V-9"/><g id="t-head"><circle cx="0" cy="-22" r="3.2"/><path class="cap" d="M-3.3-22.4a3.3 3.3 0 0 1 6.6 0z"/><rect class="mask" x="-3.3" y="-22.2" width="6.6" height="2.2" rx=".6"/></g><path id="t-armb" d="M0-16v7"/><path id="t-armf" d="M0-16v7"/></g><path id="t-lega" d="M0-9v9"/><path id="t-legb" d="M0-9v9"/></g><g id="lk"><path id="lk-sh" d="M53.5 20v-5a5.5 5.5 0 0 1 11 0v5"/><rect x="50" y="20" width="18" height="15" rx="1.5"/><circle id="lk-key" class="acc" cx="59" cy="25.8" r="1.6"/><path d="M59 27.2v3.3"/></g></svg></div><span></span><h3>Security by design</h3><p>A background in cybersecurity informs every engagement. Security is established at the outset, never retrofitted.</p></div>
+        <div><div class="ptop"><span class="num">II</span><svg class="pi" viewBox="0 0 40 40" aria-hidden="true"><g class="shackle"><path d="M13.5 18v-5a6.5 6.5 0 0 1 13 0v5"/></g><rect x="9.5" y="18" width="21" height="16" rx="1.5"/><circle class="acc" cx="20" cy="24.5" r="1.8"/><path d="M20 26v3.5"/></svg></div><span></span><h3>Security by design</h3><p>A background in cybersecurity informs every engagement. Security is established at the outset, never retrofitted.</p></div>
         <div><div class="ptop"><span class="num">III</span><svg class="pi" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="2.2"/><g class="pulse-g"><path pathLength="1" style="--k:0" d="M24.00 20.00L38.00 20.00"/><path pathLength="1" style="--k:1" d="M23.70 21.53L31.09 24.59"/><path pathLength="1" style="--k:2" d="M22.83 22.83L30.61 30.61"/><path pathLength="1" style="--k:3" d="M21.53 23.70L26.89 36.63"/><path pathLength="1" style="--k:4" d="M20.00 24.00L20.00 32.00"/><path pathLength="1" style="--k:5" d="M18.47 23.70L14.26 33.86"/><path pathLength="1" style="--k:6" d="M17.17 22.83L7.27 32.73"/><path pathLength="1" style="--k:7" d="M16.30 21.53L8.91 24.59"/><path pathLength="1" style="--k:8" d="M16.00 20.00L5.00 20.00"/><path pathLength="1" style="--k:9" d="M16.30 18.47L3.37 13.11"/><path pathLength="1" style="--k:10" d="M17.17 17.17L11.51 11.51"/><path pathLength="1" style="--k:11" d="M18.47 16.30L14.26 6.14"/><path pathLength="1" style="--k:12" d="M20.00 16.00L20.00 2.00"/><path pathLength="1" style="--k:13" d="M21.53 16.30L24.59 8.91"/><path pathLength="1" style="--k:14" d="M22.83 17.17L30.61 9.39"/><path pathLength="1" style="--k:15" d="M23.70 18.47L36.63 13.11"/></g></svg></div><span></span><h3>AI-augmented delivery</h3><p>Advanced AI tooling accelerates routine work. Every output is reviewed and verified by the engineer.</p></div>
         <div><div class="ptop"><span class="num">IV</span><svg class="pi" viewBox="0 0 40 40" aria-hidden="true"><path d="M5 20C10 11 14 11 18 20S26 29 35 20"><animate attributeName="d" dur="6s" repeatCount="indefinite" values="M5 20C10 11 14 11 18 20S26 29 35 20;M5 20C10 20 14 20 18 20S26 20 35 20;M5 20C10 11 14 11 18 20S26 29 35 20" calcMode="spline" keySplines=".6 0 .4 1;.6 0 .4 1"/></path><circle class="acc" cx="35" cy="20" r="1.8"/></svg></div><span></span><h3>Considered design</h3><p>Interfaces are refined, intuitive and dependable from the first use.</p></div>
       </div>
@@ -494,37 +493,6 @@ addEventListener("scroll", topCheck, { passive: true });
 addEventListener("resize", topCheck);
 addEventListener("hashchange", () => setTimeout(topCheck, 60));
 document.querySelectorAll(".totop").forEach(b => b.addEventListener("click", () => scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" })));
-
-// ---------- Security by design: the burglar ----------
-(() => {
-  const $ = id => document.getElementById(id), thief = $("thief"), top = $("t-top"), head = $("t-head"), armF = $("t-armf"), armB = $("t-armb"), legA = $("t-lega"), legB = $("t-legb"), sh = $("lk-sh"), key = $("lk-key");
-  const L = 9.4, cl = x => Math.min(1, Math.max(0, x)), seg = (t, a, b) => cl((t - a) / (b - a)), sm = x => x * x * (3 - 2 * x);
-  function draw(ms) {
-    const t = (ms / 1000) % L;
-    let x, face = 1, amp = 0, hz = 0, lean = 0, reach = 0, slump = 0, bob = 0;
-    if (t < 2) { x = lerp(-10, 42, 1 - Math.pow(1 - t / 2, 2)); amp = 34 * (1 - seg(t, 1.5, 2)); hz = 3.6; lean = 12 * (1 - seg(t, 1.4, 2)); }   // runs in
-    else if (t < 2.9) { x = 42; reach = sm(seg(t, 2.3, 2.75)); }                                                                    // reaches for it
-    else if (t < 3.3) { const k = seg(t, 2.9, 3.3); x = 42 - 3 * sm(k); bob = -2.2 * Math.sin(Math.PI * k); reach = 1 - sm(seg(t, 2.9, 3.05)); } // the lock snaps, he jumps back
-    else if (t < 5) { x = 39; slump = sm(seg(t, 3.5, 4.3)); }                                                                       // slumps
-    else { x = 39; slump = 1; face = 1 - 2 * sm(seg(t, 5, 5.35)); const k = seg(t, 5.35, 8.6); x = lerp(39, -12, k); amp = k > 0 && k < 1 ? 16 : 0; hz = 1.5; } // turns and trudges off
-    const sw = Math.sin((ms / 1000) * Math.PI * 2 * hz) * amp;
-    bob += amp ? -Math.abs(Math.sin((ms / 1000) * Math.PI * 2 * hz)) * (amp / 34) : 0;
-    thief.setAttribute("transform", `translate(${x.toFixed(2)} ${(36 + bob + slump * .6).toFixed(2)}) scale(${face.toFixed(3)} 1)`);
-    top.setAttribute("transform", `rotate(${(lean + slump * 9).toFixed(1)} 0 -9)`);
-    head.setAttribute("transform", `translate(${(slump * .9).toFixed(2)} ${(slump * 1.3).toFixed(2)}) rotate(${(slump * 24).toFixed(1)} 0 -22)`);
-    armF.setAttribute("transform", `rotate(${(-sw * .9 - 8 - reach * 76 + slump * 10).toFixed(1)} 0 -16)`);
-    armB.setAttribute("transform", `rotate(${(sw * .9 + 10 - slump * 4).toFixed(1)} 0 -16)`);
-    legA.setAttribute("transform", `rotate(${(sw + 7).toFixed(1)} 0 -9)`);
-    legB.setAttribute("transform", `rotate(${(-sw - 7).toFixed(1)} 0 -9)`);
-    // shackle: up while he approaches, drops shut as his hand arrives, lifts again once he's gone
-    const open = t < 2.75 ? 1 : t < 2.9 ? 1 - sm(seg(t, 2.75, 2.9)) : t > 8.8 ? sm(seg(t, 8.8, 9.3)) : 0;
-    sh.setAttribute("transform", `translate(0 ${(-5 * open).toFixed(2)})`);
-    key.setAttribute("r", (1.6 + 1.1 * Math.sin(Math.PI * seg(t, 2.9, 3.5))).toFixed(2));
-  }
-  if (reduce) { draw(4500); return; }
-  const loop = now => { if (root.dataset.view === "about") draw(now); requestAnimationFrame(loop); };
-  requestAnimationFrame(loop);
-})();
 
 // ---------- custom dropdowns ----------
 let ddCount = 0;
