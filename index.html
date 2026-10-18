@@ -122,14 +122,8 @@ svg.ic { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-wid
 svg.jaba { fill: currentColor; display: block; }
 .x-hero { display: grid; grid-template-columns: minmax(0, 1fr); gap: clamp(20px, 3vw, 36px); }
 .x-hero .txt { display: grid; gap: 1rem; }
-/* the principal-led paragraph: white, set like the opening paragraph. Three placements on trial (2026-10-18): right, centre, beside the opening paragraph */
-.inner > .principal { max-width: 54ch; }
-:root[data-pp="right"] .inner > .principal { justify-self: end; }
-:root[data-pp="center"] .inner > .principal { justify-self: center; text-align: center; }
-@media (min-width: 861px) {
-  :root[data-pp="beside"] .x-hero .txt { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: clamp(32px, 5vw, 80px); align-items: start; }
-  :root[data-pp="beside"] .x-hero .txt > .display { grid-column: 1 / -1; }
-}
+/* the principal-led paragraph: white, set like the opening paragraph, on the right (picked 2026-10-18) */
+.inner > .principal { max-width: 54ch; justify-self: end; }
 .s-viz { position: relative; width: 100vw; margin-left: calc(-1 * var(--gutter)); }
 .s-viz canvas { position: static; inset: auto; display: block; width: 100%; height: clamp(150px, 18vw, 220px); }
 .s-viz .cap { position: absolute; bottom: 8px; font-family: var(--f-mono); font-size: .68rem; color: var(--muted); letter-spacing: .02em; }
@@ -170,13 +164,6 @@ svg.jaba { fill: currentColor; display: block; }
 /* security: padlock shackle drops and closes */
 .pi .shackle { animation: shackle 5s var(--ease) infinite; }
 @keyframes shackle { 0%, 15% { transform: translateY(-4px); } 35%, 85% { transform: translateY(0); } 100% { transform: translateY(-4px); } }
-
-/* craftsmanship (2026-10-18): two needles knit row after row; each new stitch row is drawn in taupe, then settles into the fabric below. Drawn in the script. */
-.pi.knit .kn-ndl { stroke-width: 1; }
-.pi.knit .kn-row { stroke-dasharray: 1; stroke-width: .75; }
-.pi.knit .kn-row.new { stroke: var(--accent); }
-.pi.knit .kn-yarn, .pi.knit .kn-wrap { stroke-width: .7; }
-.pi.knit .kn-wrap { stroke: var(--accent); }
 
 /* AI burst: each line stretches in turn, so a ripple runs round the circle */
 .pi .pulse-g path { stroke-dasharray: 1; animation: ripple 1.6s ease-in-out infinite; animation-delay: calc(var(--k) * .1s); }
@@ -236,13 +223,41 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
 .totop svg { width: 10px; height: 10px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
 .totop:focus-visible { outline: 1px solid currentColor; outline-offset: 4px; }
 
-/* preview only: option switcher, shown on About us */
-.pp-panel { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(env(safe-area-inset-bottom, 0px) + 18px); z-index: 6; display: none; align-items: center; gap: 6px; padding: 6px; border-radius: 999px;
-  background: var(--chrome-bg); color: var(--chrome-fg); font-size: .66rem; letter-spacing: .1em; text-transform: uppercase; box-shadow: 0 8px 30px rgba(0,0,0,.25); }
-:root[data-view="about"] .pp-panel { display: flex; }
-.pp-panel span { padding: 0 8px; color: var(--chrome-dim); }
-.pp-panel button { appearance: none; border: 1px solid var(--chrome-line); background: none; color: inherit; font: inherit; letter-spacing: inherit; border-radius: 999px; padding: 7px 12px; cursor: pointer; white-space: nowrap; }
-.pp-panel button[aria-pressed="true"] { background: var(--chrome-fg); color: #181412; }
+/* About us: a cue that there's more below. Three styles on trial (2026-10-18), switched by root data-cue. */
+.cue { display: none; }
+:root[data-view="about"][data-cue] .cue[data-c] { transition: opacity .6s ease, transform .6s var(--ease); }
+:root[data-view="about"]:not(.scrolled)[data-cue="line"] .cue[data-c="line"],
+:root[data-view="about"]:not(.scrolled)[data-cue="pill"] .cue[data-c="pill"],
+:root[data-view="about"][data-cue="index"] .cue[data-c="index"] { display: flex; }
+/* A: a quiet "Scroll" label over a hairline with a bead running down it */
+.cue[data-c="line"] { position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 22px); transform: translateX(-50%); z-index: 4; flex-direction: column; align-items: center; gap: 10px;
+  appearance: none; border: 0; background: none; color: inherit; cursor: pointer; font: inherit; font-size: .64rem; font-weight: 500; letter-spacing: .2em; text-transform: uppercase; }
+.cue[data-c="line"] i { position: relative; width: 1px; height: 44px; background: var(--line); overflow: hidden; }
+.cue[data-c="line"] i::after { content: ""; position: absolute; left: 0; top: -14px; width: 1px; height: 14px; background: currentColor; animation: bead 2.2s var(--ease) infinite; }
+@keyframes bead { 0% { transform: translateY(0); } 70%, 100% { transform: translateY(58px); } }
+/* B: a section index pinned to the right edge; the section in view is marked, and each name jumps there */
+.cue[data-c="index"] { position: fixed; right: var(--gutter); top: 50%; transform: translateY(-50%); z-index: 4; flex-direction: column; align-items: flex-end; gap: 14px; }
+.cue[data-c="index"] button { appearance: none; border: 0; background: none; color: inherit; cursor: pointer; font: inherit; font-size: .62rem; font-weight: 500; letter-spacing: .16em; text-transform: uppercase;
+  display: flex; align-items: center; gap: 10px; padding: 2px 0; opacity: .45; transition: opacity .35s ease; }
+.cue[data-c="index"] button::after { content: ""; width: 14px; height: 1px; background: currentColor; transition: width .5s var(--ease); }
+.cue[data-c="index"] button.on { opacity: 1; }
+.cue[data-c="index"] button.on::after { width: 30px; }
+.cue[data-c="index"] button:hover { opacity: 1; }
+@media (max-width: 860px) { .cue[data-c="index"] { right: 10px; } .cue[data-c="index"] button span { display: none; } }
+/* C: an outline pill naming what's below, matching Back to top */
+.cue[data-c="pill"] { position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 24px); transform: translateX(-50%); z-index: 4; align-items: center; gap: 10px;
+  appearance: none; border: 1px solid currentColor; background: transparent; color: inherit; border-radius: 999px; padding: 11px 20px; cursor: pointer; font: inherit; font-size: .68rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; white-space: nowrap; }
+.cue[data-c="pill"]:hover { background: var(--tint); }
+.cue[data-c="pill"] svg { width: 10px; height: 10px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; animation: nudge 2s ease-in-out infinite; }
+@keyframes nudge { 0%, 100% { transform: translateY(-1px); } 50% { transform: translateY(2px); } }
+@media (prefers-reduced-motion: reduce) { .cue i::after, .cue svg { animation: none !important; } }
+/* preview only: the cue switcher */
+.cue-pick { position: fixed; left: 12px; bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); z-index: 6; display: none; align-items: center; gap: 5px; padding: 5px; border-radius: 999px;
+  background: var(--chrome-bg); color: var(--chrome-fg); font-size: .6rem; letter-spacing: .1em; text-transform: uppercase; box-shadow: 0 8px 30px rgba(0,0,0,.25); }
+:root[data-view="about"] .cue-pick { display: flex; }
+.cue-pick span { padding: 0 6px; color: var(--chrome-dim); }
+.cue-pick button { appearance: none; border: 1px solid var(--chrome-line); background: none; color: inherit; font: inherit; letter-spacing: inherit; border-radius: 999px; padding: 6px 10px; cursor: pointer; white-space: nowrap; }
+.cue-pick button[aria-pressed="true"] { background: var(--chrome-fg); color: #181412; }
 
 /* ---------- custom dropdown: shared ---------- */
 .dd { position: relative; }
@@ -329,7 +344,7 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
       <div class="s-viz"><canvas id="signal" aria-hidden="true"></canvas></div>
     </div>
     <p class="lede principal">We are principal-led by design. Clients work directly with the engineer accountable for delivery, ensuring continuity, clear decisions and ownership throughout. Every engagement is approached on its own terms, shaped around the client’s objectives and vision.</p>
-    <div class="stack svc-wrap" style="gap:1.6rem">
+    <div class="stack svc-wrap" id="services" style="gap:1.6rem">
       <h2 class="display" style="font-size:clamp(1.8rem,3.4vw,3rem)">Our Services</h2>
       <div class="f-tiles">
     <div><svg class="ic" aria-hidden="true"><use href="#i-auto"/></svg><h3 class="svc-name">AI automation</h3><p class="svc-desc">Design and deployment of automated workflows that remove repetitive manual processes from daily operations.</p></div>
@@ -342,13 +357,13 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
     <div><svg class="ic" aria-hidden="true"><use href="#i-web"/></svg><h3 class="svc-name">Corporate websites</h3><p class="svc-desc">Considered, high-performance websites that represent the organisation with clarity.</p></div>
       </div>
     </div>
-    <div class="stack pillars" style="gap:1.6rem">
+    <div class="stack pillars" id="pillars" style="gap:1.6rem">
       <h2 class="display" style="font-size:clamp(1.8rem,3.4vw,3rem)">Our Pillars</h2>
       <div class="pA">
         <div><div class="ptop"><span class="num">I</span><svg class="pi" viewBox="0 0 40 40" aria-hidden="true"><circle cx="7" cy="20" r="3"/><circle cx="33" cy="20" r="3"/><line class="dim" x1="10" y1="20" x2="30" y2="20"/><circle class="acc" cx="10" cy="20" r="1.8"><animate attributeName="cx" values="10;30;10" dur="4.5s" repeatCount="indefinite" calcMode="spline" keySplines=".6 0 .4 1;.6 0 .4 1"/></circle></svg></div><span></span><h3>Communication</h3><p>Clients work directly with the engineer responsible for delivery, keeping communication clear and ownership unambiguous.</p></div>
         <div><div class="ptop"><span class="num">II</span><svg class="pi" viewBox="0 0 40 40" aria-hidden="true"><g class="shackle"><path d="M13.5 18v-5a6.5 6.5 0 0 1 13 0v5"/></g><rect x="9.5" y="18" width="21" height="16" rx="1.5"/><circle class="acc" cx="20" cy="24.5" r="1.8"/><path d="M20 26v3.5"/></svg></div><span></span><h3>Security</h3><p>Cybersecurity is embedded from the outset, informing architecture, implementation and review.</p></div>
         <div><div class="ptop"><span class="num">III</span><svg class="pi" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="2.2"/><g class="pulse-g"><path pathLength="1" style="--k:0" d="M24.00 20.00L38.00 20.00"/><path pathLength="1" style="--k:1" d="M23.70 21.53L31.09 24.59"/><path pathLength="1" style="--k:2" d="M22.83 22.83L30.61 30.61"/><path pathLength="1" style="--k:3" d="M21.53 23.70L26.89 36.63"/><path pathLength="1" style="--k:4" d="M20.00 24.00L20.00 32.00"/><path pathLength="1" style="--k:5" d="M18.47 23.70L14.26 33.86"/><path pathLength="1" style="--k:6" d="M17.17 22.83L7.27 32.73"/><path pathLength="1" style="--k:7" d="M16.30 21.53L8.91 24.59"/><path pathLength="1" style="--k:8" d="M16.00 20.00L5.00 20.00"/><path pathLength="1" style="--k:9" d="M16.30 18.47L3.37 13.11"/><path pathLength="1" style="--k:10" d="M17.17 17.17L11.51 11.51"/><path pathLength="1" style="--k:11" d="M18.47 16.30L14.26 6.14"/><path pathLength="1" style="--k:12" d="M20.00 16.00L20.00 2.00"/><path pathLength="1" style="--k:13" d="M21.53 16.30L24.59 8.91"/><path pathLength="1" style="--k:14" d="M22.83 17.17L30.61 9.39"/><path pathLength="1" style="--k:15" d="M23.70 18.47L36.63 13.11"/></g></svg></div><span></span><h3>Intelligence</h3><p>AI accelerates delivery where it adds value. Every output remains engineer-led, reviewed, and verified.</p></div>
-        <div><div class="ptop"><span class="num">IV</span><svg class="pi knit" viewBox="0 0 40 40" aria-hidden="true"><g id="kn-rows"><path class="kn-row" pathLength="1" d="M13.6 0l.9 2l.9-2M16.4 0l.9 2l.9-2M19.2 0l.9 2l.9-2M22.0 0l.9 2l.9-2M24.8 0l.9 2l.9-2"/><path class="kn-row" pathLength="1" d="M13.6 0l.9 2l.9-2M16.4 0l.9 2l.9-2M19.2 0l.9 2l.9-2M22.0 0l.9 2l.9-2M24.8 0l.9 2l.9-2"/><path class="kn-row" pathLength="1" d="M13.6 0l.9 2l.9-2M16.4 0l.9 2l.9-2M19.2 0l.9 2l.9-2M22.0 0l.9 2l.9-2M24.8 0l.9 2l.9-2"/><path class="kn-row" pathLength="1" d="M13.6 0l.9 2l.9-2M16.4 0l.9 2l.9-2M19.2 0l.9 2l.9-2M22.0 0l.9 2l.9-2M24.8 0l.9 2l.9-2"/><path class="kn-row" pathLength="1" d="M13.6 0l.9 2l.9-2M16.4 0l.9 2l.9-2M19.2 0l.9 2l.9-2M22.0 0l.9 2l.9-2M24.8 0l.9 2l.9-2"/><path class="kn-row" pathLength="1" d="M13.6 0l.9 2l.9-2M16.4 0l.9 2l.9-2M19.2 0l.9 2l.9-2M22.0 0l.9 2l.9-2M24.8 0l.9 2l.9-2"/></g><path id="kn-yarn" class="kn-yarn" d="M26.7 18C31 20 30 27 33.6 29.6"/><g id="kn-ball"><circle cx="34" cy="32.5" r="3"/><path class="kn-wrap" d="M31.6 31a3 3 0 0 1 4.9.4M31.1 33.3a3 3 0 0 0 4.8 1.6"/></g><g id="kn-a"><path class="kn-ndl" d="M7 5 27 17"/><circle class="acc" cx="7" cy="5" r="1.3"/></g><g id="kn-b"><path class="kn-ndl" d="M33 5 13 17"/><circle class="acc" cx="33" cy="5" r="1.3"/></g></svg></div><span></span><h3>Craftsmanship</h3><p>Every system and interface is refined for clarity, usability and long-term reliability.</p></div>
+        <div><div class="ptop"><span class="num">IV</span><svg class="pi" viewBox="0 0 40 40" aria-hidden="true"><path d="M5 20C10 11 14 11 18 20S26 29 35 20"><animate attributeName="d" dur="6s" repeatCount="indefinite" values="M5 20C10 11 14 11 18 20S26 29 35 20;M5 20C10 20 14 20 18 20S26 20 35 20;M5 20C10 11 14 11 18 20S26 29 35 20" calcMode="spline" keySplines=".6 0 .4 1;.6 0 .4 1"/></path><circle class="acc" cx="35" cy="20" r="1.8"/></svg></div><span></span><h3>Craftsmanship</h3><p>Every system and interface is refined for clarity, usability and long-term reliability.</p></div>
       </div>
     </div>
   </div>
@@ -379,6 +394,12 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
   <symbol id="i-app" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="1.5"/><path d="M3 8.5h18"/><path class="a-type" pathLength="1" d="M7 13h6"/><path class="a-type" pathLength="1" style="--w:.7s" d="M7 16h4"/></symbol>
   <symbol id="i-web" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path class="a-mer" d="M12 3c2.5 2.6 3.7 5.6 3.7 9s-1.2 6.4-3.7 9c-2.5-2.6-3.7-5.6-3.7-9S9.5 5.6 12 3z"/></symbol>
 </svg>
+
+<!-- About us: cues that there's more below (three on trial) -->
+<button type="button" class="cue" data-c="line" data-go="services" aria-label="Scroll to our services">Scroll<i></i></button>
+<nav class="cue" data-c="index" aria-label="On this page"><button type="button" data-go="top"><span>About</span></button><button type="button" data-go="services"><span>Services</span></button><button type="button" data-go="pillars"><span>Pillars</span></button></nav>
+<button type="button" class="cue" data-c="pill" data-go="services">Our services &amp; pillars<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M5 1v8M1.5 5.5 5 9l3.5-3.5"/></svg></button>
+<div class="cue-pick"><span>Scroll cue</span><button type="button" data-v="line">A · Line</button><button type="button" data-v="index">B · Index</button><button type="button" data-v="pill">C · Button</button></div>
 
 <!-- Contact -->
 <section class="view" data-view="contact" aria-label="Contact">
@@ -507,47 +528,21 @@ addEventListener("resize", topCheck);
 addEventListener("hashchange", () => setTimeout(topCheck, 60));
 document.querySelectorAll(".totop").forEach(b => b.addEventListener("click", () => scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" })));
 
-// ---------- Craftsmanship: hand knitting ----------
-// Rows are recycled: the newest is knitted at the needles, the fabric steps down one row, and the lowest row fades away, so the loop never jumps.
+// ---------- About us: show there's more below ----------
 (() => {
-  const $ = id => document.getElementById(id), rows = [...document.querySelectorAll("#kn-rows .kn-row")], A = $("kn-a"), B = $("kn-b"), yarn = $("kn-yarn"), ball = $("kn-ball");
-  const D = 1.7, cl = x => Math.min(1, Math.max(0, x)), sm = x => x * x * (3 - 2 * x);
-  function draw(ms) {
-    const t = ms / 1000, n = Math.floor(t / D), p = t / D - n;
-    const st = sm(cl(p / .55)), dip = Math.sin(Math.PI * cl(p / .55)), sh = sm(cl((p - .6) / .35));
-    rows.forEach((r, j) => {
-      const age = ((n - j) % rows.length + rows.length) % rows.length, y = 18.2 + 2.6 * (age + sh);
-      r.setAttribute("transform", `translate(0 ${y.toFixed(2)})`);
-      r.style.strokeDashoffset = age === 0 ? (1 - sm(cl((p - .12) / .5))).toFixed(3) : 0;
-      r.style.opacity = cl((31.5 - y) / 5).toFixed(3);
-      r.classList.toggle("new", age === 0);
-    });
-    // the working needle dips into the stitch and slides through; the other answers a touch
-    B.setAttribute("transform", `rotate(${(-5 * dip).toFixed(2)} 33 5) translate(${(-.9 * dip).toFixed(2)} ${(.55 * dip).toFixed(2)})`);
-    A.setAttribute("transform", `rotate(${(1.6 * dip).toFixed(2)} 7 5)`);
-    // the yarn draws tight as the stitch forms, and the ball turns as it pays out
-    yarn.setAttribute("d", `M26.7 18C${(31 - 1.6 * dip).toFixed(2)} ${(20 + 1.2 * dip).toFixed(2)} ${(30.5 - .8 * dip).toFixed(2)} 27 33.6 29.6`);
-    ball.setAttribute("transform", `rotate(${((n + st) * 24).toFixed(1)} 34 32.5)`);
-  }
-  if (reduce) { draw(D * 3.98 * 1000); return; }
-  const loop = now => { if (root.dataset.view === "about") draw(now); requestAnimationFrame(loop); };
-  requestAnimationFrame(loop);
-})();
-
-// ---------- preview only: placement options for the principal-led paragraph ----------
-(() => {
-  const para = document.querySelector(".principal"), hero = document.querySelector(".x-hero"), txt = hero.querySelector(".txt");
-  const set = v => {
-    root.dataset.pp = v;
-    if (v === "beside") txt.appendChild(para); else hero.after(para);
-    panel.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.dataset.v === v));
+  const go = id => { const el = id === "top" ? null : document.getElementById(id); scrollTo({ top: el ? el.getBoundingClientRect().top + scrollY - 96 : 0, behavior: reduce ? "auto" : "smooth" }); };
+  document.querySelectorAll(".cue [data-go], .cue[data-go]").forEach(b => b.addEventListener("click", () => go(b.dataset.go)));
+  const idx = [...document.querySelectorAll('.cue[data-c="index"] button')], svc = document.getElementById("services"), pil = document.getElementById("pillars");
+  const mark = () => {
+    root.classList.toggle("scrolled", scrollY > 80);
+    const line = innerHeight * .5, at = pil.getBoundingClientRect().top < line ? 2 : svc.getBoundingClientRect().top < line ? 1 : 0;
+    idx.forEach((b, i) => b.classList.toggle("on", i === at));
   };
-  const panel = document.createElement("div");
-  panel.className = "pp-panel";
-  panel.innerHTML = '<span>Paragraph</span>' + [["right", "A · Right"], ["center", "B · Centre"], ["beside", "C · Beside"]].map(([v, l]) => `<button type="button" data-v="${v}">${l}</button>`).join("");
-  panel.addEventListener("click", e => { const b = e.target.closest("button"); if (b) set(b.dataset.v); });
-  document.body.appendChild(panel);
-  set("right");
+  addEventListener("scroll", mark, { passive: true }); addEventListener("hashchange", () => setTimeout(mark, 60)); setTimeout(mark, 60);
+  // preview only: pick between the three cues
+  const pick = document.querySelector(".cue-pick"), set = v => { root.dataset.cue = v; pick.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.dataset.v === v)); };
+  pick.addEventListener("click", e => { const b = e.target.closest("button"); if (b) set(b.dataset.v); });
+  set("pill");
 })();
 
 // ---------- custom dropdowns ----------
