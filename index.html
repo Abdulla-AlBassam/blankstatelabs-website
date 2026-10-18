@@ -169,6 +169,28 @@ svg.jaba { fill: currentColor; display: block; }
 .pi .pulse-g path { stroke-dasharray: 1; animation: ripple 1.6s ease-in-out infinite; animation-delay: calc(var(--k) * .1s); }
 @keyframes ripple { 0%, 100% { stroke-dashoffset: .7; } 50% { stroke-dashoffset: 0; } }
 
+/* craftsmanship: two hands knitting. One calm 6.4s loop: the right needle dips into the stitch, the yarn wraps it
+   (the taupe loop draws on), the needle draws the loop back through, then the new stitch slides across and the
+   fabric grows by a row. With reduced motion it rests on one still frame with the new loop showing. */
+.knit { --kd: 6.4s; --ke: cubic-bezier(.45, 0, .55, 1); }
+.knit .k-rh { transform-origin: 32.87px 26.62px; animation: k-rh var(--kd) var(--ke) infinite; }
+.knit .k-lh { transform-origin: 7.13px 26.62px; animation: k-lh var(--kd) var(--ke) infinite; }
+.knit .k-n { animation: k-n var(--kd) var(--ke) infinite; }
+.knit .k-na { stroke: var(--accent); stroke-dasharray: 1; opacity: 0; animation: k-na var(--kd) linear infinite; }
+.knit .k-ni { opacity: 0; animation: k-ni var(--kd) linear infinite; }
+.knit .k-rows { animation: k-rows var(--kd) var(--ke) infinite; }
+.knit .k-r0 { opacity: 0; animation: k-in var(--kd) linear infinite; }
+.knit .k-r3 { animation: k-out var(--kd) linear infinite; }
+@keyframes k-rh { 0%, 6% { transform: none; } 24%, 42% { transform: rotate(-5deg); } 60% { transform: rotate(2.5deg); } 80%, 100% { transform: none; } }
+@keyframes k-lh { 0%, 6% { transform: none; } 24%, 42% { transform: rotate(1.5deg); } 60% { transform: rotate(-1deg); } 80%, 100% { transform: none; } }
+@keyframes k-na { 0%, 24% { opacity: 0; stroke-dashoffset: 1; } 25% { opacity: 1; stroke-dashoffset: 1; } 42% { stroke-dashoffset: 0; } 72% { opacity: 1; } 82%, 100% { opacity: 0; stroke-dashoffset: 0; } }
+@keyframes k-ni { 0%, 72% { opacity: 0; } 82% { opacity: 1; } 90%, 100% { opacity: 0; } }
+@keyframes k-n { 0%, 58% { transform: none; } 82%, 100% { transform: translate(3.63px, 1.69px); } }
+@keyframes k-rows { 0%, 76% { transform: none; } 96%, 100% { transform: translateY(3.1px); } }
+@keyframes k-in { 0%, 82% { opacity: 0; } 96%, 100% { opacity: 1; } }
+@keyframes k-out { 0%, 76% { opacity: 1; } 86%, 100% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .knit .k-na { opacity: 1; } }
+
 
 
 /* service icons (2026-10-18): only the AI automation arrows move, turning half a circle every few seconds.
@@ -392,7 +414,7 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
         <div><div class="ptop"><span class="num">I</span><svg class="pi" viewBox="0 0 40 40" aria-hidden="true"><circle cx="7" cy="20" r="3"/><circle cx="33" cy="20" r="3"/><line class="dim" x1="10" y1="20" x2="30" y2="20"/><circle class="acc" cx="10" cy="20" r="1.8"><animate attributeName="cx" values="10;30;10" dur="4.5s" repeatCount="indefinite" calcMode="spline" keySplines=".6 0 .4 1;.6 0 .4 1"/></circle></svg></div><span></span><h3>Communication</h3><p>Clients work directly with the engineer responsible for delivery, keeping communication clear and ownership unambiguous.</p></div>
         <div><div class="ptop"><span class="num">II</span><svg class="pi" viewBox="0 0 40 40" aria-hidden="true"><g class="shackle"><path d="M13.5 18v-5a6.5 6.5 0 0 1 13 0v5"/></g><rect x="9.5" y="18" width="21" height="16" rx="1.5"/><circle class="acc" cx="20" cy="24.5" r="1.8"/><path d="M20 26v3.5"/></svg></div><span></span><h3>Security</h3><p>Cybersecurity is embedded from the outset, informing architecture, implementation and review.</p></div>
         <div><div class="ptop"><span class="num">III</span><svg class="pi" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="2.2"/><g class="pulse-g"><path pathLength="1" style="--k:0" d="M24.00 20.00L38.00 20.00"/><path pathLength="1" style="--k:1" d="M23.70 21.53L31.09 24.59"/><path pathLength="1" style="--k:2" d="M22.83 22.83L30.61 30.61"/><path pathLength="1" style="--k:3" d="M21.53 23.70L26.89 36.63"/><path pathLength="1" style="--k:4" d="M20.00 24.00L20.00 32.00"/><path pathLength="1" style="--k:5" d="M18.47 23.70L14.26 33.86"/><path pathLength="1" style="--k:6" d="M17.17 22.83L7.27 32.73"/><path pathLength="1" style="--k:7" d="M16.30 21.53L8.91 24.59"/><path pathLength="1" style="--k:8" d="M16.00 20.00L5.00 20.00"/><path pathLength="1" style="--k:9" d="M16.30 18.47L3.37 13.11"/><path pathLength="1" style="--k:10" d="M17.17 17.17L11.51 11.51"/><path pathLength="1" style="--k:11" d="M18.47 16.30L14.26 6.14"/><path pathLength="1" style="--k:12" d="M20.00 16.00L20.00 2.00"/><path pathLength="1" style="--k:13" d="M21.53 16.30L24.59 8.91"/><path pathLength="1" style="--k:14" d="M22.83 17.17L30.61 9.39"/><path pathLength="1" style="--k:15" d="M23.70 18.47L36.63 13.11"/></g></svg></div><span></span><h3>Intelligence</h3><p>AI accelerates delivery where it adds value. Every output remains engineer-led, reviewed, and verified.</p></div>
-        <div><div class="ptop"><span class="num">IV</span><svg class="pi" viewBox="0 0 40 40" aria-hidden="true"><path d="M5 20C10 11 14 11 18 20S26 29 35 20"><animate attributeName="d" dur="6s" repeatCount="indefinite" values="M5 20C10 11 14 11 18 20S26 29 35 20;M5 20C10 20 14 20 18 20S26 20 35 20;M5 20C10 11 14 11 18 20S26 29 35 20" calcMode="spline" keySplines=".6 0 .4 1;.6 0 .4 1"/></path><circle class="acc" cx="35" cy="20" r="1.8"/></svg></div><span></span><h3>Craftsmanship</h3><p>Every system and interface is refined for clarity, usability and long-term reliability.</p></div>
+        <div><div class="ptop"><span class="num">IV</span><svg class="pi knit" viewBox="0 0 40 40" aria-hidden="true"><path d="M16.4 16.9C16.6 21 16.2 26.4 16.4 31C18.8 31.7 21.2 31.7 23.6 31C23.8 26.4 23.4 21 23.6 16.9"/><g class="k-rows"><path class="k-r0" d="M17.2 18.4l1.2 1.25l1.2-1.25M20.4 18.4l1.2 1.25l1.2-1.25"/><path class="k-r1" d="M17.2 21.5l1.2 1.25l1.2-1.25M20.4 21.5l1.2 1.25l1.2-1.25"/><path class="k-r2" d="M17.2 24.6l1.2 1.25l1.2-1.25M20.4 24.6l1.2 1.25l1.2-1.25"/><path class="k-r3" d="M17.2 27.7l1.2 1.25l1.2-1.25M20.4 27.7l1.2 1.25l1.2-1.25"/></g><path d="M21.7 31.5C22.4 33.7 24.9 33.5 26.4 34.8C27.2 35.5 27.5 36.3 27.6 37"/><g class="k-lh"><path d="M 2.84 29.73C 1.1 24.58 1.23 19.66 3.52 17.93C 4.62 16.98 5.74 17.01 6.7 16.23C 8.44 14.76 11.12 14.83 12.18 17.1"/><path d="M 13.46 17.49C 14.42 18.59 13.99 19.56 12.81 20.11C 11.63 20.66 10.68 20.99 9.78 21.42"/><path d="M 9.78 21.42C 13.04 20.02 13.91 21.89 10.29 23.71C 12.91 22.62 13.74 24.41 10.32 26.13C 12.74 25.11 13.5 26.74 9.99 28.49C 9.73 29.6 9.82 31.21 9.96 32.69"/><path d="M8.58 19.32L24.17 12.06"/></g><g class="k-rh"><path d="M 37.16 29.73C 38.9 24.58 38.77 19.66 36.48 17.93C 35.38 16.98 34.26 17.01 33.3 16.23C 31.56 14.76 28.88 14.83 27.82 17.1"/><path d="M 26.54 17.49C 25.58 18.59 26.01 19.56 27.19 20.11C 28.37 20.66 29.32 20.99 30.22 21.42"/><path d="M 30.22 21.42C 26.96 20.02 26.09 21.89 29.71 23.71C 27.09 22.62 26.26 24.41 29.68 26.13C 27.26 25.11 26.5 26.74 30.01 28.49C 30.27 29.6 30.18 31.21 30.04 32.69"/><path d="M31.42 19.32L15.83 12.06"/><g class="k-n"><path class="k-na" pathLength="1" d="M18.55 11.73A0.85 1.45 30 1 0 17.1 14.24A0.85 1.45 30 1 0 18.55 11.73"/><path class="k-ni" d="M18.55 11.73A0.85 1.45 30 1 0 17.1 14.24A0.85 1.45 30 1 0 18.55 11.73"/></g></g></svg></div><span></span><h3>Craftsmanship</h3><p>Every system and interface is refined for clarity, usability and long-term reliability.</p></div>
       </div>
     </div>
   </div>
