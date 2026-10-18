@@ -261,6 +261,15 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
 :root[data-jlook="serif"] .jump button { font-family: var(--f-display); font-size: clamp(1.25rem, 1.9vw, 1.6rem); }
 :root[data-jlook="serif"] .jump .w { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .28em; text-decoration-color: rgba(var(--ink-rgb), .3); transition: text-decoration-color .3s ease; }
 :root[data-jlook="serif"] .jump button:hover .w { text-decoration-color: currentColor; }
+/* B: both paragraphs side by side in the middle, each with its link underneath; the Loom follows (2026-10-18) */
+.duo { display: none; }
+:root[data-jump^="duo"] .duo { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(36px, 6vw, 96px); width: min(100%, 1120px); justify-self: center; margin-top: clamp(1.5rem, 4vw, 3.5rem); }
+:root[data-jump^="duo"] .duo > div { display: grid; gap: clamp(1.1rem, 2vw, 1.6rem); align-content: start; }
+:root[data-jump="duo"] .duo > div { text-align: center; justify-items: center; }
+:root[data-jump="duo-left"] .duo > div { justify-items: start; }
+:root[data-jump^="duo"] .duo .jump { display: flex; }
+:root[data-jump^="duo"] .x-hero .txt > .lede, :root[data-jump^="duo"] .inner > .principal { display: none; }
+@media (max-width: 860px) { :root[data-jump^="duo"] .duo { grid-template-columns: minmax(0, 1fr); } }
 /* preview only: the switcher */
 .jump-pick { position: fixed; right: 12px; bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); z-index: 6; display: none; flex-direction: column; align-items: flex-end; gap: 5px; padding: 6px; border-radius: 18px;
   background: var(--chrome-bg); color: var(--chrome-fg); font-size: .6rem; letter-spacing: .1em; text-transform: uppercase; box-shadow: 0 8px 30px rgba(0,0,0,.25); }
@@ -357,6 +366,10 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
         <nav class="jump" data-j="under" aria-label="On this page"><button type="button" data-go="services"><span class="n">01</span><span class="w">Services</span></button><i class="sep" aria-hidden="true"></i><button type="button" data-go="pillars"><span class="n">02</span><span class="w">Pillars</span></button></nav>
         <nav class="jump" data-j="top" aria-label="On this page"><button type="button" data-go="services"><span class="n">01</span><span class="w">Services</span></button><i class="sep" aria-hidden="true"></i><button type="button" data-go="pillars"><span class="n">02</span><span class="w">Pillars</span></button></nav>
       </div>
+      <div class="duo">
+        <div><p class="lede">Blank State Labs is a Bahrain-based software engineering and consultancy firm specialising in AI automation, intelligent systems and bespoke software. We advise, architect, engineer, audit and test end to end, with every engagement held to the highest standard.</p><nav class="jump" data-j="duo" aria-label="On this page"><button type="button" data-go="services"><span class="n">01</span><span class="w">Services</span></button></nav></div>
+        <div><p class="lede">We are principal-led by design. Clients work directly with the engineer accountable for delivery, ensuring continuity, clear decisions and ownership throughout. Every engagement is approached on its own terms, shaped around the client’s objectives and vision.</p><nav class="jump" data-j="duo" aria-label="On this page"><button type="button" data-go="pillars"><span class="n">02</span><span class="w">Pillars</span></button></nav></div>
+      </div>
       <div class="s-viz"><canvas id="signal" aria-hidden="true"></canvas></div>
     </div>
     <p class="lede principal">We are principal-led by design. Clients work directly with the engineer accountable for delivery, ensuring continuity, clear decisions and ownership throughout. Every engagement is approached on its own terms, shaped around the client’s objectives and vision.</p>
@@ -412,7 +425,7 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
 </svg>
 
 <!-- About us: links down to Services and Pillars (B placement); preview switcher -->
-<div class="jump-pick"><div data-k="jump"><span>Place</span><button type="button" data-v="under">A · Under text</button><button type="button" data-v="top">C · Top right</button></div><div data-k="jlook"><span>Look</span><button type="button" data-v="rule">1 · Rule</button><button type="button" data-v="index">2 · Index</button><button type="button" data-v="brackets">3 · Brackets</button><button type="button" data-v="caps">4 · Caps</button><button type="button" data-v="serif">5 · Serif</button></div></div>
+<div class="jump-pick"><div data-k="jump"><span>Place</span><button type="button" data-v="duo">B · Side by side</button><button type="button" data-v="duo-left">B · Side by side, text left</button><button type="button" data-v="under">A · Under text</button><button type="button" data-v="top">C · Top right</button></div><div data-k="jlook"><span>Look</span><button type="button" data-v="serif">5 · Serif</button><button type="button" data-v="rule">1 · Rule</button><button type="button" data-v="index">2 · Index</button><button type="button" data-v="brackets">3 · Brackets</button><button type="button" data-v="caps">4 · Caps</button></div></div>
 
 <!-- Contact -->
 <section class="view" data-view="contact" aria-label="Contact">
