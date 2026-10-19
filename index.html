@@ -169,25 +169,11 @@ svg.jaba { fill: currentColor; display: block; }
 .pi .pulse-g path { stroke-dasharray: 1; animation: ripple 1.6s ease-in-out infinite; animation-delay: calc(var(--k) * .1s); }
 @keyframes ripple { 0%, 100% { stroke-dashoffset: .7; } 50% { stroke-dashoffset: 0; } }
 
-/* PREVIEW ONLY (2026-10-19): six ready-made icons for Craftsmanship to choose from (Lucide ISC / Tabler MIT).
-   The card's data-ic picks which shows; remove the .ic-pick buttons and the unpicked icons once Abdulla chooses. */
-.c-ic { stroke-width: .54; display: none; }
-.pA > div[data-ic="a"] .c-ic[data-ic="a"], .pA > div[data-ic="b"] .c-ic[data-ic="b"], .pA > div[data-ic="c"] .c-ic[data-ic="c"],
-.pA > div[data-ic="d"] .c-ic[data-ic="d"], .pA > div[data-ic="e"] .c-ic[data-ic="e"], .pA > div[data-ic="f"] .c-ic[data-ic="f"] { display: block; }
+/* craftsmanship (picked 2026-10-19): Tabler "needle-thread" icon, restyled to the site's line weight.
+   The taupe thread sews itself through the eye on a slow loop; with reduced motion it rests fully drawn. */
+.c-ic { stroke-width: .54; }
 .c-ic .c-draw { stroke: var(--accent); stroke-dasharray: 1; animation: c-draw 6s var(--ease) infinite; }
-.c-ic .c-glint { stroke: var(--accent); transform-box: fill-box; transform-origin: center; animation: c-glint 4s ease-in-out infinite; }
-.c-ic .c-rock { transform-origin: 3px 3px; animation: c-rock 5s var(--ease) infinite; }
-.c-ic .c-acc { stroke: var(--accent); }
-.c-ic .c-beat { stroke: var(--accent); transform-box: fill-box; transform-origin: center; animation: c-beat 3.2s ease-in-out infinite; }
-.c-ic .c-twinkle { transform-box: fill-box; transform-origin: center; animation: c-twinkle 5s var(--ease) infinite; }
 @keyframes c-draw { 0% { stroke-dashoffset: 1; } 45%, 80% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: -1; } }
-@keyframes c-glint { 0%, 55%, 100% { transform: scale(1); opacity: 1; } 70% { transform: scale(.2) rotate(45deg); opacity: 0; } 85% { transform: scale(1.15); opacity: 1; } }
-@keyframes c-rock { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-6deg); } }
-@keyframes c-beat { 0%, 40%, 100% { transform: scale(1); } 15% { transform: scale(1.1); } 28% { transform: scale(1.04); } }
-@keyframes c-twinkle { 0%, 100% { transform: scale(1) rotate(0); } 50% { transform: scale(.86) rotate(45deg); } }
-.ic-pick { display: flex; gap: 4px; padding-bottom: 1rem; }
-.ic-pick button { font: 500 .7rem/1 var(--f-mono); width: 26px; height: 26px; border: 1px solid var(--line); background: none; color: var(--ink); cursor: pointer; }
-.ic-pick button.on { background: var(--ink); color: var(--page); }
 
 
 
@@ -412,7 +398,29 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
         <div><div class="ptop"><span class="num">I</span><svg class="pi" viewBox="0 0 40 40" aria-hidden="true"><circle cx="7" cy="20" r="3"/><circle cx="33" cy="20" r="3"/><line class="dim" x1="10" y1="20" x2="30" y2="20"/><circle class="acc" cx="10" cy="20" r="1.8"><animate attributeName="cx" values="10;30;10" dur="4.5s" repeatCount="indefinite" calcMode="spline" keySplines=".6 0 .4 1;.6 0 .4 1"/></circle></svg></div><span></span><h3>Communication</h3><p>Clients work directly with the engineer responsible for delivery, keeping communication clear and ownership unambiguous.</p></div>
         <div><div class="ptop"><span class="num">II</span><svg class="pi" viewBox="0 0 40 40" aria-hidden="true"><g class="shackle"><path d="M13.5 18v-5a6.5 6.5 0 0 1 13 0v5"/></g><rect x="9.5" y="18" width="21" height="16" rx="1.5"/><circle class="acc" cx="20" cy="24.5" r="1.8"/><path d="M20 26v3.5"/></svg></div><span></span><h3>Security</h3><p>Cybersecurity is embedded from the outset, informing architecture, implementation and review.</p></div>
         <div><div class="ptop"><span class="num">III</span><svg class="pi" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="2.2"/><g class="pulse-g"><path pathLength="1" style="--k:0" d="M24.00 20.00L38.00 20.00"/><path pathLength="1" style="--k:1" d="M23.70 21.53L31.09 24.59"/><path pathLength="1" style="--k:2" d="M22.83 22.83L30.61 30.61"/><path pathLength="1" style="--k:3" d="M21.53 23.70L26.89 36.63"/><path pathLength="1" style="--k:4" d="M20.00 24.00L20.00 32.00"/><path pathLength="1" style="--k:5" d="M18.47 23.70L14.26 33.86"/><path pathLength="1" style="--k:6" d="M17.17 22.83L7.27 32.73"/><path pathLength="1" style="--k:7" d="M16.30 21.53L8.91 24.59"/><path pathLength="1" style="--k:8" d="M16.00 20.00L5.00 20.00"/><path pathLength="1" style="--k:9" d="M16.30 18.47L3.37 13.11"/><path pathLength="1" style="--k:10" d="M17.17 17.17L11.51 11.51"/><path pathLength="1" style="--k:11" d="M18.47 16.30L14.26 6.14"/><path pathLength="1" style="--k:12" d="M20.00 16.00L20.00 2.00"/><path pathLength="1" style="--k:13" d="M21.53 16.30L24.59 8.91"/><path pathLength="1" style="--k:14" d="M22.83 17.17L30.61 9.39"/><path pathLength="1" style="--k:15" d="M23.70 18.47L36.63 13.11"/></g></svg></div><span></span><h3>Intelligence</h3><p>AI accelerates delivery where it adds value. Every output remains engineer-led, reviewed, and verified.</p></div>
-        <div data-ic="a"><div class="ptop"><span class="num">IV</span><svg class="pi c-ic" data-ic="a" viewBox="0 0 24 24" aria-hidden="true"><path d="m12.99 6.74 1.93 3.44"/><path class="c-draw" pathLength="1" d="M19.136 12a10 10 0 0 1-14.271 0"/><path d="m21 21-2.16-3.84"/><path d="m3 21 8.02-14.26"/><circle cx="12" cy="5" r="2"/></svg><svg class="pi c-ic" data-ic="b" viewBox="0 0 24 24" aria-hidden="true"><path d="M10.5 3 8 9l4 13 4-13-2.5-6"/><path d="M17 3a2 2 0 0 1 1.6.8l3 4a2 2 0 0 1 .013 2.382l-7.99 10.986a2 2 0 0 1-3.247 0l-7.99-10.986A2 2 0 0 1 2.4 7.8l2.998-3.997A2 2 0 0 1 7 3z"/><path d="M2 9h20"/><path class="c-glint" d="M21.5 -1.2v3.4M19.8 .5h3.4"/></svg><svg class="pi c-ic" data-ic="c" viewBox="0 0 24 24" aria-hidden="true"><g class="c-rock"><path d="m18 13-.654-4.736a4 4 0 00-2.756-3.266l-9.163-2.9a2 2 0 00-2.017.493l-.82.819a2 2 0 00-.492 2.017l2.9 9.163a4 4 0 003.266 2.756L13 18"/><path d="M18.648 12.352a1.205 1.205 0 011.704 0l1.296 1.296a1.205 1.205 0 010 1.704l-6.296 6.296a1.205 1.205 0 01-1.704 0l-1.296-1.296a1.205 1.205 0 010-1.704z"/><path d="m3 3 6.586 6.586"/><circle class="c-acc" cx="11" cy="11" r="2"/></g></svg><svg class="pi c-ic" data-ic="d" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 14h2a2 2 0 0 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 16"/><path class="c-beat" d="m14.45 13.39 5.05-4.694C20.196 8 21 6.85 21 5.75a2.75 2.75 0 0 0-4.797-1.837.276.276 0 0 1-.406 0A2.75 2.75 0 0 0 11 5.75c0 1.2.802 2.248 1.5 2.946L16 11.95"/><path d="m2 15 6 6"/><path d="m7 20 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a1 1 0 0 0-2.75-2.91"/></svg><svg class="pi c-ic" data-ic="e" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21c-.667-.667 3.262-6.236 11.785-16.709a3.5 3.5 0 1 1 5.078 4.791c-10.575 8.612-16.196 12.585-16.863 11.918"/><path d="M17.5 6.5l-1 1"/><path class="c-draw" pathLength="1" d="M17 7c-2.333-2.667-3.5-4-5-4s-2 1-2 2c0 4 8.161 8.406 6 11c-1.056 1.268-3.363 1.285-5.75.808"/><path d="M5.739 15.425c-1.393-.565-3.739-1.925-3.739-3.425"/><path d="M19.5 9.5l1.5 1.5"/></svg><svg class="pi c-ic" data-ic="f" viewBox="0 0 24 24" aria-hidden="true"><path class="c-twinkle" d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path class="c-glint" d="M20.5 1.6v2.8M19.1 3h2.8"/></svg></div><span></span><h3>Craftsmanship</h3><p>Every system and interface is refined for clarity, usability and long-term reliability.</p><div class="ic-pick" aria-label="Preview only: pick the Craftsmanship icon"><button type="button" data-ic="a" title="Compass">A</button><button type="button" data-ic="b" title="Gem">B</button><button type="button" data-ic="c" title="Pen nib">C</button><button type="button" data-ic="d" title="Hand and heart">D</button><button type="button" data-ic="e" title="Needle and thread">E</button><button type="button" data-ic="f" title="Sparkle">F</button></div></div>
+        <div><div class="ptop"><span class="num">IV</span><!-- Needle-and-thread icon from Tabler Icons (https://tabler.io/icons), used under the MIT licence:
+MIT License
+
+Copyright (c) 2020-2026 Paweł Kuna
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+--><svg class="pi c-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21c-.667-.667 3.262-6.236 11.785-16.709a3.5 3.5 0 1 1 5.078 4.791c-10.575 8.612-16.196 12.585-16.863 11.918"/><path d="M17.5 6.5l-1 1"/><path class="c-draw" pathLength="1" d="M17 7c-2.333-2.667-3.5-4-5-4s-2 1-2 2c0 4 8.161 8.406 6 11c-1.056 1.268-3.363 1.285-5.75.808"/><path d="M5.739 15.425c-1.393-.565-3.739-1.925-3.739-3.425"/><path d="M19.5 9.5l1.5 1.5"/></svg></div><span></span><h3>Craftsmanship</h3><p>Every system and interface is refined for clarity, usability and long-term reliability.</p></div>
       </div>
     </div>
   </div>
@@ -957,11 +965,6 @@ requestAnimationFrame(frame);
   addEventListener("hashchange", () => { if (location.hash === "#about") arm(); });
   arm();
 })();
-</script>
-<script>/* PREVIEW ONLY: Craftsmanship icon switcher */
-document.querySelectorAll('.ic-pick').forEach(p => { const card = p.parentElement;
-  const set = k => { card.dataset.ic = k; p.querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.ic === k)); };
-  p.addEventListener('click', e => { const b = e.target.closest('button'); if (b) set(b.dataset.ic); }); set(card.dataset.ic); });
 </script>
 </body>
 </html>
