@@ -122,8 +122,6 @@ svg.ic { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-wid
 svg.jaba { fill: currentColor; display: block; }
 .x-hero { display: grid; grid-template-columns: minmax(0, 1fr); gap: clamp(20px, 3vw, 36px); }
 .x-hero .txt { display: grid; gap: 1rem; }
-/* the principal-led paragraph: white, set like the opening paragraph, on the right (picked 2026-10-18) */
-.inner > .principal { max-width: 54ch; justify-self: end; }
 .s-viz { position: relative; width: 100vw; margin-left: calc(-1 * var(--gutter)); }
 .s-viz canvas { position: static; inset: auto; display: block; width: 100%; height: clamp(150px, 18vw, 220px); }
 .s-viz .cap { position: absolute; bottom: 8px; font-family: var(--f-mono); font-size: .68rem; color: var(--muted); letter-spacing: .02em; }
@@ -229,64 +227,22 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
 .totop svg { width: 10px; height: 10px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
 .totop:focus-visible { outline: 1px solid currentColor; outline-offset: 4px; }
 
-/* About us: plain text links to what's further down. Two placements x five looks on trial (2026-10-18), switched by root data-jump and data-jlook. */
-.jump { display: none; gap: clamp(22px, 3vw, 40px); align-items: center; flex-wrap: wrap; }
-.jump button { appearance: none; border: 0; background: none; padding: 0; color: inherit; cursor: pointer; font: inherit; font-size: clamp(1.02rem, 1.4vw, 1.2rem);
-  display: inline-flex; align-items: baseline; gap: 12px; position: relative; }
-.jump button:focus-visible { outline: 1px solid currentColor; outline-offset: 6px; }
-.jump .n, .jump .sep { display: none; }
-.jump .w { position: relative; }
-/* A: under the opening paragraph */
-:root[data-jump="under"] .jump[data-j="under"] { display: flex; margin-top: .9rem; }
-/* C: top right, level with the headline */
-.x-hero .txt { position: relative; }
-:root[data-jump="top"] .jump[data-j="top"] { display: flex; position: absolute; right: 0; top: .9rem; }
-@media (max-width: 860px) { :root[data-jump="top"] .jump[data-j="top"] { position: static; } }
-/* 1 Rule: a short line leads into each word and stretches on hover */
-:root[data-jlook="rule"] .jump button::before { content: ""; align-self: center; width: 18px; height: 1px; background: currentColor; opacity: .6; transition: width .5s var(--ease), opacity .3s ease; }
-:root[data-jlook="rule"] .jump button:hover::before { width: 34px; opacity: 1; }
-/* 2 Index: small numbers in the accent colour, like a contents page */
-:root[data-jlook="index"] .jump .n { display: inline; font-family: var(--f-mono); font-size: .7em; color: var(--accent); letter-spacing: .04em; transition: color .3s ease; }
-:root[data-jlook="index"] .jump .w::after { content: ""; position: absolute; left: 0; right: 0; bottom: -3px; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform .5s var(--ease); }
-:root[data-jlook="index"] .jump button:hover .w::after { transform: scaleX(1); }
-:root[data-jlook="index"] .jump button:hover .n { color: currentColor; }
-/* 3 Brackets: monospace, technical; the brackets open out on hover */
-:root[data-jlook="brackets"] .jump button { font-family: var(--f-mono); font-size: clamp(.78rem, 1vw, .86rem); text-transform: uppercase; letter-spacing: .12em; gap: 0; }
-:root[data-jlook="brackets"] .jump button::before, :root[data-jlook="brackets"] .jump button::after { color: var(--accent); transition: transform .45s var(--ease), color .3s ease; }
-:root[data-jlook="brackets"] .jump button::before { content: "["; margin-right: .7em; }
-:root[data-jlook="brackets"] .jump button::after { content: "]"; margin-left: .7em; }
-:root[data-jlook="brackets"] .jump button:hover::before { transform: translateX(-4px); color: currentColor; }
-:root[data-jlook="brackets"] .jump button:hover::after { transform: translateX(4px); color: currentColor; }
-/* 4 Caps: small spaced capitals like the top bar, split by a hairline; a line draws in on hover */
-:root[data-jlook="caps"] .jump { gap: clamp(16px, 2vw, 22px); }
-:root[data-jlook="caps"] .jump button { font-size: .74rem; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; }
-:root[data-jlook="caps"] .jump .sep { display: block; width: 1px; height: 13px; background: currentColor; opacity: .35; }
-:root[data-jlook="caps"] .jump .w::after { content: ""; position: absolute; left: 0; right: .16em; bottom: -5px; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform .5s var(--ease); }
-:root[data-jlook="caps"] .jump button:hover .w::after { transform: scaleX(1); }
-/* 5 Serif: the words set in the headline typeface with a fine underline that darkens on hover */
-:root[data-jlook="serif"] .jump button { font-family: var(--f-display); font-size: clamp(1.25rem, 1.9vw, 1.6rem); }
-:root[data-jlook="serif"] .jump .w { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .28em; text-decoration-color: rgba(var(--ink-rgb), .3); transition: text-decoration-color .3s ease; }
-:root[data-jlook="serif"] .jump button:hover .w { text-decoration-color: currentColor; }
-/* B: both paragraphs side by side in the middle, each with its link underneath; the Loom follows (2026-10-18) */
-.duo { display: none; }
-:root[data-jump^="duo"] .duo { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(36px, 6vw, 96px); width: min(100%, 1120px); justify-self: center; margin-top: clamp(1.5rem, 4vw, 3.5rem); }
-:root[data-jump^="duo"] .duo > div { display: grid; gap: clamp(1.1rem, 2vw, 1.6rem); align-content: start; }
-:root[data-jump="duo"] .duo > div { text-align: center; justify-items: center; }
-:root[data-jump="duo-left"] .duo > div { justify-items: start; }
-:root[data-jump^="duo"] .duo .jump { display: flex; }
-:root[data-jump^="duo"] .x-hero .txt > .lede, :root[data-jump^="duo"] .inner > .principal { display: none; }
-@media (max-width: 860px) { :root[data-jump^="duo"] .duo { grid-template-columns: minmax(0, 1fr); } }
-/* preview only: the switcher */
-.jump-pick { position: fixed; right: 12px; bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); z-index: 6; display: none; flex-direction: column; align-items: flex-end; gap: 5px; padding: 6px; border-radius: 18px;
+/* About us: both paragraphs side by side in the middle, each with a link down to its section (picked 2026-10-19). Links are set in the headline typeface with a fine underline. */
+.duo { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(36px, 6vw, 96px); width: min(100%, 1120px); justify-self: center; margin-top: clamp(1.5rem, 4vw, 3.5rem); }
+.duo > div { display: grid; gap: clamp(1.1rem, 2vw, 1.6rem); align-content: start; justify-items: start; }
+@media (max-width: 860px) { .duo { grid-template-columns: minmax(0, 1fr); } }
+.jump { appearance: none; border: 0; background: none; padding: 0; color: inherit; cursor: pointer; font-family: var(--f-display); font-size: clamp(1.25rem, 1.9vw, 1.6rem);
+  text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .28em; text-decoration-color: rgba(var(--ink-rgb), .3); transition: text-decoration-color .3s ease; }
+.jump:hover { text-decoration-color: currentColor; }
+.jump:focus-visible { outline: 1px solid currentColor; outline-offset: 6px; }
+/* preview only: the wording switcher */
+.jump-pick { position: fixed; right: 12px; bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); z-index: 6; display: none; align-items: center; gap: 5px; flex-wrap: wrap; justify-content: flex-end; padding: 6px; border-radius: 18px;
   background: var(--chrome-bg); color: var(--chrome-fg); font-size: .6rem; letter-spacing: .1em; text-transform: uppercase; box-shadow: 0 8px 30px rgba(0,0,0,.25); }
-.jump-pick div { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; justify-content: flex-end; }
 :root[data-view="about"] .jump-pick { display: flex; }
-@media (max-width: 860px) { .jump-pick { bottom: auto; right: 8px; left: 8px; align-items: center; top: calc(env(safe-area-inset-top, 0px) + 66px); } .jump-pick div { justify-content: center; } }
+@media (max-width: 860px) { .jump-pick { bottom: auto; right: 8px; left: 8px; justify-content: center; top: calc(env(safe-area-inset-top, 0px) + 66px); } }
 .jump-pick span { padding: 0 6px; color: var(--chrome-dim); }
 .jump-pick button { appearance: none; border: 1px solid var(--chrome-line); background: none; color: inherit; font: inherit; letter-spacing: inherit; border-radius: 999px; padding: 6px 10px; cursor: pointer; white-space: nowrap; }
 .jump-pick button[aria-pressed="true"] { background: var(--chrome-fg); color: #181412; }
-/* a little more room between the headline and the opening paragraph */
-.x-hero .txt > .display + .lede { margin-top: clamp(.4rem, 1.2vw, 1.1rem); }
 
 /* ---------- custom dropdown: shared ---------- */
 .dd { position: relative; }
@@ -368,17 +324,13 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
     <div class="x-hero">
       <div class="txt">
         <h2 class="display">Engineering for organisations that expect precision.</h2>
-        <p class="lede">Blank State Labs is a Bahrain-based software engineering and consultancy firm specialising in AI automation, intelligent systems and bespoke software. We advise, architect, engineer, audit and test end to end, with every engagement held to the highest standard.</p>
-        <nav class="jump" data-j="under" aria-label="On this page"><button type="button" data-go="services"><span class="n">01</span><span class="w">Services</span></button><i class="sep" aria-hidden="true"></i><button type="button" data-go="pillars"><span class="n">02</span><span class="w">Pillars</span></button></nav>
-        <nav class="jump" data-j="top" aria-label="On this page"><button type="button" data-go="services"><span class="n">01</span><span class="w">Services</span></button><i class="sep" aria-hidden="true"></i><button type="button" data-go="pillars"><span class="n">02</span><span class="w">Pillars</span></button></nav>
       </div>
       <div class="duo">
-        <div><p class="lede">Blank State Labs is a Bahrain-based software engineering and consultancy firm specialising in AI automation, intelligent systems and bespoke software. We advise, architect, engineer, audit and test end to end, with every engagement held to the highest standard.</p><nav class="jump" data-j="duo" aria-label="On this page"><button type="button" data-go="services"><span class="n">01</span><span class="w">Services</span></button></nav></div>
-        <div><p class="lede">We are principal-led by design. Clients work directly with the engineer accountable for delivery, ensuring continuity, clear decisions and ownership throughout. Every engagement is approached on its own terms, shaped around the client’s objectives and vision.</p><nav class="jump" data-j="duo" aria-label="On this page"><button type="button" data-go="pillars"><span class="n">02</span><span class="w">Pillars</span></button></nav></div>
+        <div><p class="lede">Blank State Labs is a Bahrain-based software engineering and consultancy firm specialising in AI automation, intelligent systems and bespoke software. We advise, architect, engineer, audit and test end to end, with every engagement held to the highest standard.</p><button type="button" class="jump" data-go="services">View Services</button></div>
+        <div><p class="lede">We are principal-led by design. Clients work directly with the engineer accountable for delivery, ensuring continuity, clear decisions and ownership throughout. Every engagement is approached on its own terms, shaped around the client’s objectives and vision.</p><button type="button" class="jump" data-go="pillars">View Pillars</button></div>
       </div>
       <div class="s-viz"><canvas id="signal" aria-hidden="true"></canvas></div>
     </div>
-    <p class="lede principal">We are principal-led by design. Clients work directly with the engineer accountable for delivery, ensuring continuity, clear decisions and ownership throughout. Every engagement is approached on its own terms, shaped around the client’s objectives and vision.</p>
     <div class="stack svc-wrap" id="services" style="gap:1.6rem">
       <h2 class="display" style="font-size:clamp(1.8rem,3.4vw,3rem)">Our Services</h2>
       <div class="f-tiles">
@@ -453,7 +405,7 @@ SOFTWARE.
 </svg>
 
 <!-- About us: links down to Services and Pillars (B placement); preview switcher -->
-<div class="jump-pick"><div data-k="jump"><span>Place</span><button type="button" data-v="duo">B · Side by side</button><button type="button" data-v="duo-left">B · Side by side, text left</button><button type="button" data-v="under">A · Under text</button><button type="button" data-v="top">C · Top right</button></div><div data-k="jlook"><span>Look</span><button type="button" data-v="serif">5 · Serif</button><button type="button" data-v="rule">1 · Rule</button><button type="button" data-v="index">2 · Index</button><button type="button" data-v="brackets">3 · Brackets</button><button type="button" data-v="caps">4 · Caps</button></div></div>
+<div class="jump-pick"><span>Wording</span><button type="button" data-v="0">1 · View</button><button type="button" data-v="1">2 · Go to</button><button type="button" data-v="2">3 · Explore our</button><button type="button" data-v="3">4 · What we do</button></div>
 
 <!-- Contact -->
 <section class="view" data-view="contact" aria-label="Contact">
@@ -584,16 +536,16 @@ document.querySelectorAll(".totop").forEach(b => b.addEventListener("click", () 
 
 // ---------- About us: text links down to Services and Pillars ----------
 (() => {
-  document.querySelectorAll(".jump [data-go]").forEach(b => b.addEventListener("click", () => {
+  document.querySelectorAll(".jump[data-go]").forEach(b => b.addEventListener("click", () => {
     const el = document.getElementById(b.dataset.go);
     scrollTo({ top: el.getBoundingClientRect().top + scrollY - 96, behavior: reduce ? "auto" : "smooth" });
   }));
-  // preview only: pick a placement and a look
-  document.querySelectorAll(".jump-pick [data-k]").forEach(g => {
-    const set = v => { root.dataset[g.dataset.k] = v; g.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.dataset.v === v)); };
-    g.addEventListener("click", e => { const b = e.target.closest("button"); if (b) set(b.dataset.v); });
-    set(g.querySelector("button").dataset.v);
-  });
+  // preview only: try different wordings
+  const words = [["View Services", "View Pillars"], ["Go to Services", "Go to Pillars"], ["Explore our Services", "Explore our Pillars"], ["See what we do", "See how we work"]];
+  const pick = document.querySelector(".jump-pick"), links = document.querySelectorAll(".jump[data-go]");
+  const set = v => { links.forEach((b, i) => b.textContent = words[v][i]); pick.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.dataset.v === String(v))); };
+  pick.addEventListener("click", e => { const b = e.target.closest("button"); if (b) set(+b.dataset.v); });
+  set(0);
 })();
 
 // ---------- custom dropdowns ----------
