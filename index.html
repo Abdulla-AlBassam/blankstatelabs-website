@@ -8,7 +8,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%2210%2014%2080%2080%22%3E%3Cstyle%3Epath%7Bfill%3A%23201813%3Bstroke%3A%23201813%7D%40media%20%28prefers-color-scheme%3Adark%29%7Bpath%7Bfill%3A%23efe7dc%3Bstroke%3A%23efe7dc%7D%7D%3C/style%3E%3Cpath%20d%3D%22M30%2076A20%2020%200%200%201%2070%2076Z%22%20stroke%3D%22none%22/%3E%3Cpath%20d%3D%22M15%2076A35%2035%200%200%201%2085%2076%22%20fill%3D%22none%22%20stroke-linecap%3D%22butt%22%20stroke-width%3D%2210%22/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Hanken+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400&family=Cormorant+Garamond:ital,wght@1,500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Hanken+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400&display=swap">
 <style>
 /* Layout: fixed header (logo, name that slides in on inner pages, two tabs, contact button, grain-moon toggle) over one live dune background.
    Four views swap in place: home, About us, Our clients, Contact. */
@@ -189,9 +189,6 @@ svg.jaba { fill: currentColor; display: block; }
 
 /* service icons (2026-10-18): only the AI automation arrows move, turning half a circle every few seconds.
    The tiles copy their icon in from the symbol (see script), so this rule reaches the arrows. */
-.f-tiles .a-turn { transform-origin: 12px 12px; animation: a-turn 3.2s var(--ease) infinite; }
-@keyframes a-turn { 0%, 35% { transform: rotate(0); } 75%, 100% { transform: rotate(180deg); } }
-@media (prefers-reduced-motion: reduce) { .f-tiles .a-turn { animation: none; } }
 
 /* clients */
 .f-ctiles { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
@@ -204,30 +201,76 @@ svg.jaba { fill: currentColor; display: block; }
 .f-ctiles.jaba-bare > div:first-child { background: none; border-color: transparent; color: inherit; }
 @media (max-width: 860px) { .f-ctiles, .f-ctiles.four { grid-template-columns: minmax(0, 1fr); } .f-ctiles > div { min-height: 0; } }
 /* Our clients (2026-10-27): the earlier tiles, now four across (Jaba + three engagements). Icon and label sit side by side (Inline, picked 11:28Z).
-   Label font on trial via root data-lf; each icon has its own small looping animation. */
+   Sans plain label font picked 11:38Z; each icon loops continuously. */
 .f-ctiles.four { grid-template-columns: minmax(0, .9fr) repeat(3, minmax(0, 1fr)); }
 @media (max-width: 1100px) and (min-width: 861px) { .f-ctiles.four { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 860px) { .f-ctiles.four { grid-template-columns: minmax(0, 1fr); } }
 .eg-head { display: flex; align-items: center; gap: 12px; margin-bottom: .3rem; color: var(--muted); }
 .eg-head svg.ic { width: 24px; height: 24px; color: var(--ink); overflow: visible; }
-.eg-head .lbl { font-family: var(--f-body); font-size: .7rem; font-weight: 500; letter-spacing: .2em; text-transform: uppercase; }
-:root[data-lf="serif"] .eg-head .lbl { font-family: var(--f-display); font-weight: 400; font-size: .78rem; letter-spacing: .22em; }
-:root[data-lf="italic"] .eg-head .lbl { font-family: "Cormorant Garamond", Georgia, serif; font-style: italic; font-weight: 500; font-size: 1.15rem; letter-spacing: .01em; text-transform: none; }
-:root[data-lf="plain"] .eg-head .lbl { font-size: .9rem; font-weight: 400; letter-spacing: .02em; text-transform: none; }
-/* Web: a browser window whose two lines of content write themselves in, then clear */
-.ia-web .ln { stroke-dasharray: 1; stroke-dashoffset: 1; animation: ia-write 4.8s var(--ease) infinite; }
-.ia-web .ln + .ln { animation-delay: .35s; }
-@keyframes ia-write { 0%, 8% { stroke-dashoffset: 1; opacity: 1; } 30%, 78% { stroke-dashoffset: 0; opacity: 1; } 92%, 100% { stroke-dashoffset: 0; opacity: 0; } }
-/* System: three stacked units; their status lights come on one after another */
-.ia-sys .led { opacity: .2; animation: ia-led 3.6s ease-in-out infinite; }
-.ia-sys .led:nth-of-type(2) { animation-delay: .45s; } .ia-sys .led:nth-of-type(3) { animation-delay: .9s; }
-@keyframes ia-led { 0%, 100% { opacity: .2; } 15%, 45% { opacity: 1; } 65% { opacity: .2; } }
-/* Advisory: a compass needle swings, then settles on its heading */
-.ia-adv .ndl { transform-box: view-box; transform-origin: 12px 12px; animation: ia-swing 5s cubic-bezier(.3,.6,.3,1) infinite; }
-@keyframes ia-swing { 0% { transform: rotate(0); } 10% { transform: rotate(-38deg); } 22% { transform: rotate(22deg); } 32% { transform: rotate(-10deg); } 40% { transform: rotate(4deg); } 48%, 100% { transform: rotate(0); } }
-@media (prefers-reduced-motion: reduce) { .ia-web .ln, .ia-sys .led, .ia-adv .ndl { animation: none; stroke-dashoffset: 0; opacity: 1; } }
+.eg-head .lbl { font-family: var(--f-body); font-size: .9rem; font-weight: 400; letter-spacing: .02em; }
+/* Looping icons (2026-10-27): every engagement and service icon keeps moving, gently and without pauses. */
+/* lines that write themselves in, then clear from the start, round and round */
+.lp-write { stroke-dasharray: 1; stroke-dashoffset: 1; animation: lp-write 3.6s ease-in-out infinite; }
+.lp-write + .lp-write { animation-delay: -.6s; }
+@keyframes lp-write { 0% { stroke-dashoffset: 1; } 45%, 55% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: -1; } }
+/* status lights stepping on in turn */
+.lp-led { animation: lp-led 2.4s ease-in-out infinite; }
+.lp-led:nth-of-type(2) { animation-delay: .4s; } .lp-led:nth-of-type(3) { animation-delay: .8s; }
+@keyframes lp-led { 0%, 100% { opacity: .2; } 30% { opacity: 1; } 60% { opacity: .2; } }
+/* a compass needle searching, never quite still */
+.lp-sway { transform-box: view-box; transform-origin: 12px 12px; animation: lp-sway 4s ease-in-out infinite alternate; }
+@keyframes lp-sway { 0% { transform: rotate(-24deg); } 100% { transform: rotate(24deg); } }
+/* steady turning */
+.lp-spin { transform-box: view-box; transform-origin: 12px 12px; animation: lp-spin 7s linear infinite; }
+.lp-spin.slow { animation-duration: 12s; }
+@keyframes lp-spin { to { transform: rotate(360deg); } }
+/* a soft pulse */
+.lp-pulse { transform-box: fill-box; transform-origin: center; animation: lp-pulse 2.4s ease-in-out infinite; }
+@keyframes lp-pulse { 0%, 100% { transform: scale(.75); opacity: .6; } 50% { transform: none; opacity: 1; } }
+/* layers floating apart and back */
+.lp-float { animation: lp-float 3s ease-in-out infinite; }
+.lp-float.b { animation-delay: -.4s; }
+@keyframes lp-float { 0%, 100% { transform: none; } 50% { transform: translateY(var(--dy, -1.5px)); } }
+/* a scan line passing down a page */
+.lp-scan { animation: lp-scan 2.8s ease-in-out infinite alternate; }
+@keyframes lp-scan { from { transform: translateY(-5px); } to { transform: translateY(5px); } }
+/* data travelling along a wire */
+.lp-flow { stroke-dasharray: .18 .82; animation: lp-flow 2.2s linear infinite; }
+.lp-flow.b { animation-delay: -1.1s; }
+@keyframes lp-flow { to { stroke-dashoffset: -1; } }
+/* a globe turning: the meridian narrows and widens */
+.lp-globe { transform-box: view-box; transform-origin: 12px 12px; animation: lp-globe 3.2s ease-in-out infinite alternate; }
+@keyframes lp-globe { from { transform: scaleX(1); } to { transform: scaleX(.12); } }
+@media (prefers-reduced-motion: reduce) { [class*="lp-"] { animation: none !important; stroke-dashoffset: 0 !important; opacity: 1 !important; } }
 
-/* rotating word (2026-10-27): "precision." gives way to other words. The box keeps the widest word's width so the headline never reflows. Four animation styles on trial via root data-rw. */
+/* "Bahrain" (2026-10-27): four ways to nod to the flag, on trial via root data-bh. Flag geometry from Decree-Law No. 4 of 2002:
+   the white band is a quarter of the length, and its five white points reach a fifth of the way into the red. #ce1126 is the common web value for the flag's crimson. */
+@property --bx { syntax: "<percentage>"; inherits: false; initial-value: 40%; }
+.bh { position: relative; display: inline-block; white-space: nowrap; }
+.bh-flag, .bh-ul { display: none; }
+.bh-w { position: relative; display: inline-block; }
+.bh-w::after { content: attr(data-w); position: absolute; inset: 0; color: #ce1126; display: none; pointer-events: none; }
+/* A Waving flag: a small flag before the word, rippling in strips */
+:root[data-bh="wave"] .bh-flag { display: inline-flex; width: 1.25em; height: .78em; margin: 0 .38em 0 .05em; vertical-align: -.06em; outline: 1px solid var(--line); outline-offset: 0; }
+.bh-flag i { flex: 1; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 30' preserveAspectRatio='none'%3E%3Crect width='50' height='30' fill='%23ce1126'/%3E%3Cpath fill='%23fff' d='M0 0h12.5L20 3l-7.5 3L20 9l-7.5 3L20 15l-7.5 3L20 21l-7.5 3L20 27l-7.5 3H0z'/%3E%3C/svg%3E") no-repeat; background-size: 1400% 100%; background-position: calc(var(--k) * 100% / 13) 0;
+  animation: bh-wave 2.4s ease-in-out infinite; animation-delay: calc(var(--k) * -.12s); }
+@keyframes bh-wave { 0%, 100% { transform: translateY(-.045em); filter: brightness(1); } 50% { transform: translateY(.045em); filter: brightness(.86); } }
+/* B Serrated line: the flag's serrated edge, in crimson, draws under the word and clears again */
+:root[data-bh="edge"] .bh-ul { display: block; position: absolute; left: 0; right: 0; bottom: -.32em; width: 100%; height: .3em; overflow: visible; }
+.bh-ul path { fill: none; stroke: #ce1126; stroke-width: 1.4; vector-effect: non-scaling-stroke; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; animation: lp-write 5s ease-in-out infinite; }
+/* C Flag split: the word is ink up to a serrated edge and crimson after it, the edge drifting slowly */
+:root[data-bh="split"] .bh-w::after { display: block; clip-path: polygon(100% 0, 100% 100%, calc(var(--bx)) 100%, calc(var(--bx) + 7%) 90%, calc(var(--bx)) 80%, calc(var(--bx) + 7%) 70%, calc(var(--bx)) 60%, calc(var(--bx) + 7%) 50%, calc(var(--bx)) 40%, calc(var(--bx) + 7%) 30%, calc(var(--bx)) 20%, calc(var(--bx) + 7%) 10%, calc(var(--bx)) 0%); animation: bh-drift 6s ease-in-out infinite alternate; }
+@keyframes bh-drift { from { --bx: 22%; } to { --bx: 46%; } }
+/* D Crimson sweep: a band of crimson with the flag's serrated edge passes through the word */
+:root[data-bh="sweep"] .bh-w::after { display: block; clip-path: polygon(calc(var(--bx)) 100%, calc(var(--bx) + 7%) 90%, calc(var(--bx)) 80%, calc(var(--bx) + 7%) 70%, calc(var(--bx)) 60%, calc(var(--bx) + 7%) 50%, calc(var(--bx)) 40%, calc(var(--bx) + 7%) 30%, calc(var(--bx)) 20%, calc(var(--bx) + 7%) 10%, calc(var(--bx)) 0%, calc(var(--bx) - 34%) 0%, calc(var(--bx) - 34% + 7%) 10%, calc(var(--bx) - 34%) 20%, calc(var(--bx) - 34% + 7%) 30%, calc(var(--bx) - 34%) 40%, calc(var(--bx) - 34% + 7%) 50%, calc(var(--bx) - 34%) 60%, calc(var(--bx) - 34% + 7%) 70%, calc(var(--bx) - 34%) 80%, calc(var(--bx) - 34% + 7%) 90%, calc(var(--bx) - 34%) 100%); animation: bh-sweep 4.5s cubic-bezier(.6,0,.4,1) infinite; }
+@keyframes bh-sweep { 0% { --bx: -6%; } 60%, 100% { --bx: 140%; } }
+@media (prefers-reduced-motion: reduce) { .bh-flag i, .bh-ul path, .bh-w::after { animation: none !important; stroke-dashoffset: 0; } }
+
+/* second About paragraph (2026-10-27): three versions on trial via root data-pl */
+.lede.pl { display: none; }
+:root[data-pl="1"] .lede.pl[data-pl="1"], :root[data-pl="2"] .lede.pl[data-pl="2"], :root[data-pl="3"] .lede.pl[data-pl="3"] { display: block; }
+
+/* rotating word (2026-10-27): "precision." gives way to other words. The box keeps the widest word's width so the headline never reflows. Blur morph picked 2026-10-27 11:38Z. */
 .rw { position: relative; display: inline-grid; white-space: nowrap; vertical-align: baseline; }
 .rw-size { grid-area: 1 / 1; visibility: hidden; display: inline-grid; }
 .rw-size > span { grid-area: 1 / 1; }
@@ -389,8 +432,8 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
         <h2 class="display">Engineering for organisations that expect <span class="sr">precision.</span><span class="rw" aria-hidden="true" data-words="precision.|clarity.|efficiency.|resilience.|integrity."><span class="rw-size"><span>precision.</span><span>clarity.</span><span>efficiency.</span><span>resilience.</span><span>integrity.</span></span><span class="rw-stage"></span></span></h2>
       </div>
       <div class="duo">
-        <div><p class="lede">Blank State Labs is a Bahrain-based software engineering and consultancy firm specialising in AI automation, intelligent systems and bespoke software. We advise, architect, engineer, audit and test end to end, with every engagement held to the highest standard.</p><button type="button" class="jump" data-go="services">See what we do</button></div>
-        <div><p class="lede">We are principal-led by design. Clients work directly with the engineer accountable for delivery, ensuring continuity, clear decisions and ownership throughout. Every engagement is approached on its own terms, shaped around the client’s objectives and vision.</p><button type="button" class="jump" data-go="pillars">See how we work</button></div>
+        <div><p class="lede">Blank State Labs is a <span class="bh"><span class="bh-flag" aria-hidden="true"><i style="--k:0"></i><i style="--k:1"></i><i style="--k:2"></i><i style="--k:3"></i><i style="--k:4"></i><i style="--k:5"></i><i style="--k:6"></i><i style="--k:7"></i><i style="--k:8"></i><i style="--k:9"></i><i style="--k:10"></i><i style="--k:11"></i><i style="--k:12"></i><i style="--k:13"></i></span><span class="bh-w" data-w="Bahrain">Bahrain</span><svg class="bh-ul" viewBox="0 0 100 6" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M0 1 5 5 10 1 15 5 20 1 25 5 30 1 35 5 40 1 45 5 50 1 55 5 60 1 65 5 70 1 75 5 80 1 85 5 90 1 95 5 100 1"/></svg></span>-based software engineering and consultancy firm specialising in AI automation, intelligent systems and bespoke software. We advise, architect, engineer, audit and test end to end, with every engagement held to the highest standard.</p><button type="button" class="jump" data-go="services">What we do</button></div>
+        <div><p class="lede pl" data-pl="1">Fast iteration is built into how we work. You see working progress early and often, your feedback shapes every round, and the finished product arrives quickly without cutting corners. Your taste and opinions guide each decision, until the result is your vision, realised.</p><p class="lede pl" data-pl="2">We move quickly and we listen closely. Short cycles put working software in front of you from the first days, so your taste and judgement steer every step. The result is delivered fast, built properly, and unmistakably yours: your vision, realised.</p><p class="lede pl" data-pl="3">Speed and fidelity, together. We work in short, visible rounds and deliver quickly, turning your preferences, opinions and instincts into a finished product. Nothing is lost between what you imagine and what you receive. Your vision, realised.</p><button type="button" class="jump" data-go="pillars">How we work</button></div>
       </div>
       <div class="s-viz"><canvas id="signal" aria-hidden="true"></canvas></div>
     </div>
@@ -455,30 +498,30 @@ SOFTWARE.
     </div>
     <div class="f-ctiles jaba-bare four">
       <div><svg class="jaba" role="img" aria-label="Jaba logo"><use href="#jaba" width="100%" height="100%"/></svg><h3 class="svc-name">Jaba</h3></div>
-      <div><span class="eg-head"><svg class="ic ia-web" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4" width="19" height="16" rx="1.5"/><path d="M2.5 8.5h19"/><path class="ln" pathLength="1" d="M6 12.5h9"/><path class="ln" pathLength="1" d="M6 16h6"/></svg><span class="lbl">Web</span></span><h3 class="svc-name">Corporate website</h3><p class="svc-desc">Design and engineering of the company's public website, with ongoing maintenance and support.</p></div>
-      <div><span class="eg-head"><svg class="ic ia-sys" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="5" rx="1"/><rect x="3" y="9.5" width="18" height="5" rx="1"/><rect x="3" y="16" width="18" height="5" rx="1"/><circle class="led" cx="17.5" cy="5.5" r=".9" fill="currentColor" stroke="none"/><circle class="led" cx="17.5" cy="12" r=".9" fill="currentColor" stroke="none"/><circle class="led" cx="17.5" cy="18.5" r=".9" fill="currentColor" stroke="none"/></svg><span class="lbl">System</span></span><h3 class="svc-name">Internal operations system</h3><p class="svc-desc">A bespoke platform the team uses to run and manage day-to-day operations behind the scenes.</p></div>
-      <div><span class="eg-head"><svg class="ic ia-adv" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><g class="ndl"><path d="M12 5.5 14 12h-4z" fill="currentColor"/><path d="M12 18.5 10 12h4z"/></g><circle cx="12" cy="12" r=".8" fill="currentColor" stroke="none"/></svg><span class="lbl">Advisory</span></span><h3 class="svc-name">Technical advisory and continued engineering</h3><p class="svc-desc">Retained as technical advisor, guiding technology decisions while continuing to develop the website and internal operations system, with ad hoc engineering support as needs arise.</p></div>
+      <div><span class="eg-head"><svg class="ic ia-web" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4" width="19" height="16" rx="1.5"/><path d="M2.5 8.5h19"/><path class="lp-write" pathLength="1" d="M6 12.5h9"/><path class="lp-write" pathLength="1" d="M6 16h6"/></svg><span class="lbl">Web</span></span><h3 class="svc-name">Corporate website</h3><p class="svc-desc">Design and engineering of the company's public website, with ongoing maintenance and support.</p></div>
+      <div><span class="eg-head"><svg class="ic ia-sys" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="5" rx="1"/><rect x="3" y="9.5" width="18" height="5" rx="1"/><rect x="3" y="16" width="18" height="5" rx="1"/><circle class="lp-led" cx="17.5" cy="5.5" r=".9" fill="currentColor" stroke="none"/><circle class="lp-led" cx="17.5" cy="12" r=".9" fill="currentColor" stroke="none"/><circle class="lp-led" cx="17.5" cy="18.5" r=".9" fill="currentColor" stroke="none"/></svg><span class="lbl">System</span></span><h3 class="svc-name">Internal operations system</h3><p class="svc-desc">A bespoke platform the team uses to run and manage day-to-day operations behind the scenes.</p></div>
+      <div><span class="eg-head"><svg class="ic ia-adv" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><g class="lp-sway"><path d="M12 5.5 14 12h-4z" fill="currentColor"/><path d="M12 18.5 10 12h4z"/></g><circle cx="12" cy="12" r=".8" fill="currentColor" stroke="none"/></svg><span class="lbl">Advisory</span></span><h3 class="svc-name">Technical advisory and continued engineering</h3><p class="svc-desc">Retained as technical advisor, guiding technology decisions while continuing to develop the website and internal operations system, with ad hoc engineering support as needs arise.</p></div>
     </div>
   </div>
 </section>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="jaba" viewBox="78.28 143.77 146.87 146.87"><path d="M214.35 268.6C214.29 268.87 214.08 269.09 213.81 269.16C213.75 269.18 213.68 269.19 213.61 269.19C213.4 269.19 213.2 269.11 213.06 268.96C210.68 266.48 208.24 263.92 205.76 261.31C173.67 227.64 133.74 185.73 89.68 176.36C89.33 176.28 89.08 175.97 89.08 175.61L89.08 170.75C88.63 164.95 91.32 159.37 95.95 156.53C96.15 156.41 96.4 156.38 96.62 156.47C142.94 174.09 177.37 211.05 210.65 246.79L214.55 250.98C214.68 251.12 214.76 251.3 214.76 251.5L214.76 260.26C214.74 261.04 214.75 261.83 214.76 262.6C214.79 264.57 214.81 266.61 214.35 268.6M208.79 277.04C208.79 277.04 208.78 277.04 208.78 277.05C205.91 279.58 201.05 280.02 196.41 280.02C195.16 280.02 193.92 279.98 192.74 279.95C191.01 279.91 189.38 279.87 188.07 279.94C187.81 279.96 187.57 279.83 187.42 279.63C181.62 271.86 176.13 264.87 170.63 258.26C157.05 242.33 144.5 228.31 128.59 218.24C123.43 215.23 117.36 212.06 110.98 212.73C107.95 213.07 105.72 214.5 104.52 216.87C103.04 219.81 103.38 223.95 105.4 227.43C106.66 229.81 108.22 232.07 109.73 234.25C111.35 236.58 113.01 238.98 114.34 241.57C121.5 254.46 126.68 268.3 130.38 278.92C130.46 279.15 130.43 279.41 130.28 279.62C130.14 279.82 129.91 279.94 129.66 279.94L116.15 279.94C115.81 279.94 115.52 279.72 115.42 279.4C110.82 264.39 103.69 245.41 89.31 231.8C89.16 231.65 89.08 231.45 89.08 231.24L89.08 184.62C89.08 184.39 89.18 184.17 89.37 184.02C89.56 183.88 89.8 183.82 90.03 183.88C131.26 194.23 169.93 234.93 201.01 267.63C203.7 270.47 206.33 273.23 208.88 275.9C209.03 276.05 209.11 276.27 209.09 276.49C209.07 276.7 208.96 276.9 208.79 277.04M176.9 279.51C176.78 279.77 176.51 279.94 176.22 279.94L139.91 279.94C139.59 279.94 139.3 279.73 139.19 279.42C133.53 262.67 128.27 250.22 122.14 239.05C120.07 235.33 118.07 232.15 116.03 229.33L115.56 228.65C113.91 226.3 112.04 223.65 111.82 220.63C111.8 220.4 111.89 220.18 112.06 220.02C112.23 219.86 112.46 219.79 112.69 219.82C133.07 222.83 163.41 261.58 176.36 278.12L176.82 278.7C177 278.93 177.03 279.24 176.9 279.51M106.61 279.62C106.46 279.82 106.24 279.94 105.99 279.94L103.78 279.94L103.7 279.94C99.59 279.94 95.79 278.25 93.01 275.19C90.07 271.94 88.63 267.53 89.08 263.08L89.08 261.83L89.08 259.18L89.08 245.38C89.08 245.05 89.29 244.75 89.6 244.65C89.91 244.55 90.26 244.66 90.45 244.93C97 253.82 102.16 264.63 106.72 278.94C106.79 279.17 106.75 279.43 106.61 279.62M113.7 154.85C113.78 154.5 114.09 154.26 114.45 154.26L169.65 154.26C170.02 154.26 170.34 154.52 170.4 154.89C175.12 181.54 191.54 204.49 214.34 216.28C214.6 216.42 214.76 216.68 214.76 216.96L214.76 237.75C214.76 238.07 214.56 238.35 214.27 238.46C214.18 238.5 214.09 238.51 213.99 238.51C213.78 238.51 213.58 238.43 213.43 238.27C181.56 204.16 152.09 174.41 114.11 155.71C113.79 155.55 113.62 155.19 113.7 154.85M179 154.54C179.15 154.36 179.36 154.26 179.59 154.26L193.94 154.26C194.32 154.26 194.64 154.53 194.7 154.9C196.89 168.87 204.1 181.87 214.48 190.57C214.65 190.71 214.76 190.93 214.76 191.15L214.76 206.43C214.76 206.71 214.6 206.96 214.36 207.1C214.25 207.16 214.12 207.19 213.99 207.19C213.85 207.19 213.71 207.15 213.58 207.08C195.83 195.89 183.17 176.97 178.84 155.17C178.8 154.95 178.86 154.71 179 154.54M203.44 155.03C203.64 154.85 203.91 154.78 204.17 154.86C210.35 156.6 214.8 162.54 214.76 168.96L214.76 177.71C214.76 178.04 214.55 178.32 214.24 178.43C214.16 178.46 214.08 178.48 213.99 178.48C213.76 178.48 213.54 178.37 213.39 178.19C208.36 171.87 204.84 164.11 203.21 155.74C203.16 155.48 203.25 155.21 203.44 155.03M223 255.94L223 238.51C223 229.11 223 219.72 223 210.32C223.01 196.4 223.01 182.48 222.99 168.56L222.99 168.54C223.15 162.22 220.88 156.42 216.62 152.21C212.33 147.97 206.45 145.77 200.09 146.01C199.76 146.01 104.73 146.01 103.77 146.01C101.66 146 99.57 146.22 97.57 146.65C91.2 147.96 85.86 152.02 83.29 157.51C80.81 162.35 80.72 167.97 80.83 172.86L80.83 261.34C80.28 269.91 82.29 276.89 86.65 281.59C90.65 285.89 96.4 288.11 103.73 288.18C104.51 288.1 107.21 288.07 111.36 288.07C116.36 288.07 123.45 288.11 131.79 288.17C159.17 288.34 204.92 288.64 207.97 287.18C208.06 287.1 208.17 287.03 208.3 287C216.82 284.68 222.99 275.99 222.98 266.33C223.01 264.19 223.01 262.01 223 259.9C223 258.58 223 257.26 223 255.94"/></symbol>
-  <symbol id="i-auto" viewBox="0 0 24 24"><g class="a-turn"><path d="M20 12a8 8 0 0 1-14.3 4.9M4 12a8 8 0 0 1 14.3-4.9"/><path d="M18.6 3.4v3.9h-3.9M5.4 20.6v-3.9h3.9"/></g><circle cx="12" cy="12" r="1.6"/></symbol>
-  <symbol id="i-agent" viewBox="0 0 24 24"><circle class="a-core" cx="12" cy="12" r="3.2"/><circle class="a-orbit" cx="12" cy="12" r="8.4" stroke-dasharray="1.6 2.8"/><path d="M12 1.6v2.6M12 19.8v2.6M1.6 12h2.6M19.8 12h2.6"/></symbol>
-  <symbol id="i-doc" viewBox="0 0 24 24"><path d="M6 2.5h8.5l3.5 3.5v15.5H6z"/><path d="M14.5 2.5V6H18"/><path d="M9 9.5h4M9 17h6"/><path class="a-scan" d="M3 13.5h18"/></symbol>
-  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 2.5 4.5 5.4v6.1c0 4.5 3.2 8.4 7.5 10 4.3-1.6 7.5-5.5 7.5-10V5.4z"/><path class="a-tick" pathLength="1" d="M9 12.2l2.1 2.1 4-4.2"/></symbol>
-  <symbol id="i-layers" viewBox="0 0 24 24"><path class="a-lay" style="--dy:-1.8px" d="M12 3 2.5 8 12 13l9.5-5z"/><path class="a-lay" style="--dy:-.8px" d="M2.5 12 12 17l9.5-5"/><path d="M2.5 16 12 21l9.5-5"/></symbol>
-  <symbol id="i-link" viewBox="0 0 24 24"><circle cx="5" cy="12" r="2.4"/><circle cx="19" cy="5" r="2.4"/><circle cx="19" cy="19" r="2.4"/><path class="a-wire" pathLength="1" d="M7.2 11 16.8 6"/><path class="a-wire" pathLength="1" style="--w:.6s" d="M7.2 13l9.6 5"/></symbol>
-  <symbol id="i-app" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="1.5"/><path d="M3 8.5h18"/><path class="a-type" pathLength="1" d="M7 13h6"/><path class="a-type" pathLength="1" style="--w:.7s" d="M7 16h4"/></symbol>
+  <symbol id="i-auto" viewBox="0 0 24 24"><g class="lp-spin"><path d="M20 12a8 8 0 0 1-14.3 4.9M4 12a8 8 0 0 1 14.3-4.9"/><path d="M18.6 3.4v3.9h-3.9M5.4 20.6v-3.9h3.9"/></g><circle cx="12" cy="12" r="1.6"/></symbol>
+  <symbol id="i-agent" viewBox="0 0 24 24"><circle class="lp-pulse" cx="12" cy="12" r="3.2"/><circle class="lp-spin slow" cx="12" cy="12" r="8.4" stroke-dasharray="1.6 2.8"/><path d="M12 1.6v2.6M12 19.8v2.6M1.6 12h2.6M19.8 12h2.6"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 24 24"><path d="M6 2.5h8.5l3.5 3.5v15.5H6z"/><path d="M14.5 2.5V6H18"/><path d="M9 9.5h4M9 17h6"/><path class="lp-scan" d="M3 13.5h18"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 2.5 4.5 5.4v6.1c0 4.5 3.2 8.4 7.5 10 4.3-1.6 7.5-5.5 7.5-10V5.4z"/><path class="lp-write" pathLength="1" d="M9 12.2l2.1 2.1 4-4.2"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path class="lp-float" style="--dy:-1.8px" d="M12 3 2.5 8 12 13l9.5-5z"/><path class="lp-float b" style="--dy:-.8px" d="M2.5 12 12 17l9.5-5"/><path d="M2.5 16 12 21l9.5-5"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><circle cx="5" cy="12" r="2.4"/><circle cx="19" cy="5" r="2.4"/><circle cx="19" cy="19" r="2.4"/><path d="M7.2 11 16.8 6M7.2 13l9.6 5" opacity=".35"/><path class="lp-flow" pathLength="1" d="M7.2 11 16.8 6"/><path class="lp-flow b" pathLength="1" d="M7.2 13l9.6 5"/></symbol>
+  <symbol id="i-app" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="1.5"/><path d="M3 8.5h18"/><path class="lp-write" pathLength="1" d="M7 13h6"/><path class="lp-write" pathLength="1" d="M7 16h4"/></symbol>
   <symbol id="i-advise" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15.2 8.8 13.4 13.4 8.8 15.2 10.6 10.6z"/><circle cx="12" cy="12" r=".9"/></symbol>
   <filter id="rw-goo"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 255 -140"/></filter>
-  <symbol id="i-web" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path class="a-mer" d="M12 3c2.5 2.6 3.7 5.6 3.7 9s-1.2 6.4-3.7 9c-2.5-2.6-3.7-5.6-3.7-9S9.5 5.6 12 3z"/></symbol>
+  <symbol id="i-web" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path class="lp-globe" d="M12 3c2.5 2.6 3.7 5.6 3.7 9s-1.2 6.4-3.7 9c-2.5-2.6-3.7-5.6-3.7-9S9.5 5.6 12 3z"/></symbol>
 </svg>
 
 
-<!-- preview only: pick the Jaba card label font and how the rotating word changes -->
-<div class="pv-pick"><div data-k="lf"><span>Label font</span><button type="button" data-v="caps">A · Sans caps</button><button type="button" data-v="serif">B · Serif caps</button><button type="button" data-v="italic">C · Serif italic</button><button type="button" data-v="plain">D · Sans plain</button></div><div data-k="rw"><span>Word change</span><button type="button" data-v="blur">1 · Blur morph</button><button type="button" data-v="roll">2 · Letter roll</button><button type="button" data-v="decode">3 · Decode</button><button type="button" data-v="shared">4 · Shared letters</button></div><button type="button" class="pv-x" aria-label="Hide options">×</button></div>
+<!-- preview only: pick a Bahrain treatment and the second About paragraph -->
+<div class="pv-pick"><div data-k="bh"><span>Bahrain</span><button type="button" data-v="wave">A · Waving flag</button><button type="button" data-v="edge">B · Serrated line</button><button type="button" data-v="split">C · Flag split</button><button type="button" data-v="sweep">D · Crimson sweep</button></div><div data-k="pl"><span>Paragraph</span><button type="button" data-v="1">1</button><button type="button" data-v="2">2</button><button type="button" data-v="3">3</button></div><button type="button" class="pv-x" aria-label="Hide options">×</button></div>
 
 <!-- Contact -->
 <section class="view" data-view="contact" aria-label="Contact">
@@ -597,8 +640,8 @@ const smoothstep = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b
 let loomT0 = 0;
 const lerp = (a, b, k) => a + (b - a) * k;
 const ease = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
-// straightening takes 1.65s (doubled pace, 2026-10-27); the straight bundle then holds longer
-const cyc = (t, len) => { const p = (t / len) % 1; return p < .12 ? 0 : p < .285 ? ease((p - .12) / .165) : p < .85 ? 1 : 1 - ease((p - .85) / .15); };
+// straightening (1.65s) and loosening (0.75s) both run at double their original pace (2026-10-27)
+const cyc = (t, len) => { const p = (t / len) % 1; return p < .12 ? 0 : p < .285 ? ease((p - .12) / .165) : p < .925 ? 1 : 1 - ease((p - .925) / .075); };
 function sigDraw(now) {
   const cs = getComputedStyle(root), ink = cs.getPropertyValue("--ink-rgb").trim(), W = sW, H = sH, n = 9;
   const t = reduce ? 6000 : now - loomT0, k = cyc(t, 10000);
@@ -614,7 +657,7 @@ function sigDraw(now) {
       const y = lerp(H * .5 + wild, lane, settle);
       x ? sc.lineTo(x, y) : sc.moveTo(x, y);
     }
-    sc.strokeStyle = j === 4 ? `rgba(${ink},.9)` : `rgba(${ink},.38)`; sc.lineWidth = j === 4 ? 1.2 : 1; sc.stroke();
+    sc.strokeStyle = j === 4 ? `rgba(${ink},.9)` : `rgba(${ink},.38)`; sc.lineWidth = j === 4 ? 2.2 : 1.7; sc.stroke();
   }
 }
 let sigSeen = false;
@@ -624,60 +667,29 @@ new IntersectionObserver(([e]) => { sigSeen = e.isIntersecting; sigStart(); }).o
 addEventListener("resize", () => { if (sigSeen) { sigSize(); if (reduce) sigDraw(9000); } });
 
 // ---------- rotating word: "precision." gives way to other words, one every ~2.4s while in view ----------
-const rw = (() => {
+(() => {
   const box = document.querySelector(".rw"), stage = box.querySelector(".rw-stage");
   const words = box.dataset.words.split("|"), T = 700, HOLD = 1700;
   let i = 0, timer = 0, seen = false;
   const word = (w, hidden) => { const n = document.createElement("span"); n.className = "w"; n.innerHTML = [...w].map(c => `<span class="ch">${c}</span>`).join(""); if (hidden) n.style.visibility = "hidden"; stage.append(n); return n; };
   const after = (ms, f) => setTimeout(f, ms);
   const modes = {
-    // 1 Blur morph: the old word melts into the new one (blur with an alpha threshold, the "gooey" text-morph technique)
+    // Blur morph (picked 11:38Z): the old word melts into the new one (blur with an alpha threshold, the "gooey" text-morph technique)
     blur(a, b) {
       const n = word(b); stage.classList.add("goo");
       a.animate([{ filter: "blur(0)", opacity: 1 }, { filter: "blur(9px)", opacity: 0 }], { duration: T, easing: "ease-in", fill: "forwards" });
       n.animate([{ filter: "blur(9px)", opacity: 0 }, { filter: "blur(0)", opacity: 1 }], { duration: T, easing: "ease-out" });
       after(T + 20, () => { a.remove(); stage.classList.remove("goo"); });
-    },
-    // 2 Letter roll: letters lift away one after another, the new ones rise into place
-    roll(a, b) {
-      const n = word(b), st = 26;
-      [...a.children].forEach((c, k) => c.animate([{ transform: "none", opacity: 1 }, { transform: "translateY(-.35em)", opacity: 0 }], { duration: 380, delay: k * st, easing: "cubic-bezier(.5,0,.75,0)", fill: "forwards" }));
-      [...n.children].forEach((c, k) => c.animate([{ transform: "translateY(.35em)", opacity: 0, filter: "blur(3px)" }, { transform: "none", opacity: 1, filter: "blur(0)" }], { duration: 520, delay: 200 + k * st, easing: "cubic-bezier(.2,.7,.2,1)", fill: "backwards" }));
-      after(200 + b.length * st + 540, () => a.remove());
-    },
-    // 3 Decode: the letters cycle through random characters and lock in from left to right
-    decode(a, b) {
-      const from = a.textContent, pool = "abcdefghijklmnopqrstuvwxyz", t0 = performance.now(), D = 800;
-      const step = now => {
-        const k = Math.min(1, (now - t0) / D), len = Math.round(from.length + (b.length - from.length) * Math.min(1, k * 1.6)), lock = Math.floor(k * b.length);
-        let out = ""; for (let j = 0; j < len; j++) out += j < lock ? b[j] : (b[j] === "." ? "." : pool[(Math.random() * 26) | 0]);
-        a.textContent = out;
-        if (k < 1) requestAnimationFrame(step); else { a.remove(); word(b); }
-      };
-      requestAnimationFrame(step);
-    },
-    // 4 Shared letters: letters both words share glide to their new places, the rest fade out and in
-    shared(a, b) {
-      const n = word(b, true), old = [...a.children], used = new Set();
-      [...n.children].forEach((c, k) => {
-        const j = old.findIndex((o, x) => !used.has(x) && o.textContent.toLowerCase() === c.textContent.toLowerCase());
-        if (j >= 0) { used.add(j); const dx = old[j].offsetLeft - c.offsetLeft; old[j].style.opacity = 0; c.animate([{ transform: `translateX(${dx}px)` }, { transform: "none" }], { duration: T, easing: "cubic-bezier(.65,0,.35,1)" }); }
-        else c.animate([{ opacity: 0, transform: "translateY(.2em)" }, { opacity: 0, offset: .35 }, { opacity: 1, transform: "none" }], { duration: T + 100, easing: "ease-out" });
-      });
-      old.forEach((o, x) => { if (!used.has(x)) o.animate([{ opacity: 1 }, { opacity: 0, transform: "translateY(-.2em)" }], { duration: T * .5, fill: "forwards" }); });
-      n.style.visibility = ""; after(T + 120, () => a.remove());
     }
   };
-  const tick = () => { timer = 0; if (!seen) return; const a = stage.lastElementChild; i = (i + 1) % words.length; (modes[root.dataset.rw] || modes.blur)(a, words[i]); timer = setTimeout(tick, T + HOLD); };
-  const reset = () => { clearTimeout(timer); timer = 0; stage.textContent = ""; stage.classList.remove("goo"); i = 0; word(words[0]); if (seen && !reduce) timer = setTimeout(tick, HOLD); };
+  const tick = () => { timer = 0; if (!seen) return; const a = stage.lastElementChild; i = (i + 1) % words.length; modes.blur(a, words[i]); timer = setTimeout(tick, T + HOLD); };
   word(words[0]);
   if (!reduce) new IntersectionObserver(([e]) => { seen = e.isIntersecting; if (seen && !timer) timer = setTimeout(tick, HOLD); }, { threshold: .6 }).observe(box);
-  return { reset, stop: () => { seen = false; clearTimeout(timer); timer = 0; }, show: (m, a, b) => { stage.textContent = ""; modes[m](word(a), b); } };
 })();
 
 // ---------- preview only: option switcher ----------
 document.querySelectorAll(".pv-pick [data-k]").forEach(g => {
-  const set = v => { root.dataset[g.dataset.k] = v; g.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.dataset.v === v)); if (g.dataset.k === "rw") rw.reset(); };
+  const set = v => { root.dataset[g.dataset.k] = v; g.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.dataset.v === v)); };
   g.addEventListener("click", e => { const b = e.target.closest("button"); if (b) set(b.dataset.v); });
   set(g.querySelector("button").dataset.v);
 });
@@ -703,7 +715,7 @@ document.querySelectorAll(".totop").forEach(b => b.addEventListener("click", () 
 
 // ---------- About us: text links down to Services and Pillars ----------
 (() => {
-  // "See what we do" glides to Our services, "See how we work" to the Pillars
+  // "What we do" glides to Our services, "How we work" to the Pillars
   document.querySelectorAll(".jump[data-go]").forEach(b => b.addEventListener("click", () => {
     if (b.dataset.go === "services") return goTo("services");
     if (root.dataset.nav === "page" && root.dataset.view !== "services") { addEventListener("hashchange", () => { const el = document.getElementById("pillars"); scrollTo(0, el.getBoundingClientRect().top + scrollY - 96); }, { once: true }); location.hash = "services"; return; }
