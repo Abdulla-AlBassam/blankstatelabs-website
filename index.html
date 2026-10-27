@@ -38,7 +38,13 @@
    The background canvas is sized to the tallest the screen gets (100lvh), so it still covers once the toolbars shrink away. */
 html { background: var(--page); transition: background .6s ease; }
 body { margin: 0; background: var(--page); color: var(--ink); font-family: var(--f-body); overflow-x: hidden; transition: background .6s ease, color .6s ease; }
-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; height: 100lvh; display: block; }
+/* Safari on iPhone (2026-10-27) left a hard edge above its floating bottom toolbar: it did not draw the fixed background canvas under the toolbar.
+   So the canvas now lives in the page itself: a layer as tall as the whole page, with the canvas pinned to the top of the screen inside it (sticky).
+   Ordinary page content is drawn under the toolbar, so the grain now reaches the very bottom of the screen. */
+body { position: relative; }
+.bg { position: absolute; inset: 0; pointer-events: none; }
+canvas { display: block; }
+#gl { position: sticky; top: 0; left: 0; width: 100%; height: 100vh; height: 100lvh; }
 ::selection { background: var(--ink); color: var(--page); }
 
 /* ---------- header ---------- */
@@ -391,7 +397,7 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
 </head>
 <body>
 
-<canvas id="gl" aria-hidden="true"></canvas>
+<div class="bg" aria-hidden="true"><canvas id="gl"></canvas></div>
 
 <header class="top">
   <a class="brand" href="#home" aria-label="Blank State Labs, home">
@@ -1069,7 +1075,8 @@ addEventListener("hashchange", hdrTone);
 // ---------- render loop ----------
 function resize() {
   const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-  W = Math.floor(innerWidth * dpr); H = Math.floor(innerHeight * dpr);
+  // the buffer matches the canvas itself, which is as tall as the screen with its toolbars hidden
+  W = Math.floor(glc.clientWidth * dpr); H = Math.floor(glc.clientHeight * dpr);
   glc.width = W; glc.height = H;
   if (gl) gl.viewport(0, 0, W, H);
 }
