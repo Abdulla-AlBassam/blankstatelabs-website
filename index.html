@@ -275,7 +275,21 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
   .view { padding-top: calc(env(safe-area-inset-top, 0px) + 92px); }
   .cta-slot .cta { font-size: .6rem; letter-spacing: .08em; padding: 7px 10px; }
 }
-@media (max-width: 480px) { :root:not([data-view="home"]) .brand .name { display: none; } }
+@media (max-width: 600px) { :root:not([data-view="home"]) .brand .name { display: none; } }
+/* tablets: a slightly smaller header so the name and three tabs fit side by side */
+@media (min-width: 641px) and (max-width: 860px) {
+  .brand .name { font-size: .84rem; letter-spacing: .14em; }
+  .tabs a { font-size: .64rem; letter-spacing: .1em; }
+  .right, .tabs { gap: 16px; }
+}
+/* three tabs since Our services got its own page (2026-10-27): tighter header on narrow phones so nothing touches the logo */
+@media (max-width: 480px) {
+  header.top { gap: 10px; }
+  .right { gap: 9px; }
+  .tabs { gap: 9px; }
+  .tabs a { font-size: .56rem; letter-spacing: .05em; }
+  .cta-slot .cta { font-size: .56rem; letter-spacing: .06em; padding: 6px 8px; }
+}
 
 @media (prefers-reduced-motion: reduce) { body, .view, .tg::before, .tabs a, .tabs a::after, .cta, .cta::before, .brand .name, .dd-menu, .dd-btn .chev, .chips span { transition: none !important; } }
 </style>
@@ -293,7 +307,7 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
     <span class="name">Blank State Labs</span>
   </a>
   <div class="right">
-    <nav class="tabs" aria-label="Main"><a href="#about" data-t="About us">About us</a><a href="#clients" data-t="Our clients">Our clients</a></nav>
+    <nav class="tabs" aria-label="Main"><a href="#about" data-t="About us">About us</a><a href="#services" data-t="Our services">Our services</a><a href="#clients" data-t="Our clients">Our clients</a></nav>
     <div class="cta-slot"><a class="cta" href="#contact">Enquire</a></div>
     <button type="button" class="tg" aria-label="Switch to dark mode"></button>
   </div>
@@ -323,8 +337,14 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
       </div>
       <div class="s-viz"><canvas id="signal" aria-hidden="true"></canvas></div>
     </div>
-    <div class="stack svc-wrap" id="services" style="gap:1.6rem">
-      <h2 class="display" style="font-size:clamp(1.8rem,3.4vw,3rem)">Our Services</h2>
+  </div>
+</section>
+
+<!-- Our services (own page from 2026-10-27; was part of About us) -->
+<section class="view" data-view="services" aria-label="Our services">
+  <div class="inner">
+    <div class="stack svc-wrap" id="svc" style="gap:1.6rem">
+      <h2 class="display">Our Services</h2>
       <div class="f-tiles">
     <div><svg class="ic" aria-hidden="true"><use href="#i-auto"/></svg><h3 class="svc-name">AI automation</h3><p class="svc-desc">Design and deployment of automated workflows that remove repetitive manual processes from daily operations.</p></div>
     <div><svg class="ic" aria-hidden="true"><use href="#i-agent"/></svg><h3 class="svc-name">AI agents and assistants</h3><p class="svc-desc">Intelligent agents and assistants built around an organisation's own data, systems and procedures.</p></div>
@@ -418,6 +438,7 @@ SOFTWARE.
       <fieldset class="f">
         <legend>What do you need?</legend>
         <div class="chips">
+          <label><input type="checkbox" id="need-auto" name="need" value="Automation"><span>Automation</span></label>
           <label><input type="checkbox" id="need-site" name="need" value="Website"><span>Website</span></label>
           <label><input type="checkbox" id="need-app" name="need" value="Web or mobile app"><span>Web or mobile app</span></label>
           <label><input type="checkbox" id="need-system" name="need" value="Internal system"><span>Internal system</span></label>
@@ -526,9 +547,13 @@ document.querySelectorAll(".totop").forEach(b => b.addEventListener("click", () 
 
 // ---------- About us: text links down to Services and Pillars ----------
 (() => {
+  // both open Our services; "See how we work" then glides down to the Pillars
   document.querySelectorAll(".jump[data-go]").forEach(b => b.addEventListener("click", () => {
-    const el = document.getElementById(b.dataset.go);
-    scrollTo({ top: el.getBoundingClientRect().top + scrollY - 96, behavior: reduce ? "auto" : "smooth" });
+    location.hash = "services";
+    if (b.dataset.go === "pillars") setTimeout(() => {
+      const el = document.getElementById("pillars");
+      scrollTo({ top: el.getBoundingClientRect().top + scrollY - 96, behavior: reduce ? "auto" : "smooth" });
+    }, 350);
   }));
 })();
 
@@ -595,14 +620,16 @@ document.getElementById("enquiry").addEventListener("submit", e => {
     .finally(() => { btn.disabled = false; });
 });
 
-// ---------- grain follows the About page: left while the services are in view, right again at Our Pillars ----------
-const aboutView = document.querySelector('section[data-view="about"]'), svcWrap = aboutView.querySelector(".svc-wrap"), pillars = aboutView.querySelector(".pillars");
-addEventListener("scroll", () => {
-  if (root.dataset.view !== "about") return;
+// ---------- grain follows Our services: left while the service cards are in view, right again at Our Pillars ----------
+const svcView = document.querySelector('section[data-view="services"]'), svcWrap = svcView.querySelector(".svc-wrap"), pillars = svcView.querySelector(".pillars");
+const sideCheck = () => {
+  if (root.dataset.view !== "services") return;
   const line = innerHeight * .55;
   sideTarget = svcWrap.getBoundingClientRect().top < line && pillars.getBoundingClientRect().top > line ? 1 : 0;
   if (reduce) { sideNow = sideTarget; frame(performance.now()); }
-}, { passive: true });
+};
+addEventListener("scroll", sideCheck, { passive: true });
+addEventListener("hashchange", () => setTimeout(sideCheck, 60));
 
 // ---------- background ----------
 const glc = document.getElementById("gl");
@@ -876,13 +903,14 @@ resize();
 addEventListener("resize", () => { resize(); if (reduce) frame(performance.now()); });
 applyMode(mode, true);
 route();
+setTimeout(sideCheck, 60);
 setTimeout(sigStart, 30);
 calmNow = calmTarget;
 requestAnimationFrame(frame);
 </script>
 
 <style>
-/* scroll reveal on About us (picked 2026-10-16): services sharpen from a soft blur, pillars unveil from the top down */
+/* scroll reveal on Our services (picked 2026-10-16): services sharpen from a soft blur, pillars unveil from the top down */
 .rvl { transition: opacity .9s ease, transform .9s var(--ease), filter .9s ease, clip-path 1s var(--ease); transition-delay: var(--d, 0s); }
 .rvl.focus:not(.shown) { opacity: 0; filter: blur(10px); }
 .rvl.unveil { clip-path: inset(0 0 0 0); }
@@ -891,14 +919,14 @@ requestAnimationFrame(frame);
 </style>
 <script>
 (() => {
-  const about = document.querySelector('section[data-view="about"]'), els = [];
+  const page = document.querySelector('section[data-view="services"]'), els = [];
   [[".svc-wrap > .display", "unveil"], [".f-tiles > div", "focus"], [".pillars > .display", "unveil"], [".pA > div", "unveil"]].forEach(([sel, kind]) =>
-    about.querySelectorAll(sel).forEach((el, i) => { el.classList.add("rvl", kind); el.style.setProperty("--d", (i % 4) * .09 + "s"); els.push(el); }));
+    page.querySelectorAll(sel).forEach((el, i) => { el.classList.add("rvl", kind); el.style.setProperty("--d", (i % 4) * .09 + "s"); els.push(el); }));
   // checked by position on scroll, so the blur and clip can't hide an element from the check
   const check = () => { const lim = innerHeight * .92; els.forEach(el => { if (!el.classList.contains("shown") && el.getBoundingClientRect().top < lim) el.classList.add("shown"); }); };
-  addEventListener("scroll", () => { if (root.dataset.view === "about") check(); }, { passive: true });
+  addEventListener("scroll", () => { if (root.dataset.view === "services") check(); }, { passive: true });
   const arm = () => { els.forEach(el => el.classList.remove("shown")); requestAnimationFrame(() => requestAnimationFrame(check)); };
-  addEventListener("hashchange", () => { if (location.hash === "#about") arm(); });
+  addEventListener("hashchange", () => { if (location.hash === "#services") arm(); });
   arm();
 })();
 </script>
