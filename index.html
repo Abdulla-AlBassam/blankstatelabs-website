@@ -93,16 +93,6 @@ header.top { position: fixed; top: 0; left: 0; right: 0; z-index: 5; display: fl
 :root[data-nav="page"] .view.on { min-height: 100vh; min-height: 100svh; animation: page-in .5s var(--ease) both; }
 @keyframes page-in { from { opacity: 0; } to { opacity: 1; } }
 .view[data-view="contact"] { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 110px); }
-/* a quiet cue at the foot of the hero that there is more below */
-.scroll-cue { position: absolute; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 28px); transform: translateX(-50%); display: grid; justify-items: center; gap: 10px;
-  font-size: .62rem; font-weight: 500; letter-spacing: .2em; text-transform: uppercase; color: #fff; mix-blend-mode: difference; text-decoration: none; opacity: .8; transition: opacity .4s ease; }
-/* (white with "difference" blending reads dark on the pale sky and pale on the dark grain) */
-.scroll-cue:hover { opacity: 1; }
-.scroll-cue i { display: block; width: 1px; height: 38px; background: currentColor; opacity: .5; transform-origin: top; animation: cue 2.6s var(--ease) infinite; }
-@keyframes cue { 0% { transform: scaleY(0); } 45% { transform: scaleY(1); transform-origin: top; } 55% { transform: scaleY(1); transform-origin: bottom; } 100% { transform: scaleY(0); transform-origin: bottom; } }
-:root:not([data-view="home"]) .scroll-cue { opacity: 0; pointer-events: none; }
-@media (prefers-reduced-motion: reduce) { .scroll-cue i { animation: none; } }
-
 .eyebrow { font-size: .72rem; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); margin: 0 0 1.4rem; }
 .display { font-family: var(--f-display); font-weight: 400; font-size: clamp(2.2rem, 5vw, 4.6rem); line-height: 1.05; letter-spacing: .01em; margin: 0; text-wrap: balance; }
 .lede { font-size: clamp(1.02rem, 1.4vw, 1.2rem); line-height: 1.6; max-width: 54ch; margin: 0; }
@@ -377,6 +367,43 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) { body, .view, .tg::before, .tabs a, .tabs a::after, .cta, .cta::before, .brand .name, .dd-menu, .dd-btn .chev, .chips span { transition: none !important; } }
+
+/* ---------- section separation trial (2026-10-27): three options on the long page, switched from the panel at the bottom left ----------
+   A Bands: About and Contact stay on the grain, Services sits on a grey band, Our clients on a brown band.
+   B Chapters: a hairline rule across the screen and a numbered label open each section.
+   C Sheets: each section is a rounded panel resting on the grain, in two alternating tones.
+   A section opened from a tab keeps the plain background in every option. */
+:root { --band-grey: #bcb5ad; --band-brown: #4a3628; --sheet-1: #e2ded8; --sheet-2: #c9c3bb; }
+:root[data-mode="dark"] { --band-grey: #2a2421; --band-brown: #3a2a20; --sheet-1: #221c18; --sheet-2: #2c2520; }
+.view { transition: background .6s ease; }
+
+/* A Bands */
+:root[data-nav="scroll"][data-sep="a"] .view[data-view="services"] { background: var(--band-grey); }
+:root[data-nav="scroll"][data-sep="a"] .view[data-view="clients"] { background: var(--band-brown); --page: var(--band-brown); color: var(--ink);
+  --ink: #efe7dc; --muted: rgba(239, 231, 220, .66); --line: rgba(239, 231, 220, .2); --tint: rgba(239, 231, 220, .07); --ink-rgb: 239, 231, 220; }
+/* the top bar turns pale while it sits over the brown band */
+:root[data-hdr="pale"] header.top { --ink: #efe7dc; --line: rgba(239, 231, 220, .3); color: var(--ink); transition: color .3s ease; }
+
+/* B Chapters */
+:root[data-nav="scroll"][data-sep="b"] .view:not(.home) { border-top: 1px solid var(--line); padding-top: calc(env(safe-area-inset-top, 0px) + 150px); }
+:root[data-nav="scroll"][data-sep="b"] .view:not(.home)::before { content: attr(data-n) "\2003" attr(aria-label); position: absolute; top: 26px; left: var(--gutter);
+  font-size: .7rem; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+:root[data-nav="scroll"][data-sep="b"] .view:not(.home)::after { content: attr(data-n) " / 04"; position: absolute; top: 26px; right: var(--gutter);
+  font-family: var(--f-mono); font-size: .7rem; color: var(--muted); }
+
+/* C Sheets */
+:root[data-nav="scroll"][data-sep="c"] .view:not(.home) { background: var(--sheet-1); margin: 0 clamp(8px, 1.4vw, 20px) clamp(10px, 1.4vw, 20px);
+  border-radius: clamp(18px, 2.4vw, 34px); padding-top: clamp(64px, 8vw, 104px); overflow: hidden; box-shadow: 0 30px 60px -48px rgba(20, 14, 10, .6); }
+:root[data-nav="scroll"][data-sep="c"] .view[data-view="services"], :root[data-nav="scroll"][data-sep="c"] .view[data-view="contact"] { background: var(--sheet-2); }
+:root[data-nav="scroll"][data-sep="c"] .view[data-view="about"] .s-viz { margin-left: calc(-1 * var(--gutter)); width: calc(100% + 2 * var(--gutter)); }
+
+/* the trial switcher (preview only; comes out once one is picked) */
+.sep-pick { position: fixed; left: 12px; bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); z-index: 6; display: flex; align-items: center; gap: 4px;
+  background: var(--chrome-bg); color: var(--chrome-fg); border: 1px solid var(--chrome-line); border-radius: 999px; padding: 4px 4px 4px 14px;
+  font-size: .66rem; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; backdrop-filter: blur(8px); }
+.sep-pick button { appearance: none; border: 0; background: transparent; color: var(--chrome-dim); font: inherit; letter-spacing: inherit; text-transform: inherit; padding: 7px 11px; border-radius: 999px; cursor: pointer; }
+.sep-pick button[aria-pressed="true"] { background: var(--chrome-fg); color: #1a1512; }
+:root[data-nav="page"] .sep-pick { display: none; }
 </style>
 </head>
 <body>
@@ -407,11 +434,10 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
       <span class="dim">Est. 2026</span>
     </div>
   </div>
-  <a class="scroll-cue" href="#about">Scroll<i aria-hidden="true"></i></a>
 </main>
 
 <!-- About us -->
-<section class="view" data-view="about" aria-label="About us">
+<section class="view" data-view="about" data-n="01" aria-label="About us">
   <div class="inner">
     <div class="x-hero">
       <div class="txt">
@@ -427,7 +453,7 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
 </section>
 
 <!-- Our services (own page from 2026-10-27; was part of About us) -->
-<section class="view" data-view="services" aria-label="Our services">
+<section class="view" data-view="services" data-n="02" aria-label="Our services">
   <div class="inner">
     <div class="stack svc-wrap" id="svc" style="gap:1.6rem">
       <h2 class="display">Our Services</h2>
@@ -476,7 +502,7 @@ SOFTWARE.
 </section>
 
 <!-- Our clients -->
-<section class="view" data-view="clients" aria-label="Our clients">
+<section class="view" data-view="clients" data-n="03" aria-label="Our clients">
   <div class="inner">
     <div class="stack">
       <h2 class="display">Selected engagements</h2>
@@ -507,7 +533,7 @@ SOFTWARE.
 
 
 <!-- Contact -->
-<section class="view" data-view="contact" aria-label="Contact">
+<section class="view" data-view="contact" data-n="04" aria-label="Contact">
   <div class="contact">
     <div class="stack">
       <h2 class="display" data-pick="cta">Let's build something great together</h2>
@@ -547,6 +573,10 @@ SOFTWARE.
     </form>
   </div>
 </section>
+
+<div class="sep-pick" role="group" aria-label="Section style">Sections
+  <button type="button" data-sep="a">A Bands</button><button type="button" data-sep="b">B Chapters</button><button type="button" data-sep="c">C Sheets</button>
+</div>
 
 <script>
 // a back-to-top button at the very end of the page
@@ -605,15 +635,32 @@ function route() {
 addEventListener("hashchange", route);
 addEventListener("scroll", spy, { passive: true });
 addEventListener("resize", spy);
-// the logo always returns to the long page; the "Scroll" hint glides down it
+// the logo always returns to the long page
 document.addEventListener("click", e => {
-  const a = e.target.closest('a[href="#home"], a.scroll-cue'); if (!a) return;
+  const a = e.target.closest('a[href="#home"]'); if (!a) return;
   e.preventDefault();
-  if (a.classList.contains("scroll-cue")) return goTo("about");
   if (location.hash) history.pushState(null, "", location.pathname + location.search);
   route();
 });
 addEventListener("popstate", route);
+
+// ---------- section separation trial: A Bands, B Chapters, C Sheets ----------
+const sepBtns = document.querySelectorAll(".sep-pick button");
+function setSep(k) {
+  root.dataset.sep = k; sepBtns.forEach(b => b.setAttribute("aria-pressed", b.dataset.sep === k));
+  try { localStorage.setItem("bsl-sep", k); } catch (e) {}
+  hdrTone(); dispatchEvent(new Event("resize"));
+}
+// in A, the top bar turns pale while the brown band passes under it (light mode only; dark mode is already pale)
+function hdrTone() {
+  const band = document.querySelector('.view[data-view="clients"]'), r = band.getBoundingClientRect(), y = 40;
+  const pale = root.dataset.sep === "a" && root.dataset.nav === "scroll" && root.dataset.mode !== "dark" && r.top <= y && r.bottom > y;
+  if (pale) root.dataset.hdr = "pale"; else delete root.dataset.hdr;
+}
+addEventListener("scroll", hdrTone, { passive: true });
+sepBtns.forEach(b => b.addEventListener("click", () => setSep(b.dataset.sep)));
+let sep0 = "a"; try { sep0 = localStorage.getItem("bsl-sep") || "a"; } catch (e) {}
+setSep(sep0);
 
 // ---------- About us: a noisy line settles into a clean wave ----------
 const sig = document.getElementById("signal"), sc = sig.getContext("2d");
@@ -1035,6 +1082,8 @@ function applyMode(m, instant) {
   if (reduce) frame(performance.now());
 }
 toggle.addEventListener("click", () => applyMode(mode === "dark" ? "light" : "dark"));
+toggle.addEventListener("click", hdrTone);
+addEventListener("hashchange", hdrTone);
 
 // ---------- render loop ----------
 function resize() {
