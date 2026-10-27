@@ -558,13 +558,7 @@ const CONTACT_EMAIL = "enquire@blankstatelabs.com";
 document.getElementById("addr").textContent = CONTACT_EMAIL;
 
 // the shader still takes the old object and pointer inputs; the plain hero keeps them fixed
-const objNow = 0, mNow = [.7, .3], mTarget = [.7, .3];
-// the grain is alive: it swells toward the pointer (or finger), and moving or scrolling stirs it into ripples
-let stir = 0, lastScroll = scrollY;
-const aim = (x, y) => { const nx = x / innerWidth, ny = 1 - y / innerHeight; stir = Math.min(1, stir + Math.hypot(nx - mTarget[0], ny - mTarget[1]) * 2.5); mTarget[0] = nx; mTarget[1] = ny; };
-addEventListener("pointermove", e => aim(e.clientX, e.clientY), { passive: true });
-addEventListener("touchmove", e => { const t = e.touches[0]; if (t) aim(t.clientX, t.clientY); }, { passive: true });
-addEventListener("scroll", () => { stir = Math.min(1, stir + Math.abs(scrollY - lastScroll) / innerHeight * 1.2); lastScroll = scrollY; }, { passive: true });
+const objNow = 0, mNow = [.78, .62];
 
 // the top bar gets its background once the open page is scrolled
 
@@ -631,11 +625,11 @@ const smoothstep = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b
 let loomT0 = 0;
 const lerp = (a, b, k) => a + (b - a) * k;
 const ease = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
-// straightening (1.65s) and loosening (0.75s) both run at double their original pace (2026-10-27)
-const cyc = (t, len) => { const p = (t / len) % 1; return p < .12 ? 0 : p < .285 ? ease((p - .12) / .165) : p < .925 ? 1 : 1 - ease((p - .925) / .075); };
+// a 4.5s loop (2026-10-27): tangled 0.6s, straighten 1.65s, straight 0.6s, loosen 1.65s, so the change is seen again and again
+const cyc = (t, len) => { const p = (t / len) % 1; return p < .133 ? 0 : p < .5 ? ease((p - .133) / .367) : p < .633 ? 1 : 1 - ease((p - .633) / .367); };
 function sigDraw(now) {
   const cs = getComputedStyle(root), ink = cs.getPropertyValue("--ink-rgb").trim(), W = sW, H = sH, n = 9;
-  const t = reduce ? 6000 : now - loomT0, k = cyc(t, 10000);
+  const t = reduce ? 2500 : now - loomT0, k = cyc(t, 4500);
   // the loose curves can reach 1.4x their scale, so this keeps every tip inside the canvas with a little room
   const amp = (H * .5 - 4) / 1.4;
   sc.clearRect(0, 0, W, H);
@@ -974,9 +968,6 @@ void main(){
  vec3 low=mix(vec3(.55,.42,.32),vec3(.42,.31,.23),dark);
  float line=-.26+.64*x-calm*.4+.06*sin(x*3.1+tt*3.)+.035*sin(x*7.3-tt*5.);
  line+=(fbm(vec2(x*2.,tt))-.5)*.12;
- // the edge swells toward the pointer, more while it moves, with ripples running out from it (fol = how stirred it is)
- float mx=mix(m.x,1.-m.x,side), near=exp(-pow((x-mx)*a/.24,2.)), lift=smoothstep(.0,.6,1.-abs(m.y-line-.1));
- line+=near*(.025+.07*fol)*(.5+.5*lift)+fol*.022*near*sin((x-mx)*a*24.-t*6.);
  float d=uv.y-line;
  float v=smoothstep(0.,.3,d);
  vec3 col=mix(band,top,mix(v,step(grs(0.),v),.72));
@@ -1062,15 +1053,13 @@ function frame(now) {
   if (Math.abs(calmTarget - calmNow) < .002) calmNow = calmTarget;
   sideNow += (sideTarget - sideNow) * Math.min(1, dt * 2.2);
   if (Math.abs(sideTarget - sideNow) < .002) sideNow = sideTarget;
-  const ease = Math.min(1, dt * 4); mNow[0] += (mTarget[0] - mNow[0]) * ease; mNow[1] += (mTarget[1] - mNow[1]) * ease;
-  stir *= Math.exp(-dt * 1.4);
   if (gl) {
     gl.uniform2f(U.r, W, H);
     gl.uniform1f(U.t, reduce ? 12 : (now - t0) / 1000);
     gl.uniform1f(U.dark, darkNow);
     gl.uniform1f(U.obj, objNow);
     gl.uniform1f(U.calm, calmNow);
-    gl.uniform1f(U.fol, reduce ? 0 : stir);
+    gl.uniform1f(U.fol, 0);
     gl.uniform1f(U.side, sideNow);
     gl.uniform2f(U.m, mNow[0], mNow[1]);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
