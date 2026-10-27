@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Blank State Labs is a software engineering & consultancy firm based in the Kingdom of Bahrain.">
 <title>Blank State Labs</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%2210%2014%2080%2080%22%3E%3Cstyle%3Epath%7Bfill%3A%23201813%3Bstroke%3A%23201813%7D%40media%20%28prefers-color-scheme%3Adark%29%7Bpath%7Bfill%3A%23efe7dc%3Bstroke%3A%23efe7dc%7D%7D%3C/style%3E%3Cpath%20d%3D%22M30%2076A20%2020%200%200%201%2070%2076Z%22%20stroke%3D%22none%22/%3E%3Cpath%20d%3D%22M15%2076A35%2035%200%200%201%2085%2076%22%20fill%3D%22none%22%20stroke-linecap%3D%22round%22%20stroke-width%3D%2210%22/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%2210%2014%2080%2080%22%3E%3Cstyle%3Epath%7Bfill%3A%23201813%3Bstroke%3A%23201813%7D%40media%20%28prefers-color-scheme%3Adark%29%7Bpath%7Bfill%3A%23efe7dc%3Bstroke%3A%23efe7dc%7D%7D%3C/style%3E%3Cpath%20d%3D%22M30%2076A20%2020%200%200%201%2070%2076Z%22%20stroke%3D%22none%22/%3E%3Cpath%20d%3D%22M15%2076A35%2035%200%200%201%2085%2076%22%20fill%3D%22none%22%20stroke-linecap%3D%22butt%22%20stroke-width%3D%2210%22/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Hanken+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400&display=swap">
@@ -84,12 +84,20 @@ header.top { position: fixed; top: 0; left: 0; right: 0; z-index: 5; display: fl
 :root[data-view="contact"] .cta-slot { display: none; }
 
 /* ---------- views ---------- */
-.view { position: relative; min-height: 100vh; min-height: 100svh; overflow-x: hidden; display: none; opacity: 0; transition: opacity .5s ease;
-  padding: calc(env(safe-area-inset-top, 0px) + 112px) var(--gutter) calc(env(safe-area-inset-bottom, 0px) + 110px); }
-.view { box-sizing: border-box; }
-.view.on { display: block; }
-.view.in { opacity: 1; }
-.view.home.on { display: flex; flex-direction: column; justify-content: center; }
+/* one scrolling page (2026-10-27): every page follows the hero; the tabs glide to each section */
+.view { position: relative; overflow-x: hidden; display: block; box-sizing: border-box;
+  padding: calc(env(safe-area-inset-top, 0px) + 112px) var(--gutter) clamp(40px, 6vw, 80px); }
+.view.home { min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; justify-content: center; }
+.view[data-view="contact"] { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 110px); }
+/* a quiet cue at the foot of the hero that there is more below */
+.scroll-cue { position: absolute; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 28px); transform: translateX(-50%); display: grid; justify-items: center; gap: 10px;
+  font-size: .62rem; font-weight: 500; letter-spacing: .2em; text-transform: uppercase; color: #fff; mix-blend-mode: difference; text-decoration: none; opacity: .8; transition: opacity .4s ease; }
+/* (white with "difference" blending reads dark on the pale sky and pale on the dark grain) */
+.scroll-cue:hover { opacity: 1; }
+.scroll-cue i { display: block; width: 1px; height: 38px; background: currentColor; opacity: .5; transform-origin: top; animation: cue 2.6s var(--ease) infinite; }
+@keyframes cue { 0% { transform: scaleY(0); } 45% { transform: scaleY(1); transform-origin: top; } 55% { transform: scaleY(1); transform-origin: bottom; } 100% { transform: scaleY(0); transform-origin: bottom; } }
+:root:not([data-view="home"]) .scroll-cue { opacity: 0; pointer-events: none; }
+@media (prefers-reduced-motion: reduce) { .scroll-cue i { animation: none; } }
 
 .eyebrow { font-size: .72rem; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); margin: 0 0 1.4rem; }
 .display { font-family: var(--f-display); font-weight: 400; font-size: clamp(2.2rem, 5vw, 4.6rem); line-height: 1.05; letter-spacing: .01em; margin: 0; text-wrap: balance; }
@@ -191,6 +199,79 @@ svg.jaba { fill: currentColor; display: block; }
 .f-ctiles.jaba-right > div:first-child svg.jaba { width: 80px; height: 80px; }
 .f-ctiles.jaba-bare > div:first-child { background: none; border-color: transparent; color: inherit; }
 @media (max-width: 860px) { .f-ctiles { grid-template-columns: minmax(0, 1fr); } .f-ctiles > div { min-height: 0; } }
+/* Our clients (2026-10-27): the client's name heads a set of engagement cards. Four card layouts on trial, switched by root data-cl. */
+.client { display: grid; gap: clamp(22px, 3vw, 34px); }
+.client-head { display: flex; align-items: center; gap: 18px; }
+.client-head svg.jaba { width: 56px; height: 56px; }
+.client-head .svc-name { font-size: clamp(1.6rem, 2.6vw, 2.2rem); }
+.egs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.eg { border: 1px solid var(--line); background: color-mix(in srgb, var(--ink) 7%, var(--page)); padding: clamp(22px, 3vw, 32px); display: grid; gap: .9rem; align-content: start; position: relative; }
+.eg svg.ic { width: 30px; height: 30px; fill: none; stroke: currentColor; stroke-width: 1.1; stroke-linecap: round; stroke-linejoin: round; }
+.eg .eg-tag { font-size: .66rem; font-weight: 500; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+.eg .eg-n { font-family: var(--f-display); font-size: clamp(2.6rem, 4vw, 3.6rem); line-height: 1; display: none; }
+.eg .svc-name { font-size: clamp(1.25rem, 1.8vw, 1.55rem); }
+@media (max-width: 860px) { .egs { grid-template-columns: minmax(0, 1fr); } .egs .eg { min-height: 0 !important; } }
+/* A Numbered: a large serif number, a hairline, then the title; the label sits at the foot */
+:root[data-cl="num"] .eg { grid-template-rows: auto auto auto 1fr auto; min-height: 330px; }
+:root[data-cl="num"] .eg .eg-n { display: block; padding-bottom: 1.1rem; border-bottom: 1px solid var(--line); margin-bottom: .4rem; }
+:root[data-cl="num"] .eg svg.ic { display: none; }
+:root[data-cl="num"] .eg .eg-tag { order: 9; align-self: end; padding-top: 1rem; }
+/* B Ledger: no boxes, one engagement per row across the page, split by hairlines */
+:root[data-cl="ledger"] .egs { grid-template-columns: minmax(0, 1fr); gap: 0; border-top: 1px solid var(--ink); }
+:root[data-cl="ledger"] .eg { background: none; border: 0; border-bottom: 1px solid var(--line); padding: clamp(22px, 3vw, 34px) 0;
+  grid-template-columns: minmax(70px, .35fr) minmax(0, 1.3fr) minmax(0, 1.4fr); column-gap: clamp(20px, 4vw, 60px); align-items: baseline; }
+:root[data-cl="ledger"] .eg svg.ic { display: none; }
+:root[data-cl="ledger"] .eg .eg-n { display: block; font-size: 1rem; font-family: var(--f-mono); color: var(--muted); grid-column: 1; grid-row: 1; }
+:root[data-cl="ledger"] .eg .eg-tag { grid-column: 1; grid-row: 2; }
+:root[data-cl="ledger"] .eg .svc-name { grid-column: 2; grid-row: 1 / span 2; font-size: clamp(1.5rem, 2.4vw, 2.1rem); }
+:root[data-cl="ledger"] .eg .svc-desc { grid-column: 3; grid-row: 1 / span 2; }
+@media (max-width: 860px) { :root[data-cl="ledger"] .eg { grid-template-columns: minmax(0, 1fr); } :root[data-cl="ledger"] .eg > * { grid-column: 1 !important; grid-row: auto !important; } }
+/* C Corner icon: the title leads, a larger icon in the top corner, the label under a hairline at the foot */
+:root[data-cl="corner"] .eg { grid-template-rows: auto 1fr auto; min-height: 300px; padding-right: clamp(70px, 7vw, 90px); }
+:root[data-cl="corner"] .eg svg.ic { position: absolute; top: clamp(22px, 3vw, 32px); right: clamp(22px, 3vw, 32px); width: 40px; height: 40px; stroke-width: .9; }
+:root[data-cl="corner"] .eg .svc-name { order: 1; font-size: clamp(1.4rem, 2vw, 1.75rem); }
+:root[data-cl="corner"] .eg .svc-desc { order: 2; }
+:root[data-cl="corner"] .eg .eg-tag { order: 3; align-self: end; border-top: 1px solid var(--line); padding-top: 1rem; margin-right: calc(-1 * clamp(48px, 4vw, 58px)); }
+/* D Stacked: full-width cards, the icon in a ring on the left, the words on the right */
+:root[data-cl="stack"] .egs { grid-template-columns: minmax(0, 1fr); }
+:root[data-cl="stack"] .eg { grid-template-columns: auto minmax(0, 1fr); column-gap: clamp(20px, 3vw, 40px); row-gap: .6rem; align-items: start; }
+:root[data-cl="stack"] .eg svg.ic { grid-row: 1 / span 3; width: 64px; height: 64px; padding: 16px; border: 1px solid var(--line); border-radius: 50%; box-sizing: border-box; stroke-width: 1.2; }
+:root[data-cl="stack"] .eg .svc-desc { max-width: 70ch; }
+:root[data-cl="stack"] .eg > :not(svg) { grid-column: 2; }
+
+/* "precision." (2026-10-27): the word carries a mark of precision. Five treatments on trial, switched by root data-prec. Marks draw in once when About us comes into view (.prec.go). */
+.prec { position: relative; display: inline-block; white-space: nowrap; }
+.prec .pd { position: relative; display: inline-block; }
+.prec .pm { position: absolute; pointer-events: none; display: none; color: var(--accent); }
+.prec .pm svg { display: block; width: 100%; height: 100%; overflow: visible; fill: none; stroke: currentColor; stroke-width: 1.2; vector-effect: non-scaling-stroke; }
+/* 1 Bullseye: the full stop becomes a small target */
+:root[data-prec="eye"] .prec .pd { color: transparent; margin-left: .1em; }
+:root[data-prec="eye"] .prec .m-eye { display: block; width: .5em; height: .5em; left: 50%; bottom: .01em; transform: translateX(-50%); color: var(--ink); }
+.m-eye .r1, .m-eye .r2 { transform-origin: 50% 50%; transform-box: fill-box; }
+.m-eye .dot { fill: currentColor; stroke: none; }
+:root[data-prec="eye"] .prec.go .m-eye .r1 { animation: ring 1.2s var(--ease) .1s both; }
+:root[data-prec="eye"] .prec.go .m-eye .r2 { animation: ring 1.2s var(--ease) .3s both; }
+@keyframes ring { from { transform: scale(2.4); opacity: 0; } to { transform: none; opacity: 1; } }
+/* 2 Reticle: fine cross-hairs centred on the full stop */
+:root[data-prec="reticle"] .prec .m-ret { display: block; width: .9em; height: .9em; left: 50%; bottom: -.23em; transform: translateX(-50%); }
+:root[data-prec="reticle"] .prec.go .m-ret svg { animation: spin-in 1.3s var(--ease) both; }
+@keyframes spin-in { from { transform: rotate(-90deg) scale(1.6); opacity: 0; } to { transform: none; opacity: 1; } }
+/* 3 Focus frame: four corner marks close in around the word */
+:root[data-prec="frame"] .prec .m-frame { display: block; inset: .2em -.16em -.12em -.12em; }
+.m-frame b { position: absolute; width: .2em; height: .2em; border: 0 solid currentColor; }
+.m-frame b:nth-child(1) { top: 0; left: 0; border-width: 1px 0 0 1px; } .m-frame b:nth-child(2) { top: 0; right: 0; border-width: 1px 1px 0 0; }
+.m-frame b:nth-child(3) { bottom: 0; left: 0; border-width: 0 0 1px 1px; } .m-frame b:nth-child(4) { bottom: 0; right: 0; border-width: 0 1px 1px 0; }
+:root[data-prec="frame"] .prec.go .m-frame { animation: focus-in 1.1s var(--ease) both; }
+@keyframes focus-in { from { inset: -.25em -.5em -.45em -.46em; opacity: 0; } to { inset: .2em -.16em -.12em -.12em; opacity: 1; } }
+/* 4 Caliper: a measured line under the word, with end stops and a centre tick */
+:root[data-prec="caliper"] .prec .m-cal { display: block; left: .02em; right: .02em; bottom: -.2em; height: .16em; }
+:root[data-prec="caliper"] .prec.go .m-cal svg { animation: measure 1.2s var(--ease) both; transform-origin: 50% 50%; }
+@keyframes measure { from { transform: scaleX(0); } to { transform: none; } }
+/* 5 Plumb line: a fine line drops onto the full stop */
+:root[data-prec="plumb"] .prec .m-plumb { display: block; width: 1px; left: 50%; bottom: .14em; height: .95em; transform: translateX(-.5px); background: currentColor; transform-origin: top; }
+:root[data-prec="plumb"] .prec.go .m-plumb { animation: drop 1.1s var(--ease) both; }
+@keyframes drop { from { transform: translateX(-.5px) scaleY(0); } to { transform: translateX(-.5px); } }
+@media (prefers-reduced-motion: reduce) { .prec .pm, .prec .pm svg, .prec .pm circle { animation: none !important; } }
 
 /* contact */
 .contact { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: clamp(32px, 6vw, 96px); max-width: 1240px; }
@@ -273,9 +354,20 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
   .right, .tabs { gap: 10px; }
   .principles, .pair { grid-template-columns: minmax(0, 1fr); }
   .view { padding-top: calc(env(safe-area-inset-top, 0px) + 92px); }
+  .view.home { padding-top: calc(env(safe-area-inset-top, 0px) + 92px); }
   .cta-slot .cta { font-size: .6rem; letter-spacing: .08em; padding: 7px 10px; }
 }
 @media (max-width: 600px) { :root:not([data-view="home"]) .brand .name { display: none; } }
+/* preview only: the option switcher */
+.pv-pick { position: fixed; right: 12px; bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); z-index: 6; display: flex; flex-direction: column; align-items: flex-end; gap: 5px; padding: 6px 30px 6px 6px; border-radius: 18px;
+  background: var(--chrome-bg); color: var(--chrome-fg); font-size: .6rem; letter-spacing: .1em; text-transform: uppercase; box-shadow: 0 8px 30px rgba(0,0,0,.25); }
+.pv-pick.hide { display: none; }
+.pv-pick div { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; justify-content: flex-end; }
+.pv-pick span { padding: 0 6px; color: var(--chrome-dim); }
+.pv-pick button { appearance: none; border: 1px solid var(--chrome-line); background: none; color: inherit; font: inherit; letter-spacing: inherit; border-radius: 999px; padding: 6px 10px; cursor: pointer; white-space: nowrap; }
+.pv-pick button[aria-pressed="true"] { background: var(--chrome-fg); color: #181412; }
+.pv-pick .pv-x { position: absolute; top: 6px; right: 6px; border: 0; padding: 2px 6px; font-size: .9rem; }
+@media (max-width: 860px) { .pv-pick { left: 8px; right: 8px; align-items: center; } .pv-pick div { justify-content: center; } }
 /* tablets: a slightly smaller header so the name and three tabs fit side by side */
 @media (min-width: 641px) and (max-width: 860px) {
   .brand .name { font-size: .84rem; letter-spacing: .14em; }
@@ -302,7 +394,7 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
   <a class="brand" href="#home" aria-label="Blank State Labs, home">
     <span class="logo" aria-hidden="true">
       <!-- Scale: one scale from Abdulla's childhood drawing, a solid half circle with one curve around it (agency-setup/logo/scale-mark.svg) -->
-      <svg viewBox="14 40 72 40"><path d="M34 76A16 16 0 0 1 66 76Z" fill="currentColor"/><path d="M18 76A32 32 0 0 1 82 76" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="7"/></svg>
+      <svg viewBox="14 40 72 40"><path d="M34 76A16 16 0 0 1 66 76Z" fill="currentColor"/><path d="M18 76A32 32 0 0 1 82 76" fill="none" stroke="currentColor" stroke-linecap="butt" stroke-width="7"/></svg>
     </span>
     <span class="name">Blank State Labs</span>
   </a>
@@ -322,6 +414,7 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
       <span class="dim">Est. 2026</span>
     </div>
   </div>
+  <a class="scroll-cue" href="#about">Scroll<i aria-hidden="true"></i></a>
 </main>
 
 <!-- About us -->
@@ -329,7 +422,7 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
   <div class="inner">
     <div class="x-hero">
       <div class="txt">
-        <h2 class="display">Engineering for organisations that expect precision.</h2>
+        <h2 class="display">Engineering for organisations that expect <span class="prec">precision<span class="pd">.<span class="pm m-eye" aria-hidden="true"><svg viewBox="0 0 20 20"><circle class="r1" cx="10" cy="10" r="9"/><circle class="r2" cx="10" cy="10" r="5.6"/><circle class="dot" cx="10" cy="10" r="2.4"/></svg></span><span class="pm m-ret" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M10 0v7M10 13v7M0 10h7M13 10h7"/><circle cx="10" cy="10" r="6.2"/></svg></span><span class="pm m-plumb" aria-hidden="true"></span></span><span class="pm m-frame" aria-hidden="true"><b></b><b></b><b></b><b></b></span><span class="pm m-cal" aria-hidden="true"><svg viewBox="0 0 100 10" preserveAspectRatio="none"><path d="M0 0v10M100 0v10M0 5h100M50 2v6"/></svg></span></span></h2>
       </div>
       <div class="duo">
         <div><p class="lede">Blank State Labs is a Bahrain-based software engineering and consultancy firm specialising in AI automation, intelligent systems and bespoke software. We advise, architect, engineer, audit and test end to end, with every engagement held to the highest standard.</p><button type="button" class="jump" data-go="services">See what we do</button></div>
@@ -396,10 +489,13 @@ SOFTWARE.
     <div class="stack">
       <h2 class="display">Selected engagements</h2>
     </div>
-    <div class="f-ctiles jaba-bare">
-      <div><svg class="jaba" role="img" aria-label="Jaba logo"><use href="#jaba" width="100%" height="100%"/></svg><h3 class="svc-name">Jaba</h3></div>
-      <div><svg class="ic" aria-hidden="true"><use href="#i-web"/></svg><span class="mono">Web</span><h3 class="svc-name">Corporate website</h3><p class="svc-desc">Design and engineering of the company's public website, with ongoing maintenance and support.</p></div>
-      <div><svg class="ic" aria-hidden="true"><use href="#i-layers"/></svg><span class="mono">System</span><h3 class="svc-name">Back-of-house platform</h3><p class="svc-desc">An internal operations system used by the team to manage day-to-day activity behind the scenes.</p></div>
+    <div class="client">
+      <div class="client-head"><svg class="jaba" role="img" aria-label="Jaba logo"><use href="#jaba" width="100%" height="100%"/></svg><h3 class="svc-name">Jaba</h3></div>
+      <div class="egs">
+        <article class="eg"><span class="eg-n">01</span><svg class="ic" aria-hidden="true"><use href="#i-web"/></svg><span class="eg-tag">Web</span><h3 class="svc-name">Corporate website</h3><p class="svc-desc">Design and engineering of the company's public website, with ongoing maintenance and support.</p></article>
+        <article class="eg"><span class="eg-n">02</span><svg class="ic" aria-hidden="true"><use href="#i-layers"/></svg><span class="eg-tag">System</span><h3 class="svc-name">Internal operations system</h3><p class="svc-desc">A bespoke platform the team uses to run and manage day-to-day operations behind the scenes.</p></article>
+        <article class="eg"><span class="eg-n">03</span><svg class="ic" aria-hidden="true"><use href="#i-advise"/></svg><span class="eg-tag">Advisory</span><h3 class="svc-name">Technical advisory and continued engineering</h3><p class="svc-desc">Retained as technical advisor, guiding technology decisions while continuing to develop the website and internal operations system, with ad hoc engineering support as needs arise.</p></article>
+      </div>
     </div>
   </div>
 </section>
@@ -413,9 +509,13 @@ SOFTWARE.
   <symbol id="i-layers" viewBox="0 0 24 24"><path class="a-lay" style="--dy:-1.8px" d="M12 3 2.5 8 12 13l9.5-5z"/><path class="a-lay" style="--dy:-.8px" d="M2.5 12 12 17l9.5-5"/><path d="M2.5 16 12 21l9.5-5"/></symbol>
   <symbol id="i-link" viewBox="0 0 24 24"><circle cx="5" cy="12" r="2.4"/><circle cx="19" cy="5" r="2.4"/><circle cx="19" cy="19" r="2.4"/><path class="a-wire" pathLength="1" d="M7.2 11 16.8 6"/><path class="a-wire" pathLength="1" style="--w:.6s" d="M7.2 13l9.6 5"/></symbol>
   <symbol id="i-app" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="1.5"/><path d="M3 8.5h18"/><path class="a-type" pathLength="1" d="M7 13h6"/><path class="a-type" pathLength="1" style="--w:.7s" d="M7 16h4"/></symbol>
+  <symbol id="i-advise" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15.2 8.8 13.4 13.4 8.8 15.2 10.6 10.6z"/><circle cx="12" cy="12" r=".9"/></symbol>
   <symbol id="i-web" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path class="a-mer" d="M12 3c2.5 2.6 3.7 5.6 3.7 9s-1.2 6.4-3.7 9c-2.5-2.6-3.7-5.6-3.7-9S9.5 5.6 12 3z"/></symbol>
 </svg>
 
+
+<!-- preview only: pick a card layout for Our clients and a treatment for "precision" -->
+<div class="pv-pick"><div data-k="cl"><span>Cards</span><button type="button" data-v="num">A · Numbered</button><button type="button" data-v="ledger">B · Ledger</button><button type="button" data-v="corner">C · Corner icon</button><button type="button" data-v="stack">D · Stacked</button></div><div data-k="prec"><span>Precision</span><button type="button" data-v="eye">1 · Bullseye</button><button type="button" data-v="reticle">2 · Reticle</button><button type="button" data-v="frame">3 · Focus frame</button><button type="button" data-v="caliper">4 · Caliper</button><button type="button" data-v="plumb">5 · Plumb line</button></div><button type="button" class="pv-x" aria-label="Hide options">×</button></div>
 
 <!-- Contact -->
 <section class="view" data-view="contact" aria-label="Contact">
@@ -460,8 +560,8 @@ SOFTWARE.
 </section>
 
 <script>
-// a back-to-top button at the foot of each inner page
-document.querySelectorAll('.view:not(.home)').forEach(v => v.insertAdjacentHTML("beforeend", '<button type="button" class="totop"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M5 9V1M1.5 4.5 5 1l3.5 3.5"/></svg>Back to top</button>'));
+// a back-to-top button at the very end of the page
+document.querySelectorAll('.view[data-view="contact"]').forEach(v => v.insertAdjacentHTML("beforeend", '<button type="button" class="totop"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M5 9V1M1.5 4.5 5 1l3.5 3.5"/></svg>Back to top</button>'));
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const root = document.documentElement;
 // Change this one line to change the contact address everywhere on the page.
@@ -477,20 +577,41 @@ const objNow = 0, mNow = [.78, .62];
 const views = document.querySelectorAll(".view");
 const tabLinks = document.querySelectorAll(".tabs a");
 let calmTarget = 0, calmNow = 0, sideTarget = 0, sideNow = 0;
-function route() {
-  const name = (location.hash || "#home").slice(1);
-  const target = document.querySelector(`.view[data-view="${name}"]`) ? name : "home";
-  root.dataset.view = target;
-  views.forEach(v => {
-    if (v.dataset.view === target) { v.classList.add("on"); scrollTo(0, 0); requestAnimationFrame(() => requestAnimationFrame(() => v.classList.add("in"))); }
-    else v.classList.remove("on", "in");
-  });
-  tabLinks.forEach(a => { if (a.getAttribute("href") === "#" + target) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
-  calmTarget = target === "home" ? 0 : 1;
-  sideTarget = 0;
+// the open section is whichever one crosses a line a third of the way down the screen
+function setView(name) {
+  if (root.dataset.view === name) return;
+  root.dataset.view = name;
+  tabLinks.forEach(a => { if (a.getAttribute("href") === "#" + name) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
+  calmTarget = name === "home" ? 0 : 1;
   if (reduce) { calmNow = calmTarget; frame(performance.now()); }
+  history.replaceState(null, "", name === "home" ? location.pathname + location.search : "#" + name);
+  dispatchEvent(new Event("viewchange"));
 }
-addEventListener("hashchange", route);
+function spy() {
+  const line = innerHeight * .34; let name = "home";
+  views.forEach(v => { if (v.getBoundingClientRect().top <= line) name = v.dataset.view; });
+  // at the very bottom the last section counts as open, even if it is short
+  if (innerHeight + scrollY >= document.documentElement.scrollHeight - 4) name = views[views.length - 1].dataset.view;
+  setView(name);
+}
+function goTo(name, smooth = true) {
+  const v = document.querySelector(`.view[data-view="${name}"]`);
+  const top = !v || name === "home" ? 0 : v.getBoundingClientRect().top + scrollY;
+  scrollTo({ top, behavior: smooth && !reduce ? "smooth" : "auto" });
+}
+function route() { goTo((location.hash || "#home").slice(1), false); spy(); }
+// web fonts can shift the page once they arrive, so an opening link to a section is re-aimed after that
+if (document.fonts) document.fonts.ready.then(() => { if (location.hash) route(); });
+addEventListener("hashchange", () => goTo((location.hash || "#home").slice(1)));
+addEventListener("scroll", spy, { passive: true });
+addEventListener("resize", spy);
+// links to a section glide there, even when the address already shows it
+document.addEventListener("click", e => {
+  const a = e.target.closest('a[href^="#"]'); if (!a) return;
+  const name = a.getAttribute("href").slice(1);
+  if (!document.querySelector(`.view[data-view="${name}"]`)) return;
+  e.preventDefault(); goTo(name);
+});
 
 // ---------- About us: a noisy line settles into a clean wave ----------
 const sig = document.getElementById("signal"), sc = sig.getContext("2d");
@@ -521,10 +642,25 @@ function sigDraw(now) {
     sc.strokeStyle = j === 4 ? `rgba(${ink},.9)` : `rgba(${ink},.38)`; sc.lineWidth = j === 4 ? 1.2 : 1; sc.stroke();
   }
 }
-function sigLoop(t) { if (root.dataset.view !== "about") { sRun = false; return; } sigDraw(reduce ? 9000 : t); if (reduce) { sRun = false; return; } requestAnimationFrame(sigLoop); }
-function sigStart() { if (root.dataset.view !== "about") return; sigSize(); if (!sRun) { sRun = true; loomT0 = performance.now(); requestAnimationFrame(sigLoop); } }
-addEventListener("hashchange", () => setTimeout(sigStart, 30));
-addEventListener("resize", () => { if (root.dataset.view === "about") { sigSize(); if (reduce) sigDraw(9000); } });
+let sigSeen = false;
+function sigLoop(t) { if (!sigSeen) { sRun = false; return; } sigDraw(reduce ? 9000 : t); if (reduce) { sRun = false; return; } requestAnimationFrame(sigLoop); }
+function sigStart() { if (!sigSeen) return; sigSize(); if (!sRun) { sRun = true; loomT0 = performance.now(); requestAnimationFrame(sigLoop); } }
+new IntersectionObserver(([e]) => { sigSeen = e.isIntersecting; sigStart(); }).observe(sig);
+addEventListener("resize", () => { if (sigSeen) { sigSize(); if (reduce) sigDraw(9000); } });
+
+// ---------- "precision.": the mark draws in when the headline comes into view ----------
+(() => {
+  const w = document.querySelector(".prec");
+  new IntersectionObserver(([e]) => { if (e.isIntersecting) { w.classList.remove("go"); void w.offsetWidth; w.classList.add("go"); } }, { threshold: .6 }).observe(w);
+})();
+
+// ---------- preview only: option switcher ----------
+document.querySelectorAll(".pv-pick [data-k]").forEach(g => {
+  const set = v => { root.dataset[g.dataset.k] = v; g.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.dataset.v === v)); if (g.dataset.k === "prec") { const w = document.querySelector(".prec"); w.classList.remove("go"); void w.offsetWidth; w.classList.add("go"); } };
+  g.addEventListener("click", e => { const b = e.target.closest("button"); if (b) set(b.dataset.v); });
+  set(g.querySelector("button").dataset.v);
+});
+document.querySelector(".pv-x").addEventListener("click", () => document.querySelector(".pv-pick").classList.add("hide"));
 
 // ---------- service icons: copy each symbol in, so its parts can animate ----------
 document.querySelectorAll(".f-tiles svg.ic").forEach(svg => {
@@ -535,25 +671,22 @@ document.querySelectorAll(".f-tiles svg.ic").forEach(svg => {
 
 // ---------- back to top ----------
 function topCheck() {
-  const v = document.querySelector(".view.on"), b = v && v.querySelector(".totop");
+  const b = document.querySelector(".totop");
   if (!b) return;
   const scrolled = scrollY > 160, atEnd = scrollY + innerHeight >= document.documentElement.scrollHeight - 60;
   b.classList.toggle("show", scrolled && atEnd);
 }
 addEventListener("scroll", topCheck, { passive: true });
 addEventListener("resize", topCheck);
-addEventListener("hashchange", () => setTimeout(topCheck, 60));
 document.querySelectorAll(".totop").forEach(b => b.addEventListener("click", () => scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" })));
 
 // ---------- About us: text links down to Services and Pillars ----------
 (() => {
-  // both open Our services; "See how we work" then glides down to the Pillars
+  // "See what we do" glides to Our services, "See how we work" to the Pillars
   document.querySelectorAll(".jump[data-go]").forEach(b => b.addEventListener("click", () => {
-    location.hash = "services";
-    if (b.dataset.go === "pillars") setTimeout(() => {
-      const el = document.getElementById("pillars");
-      scrollTo({ top: el.getBoundingClientRect().top + scrollY - 96, behavior: reduce ? "auto" : "smooth" });
-    }, 350);
+    if (b.dataset.go === "services") return goTo("services");
+    const el = document.getElementById("pillars");
+    scrollTo({ top: el.getBoundingClientRect().top + scrollY - 96, behavior: reduce ? "auto" : "smooth" });
   }));
 })();
 
@@ -623,13 +756,11 @@ document.getElementById("enquiry").addEventListener("submit", e => {
 // ---------- grain follows Our services: left while the service cards are in view, right again at Our Pillars ----------
 const svcView = document.querySelector('section[data-view="services"]'), svcWrap = svcView.querySelector(".svc-wrap"), pillars = svcView.querySelector(".pillars");
 const sideCheck = () => {
-  if (root.dataset.view !== "services") return;
   const line = innerHeight * .55;
   sideTarget = svcWrap.getBoundingClientRect().top < line && pillars.getBoundingClientRect().top > line ? 1 : 0;
   if (reduce) { sideNow = sideTarget; frame(performance.now()); }
 };
 addEventListener("scroll", sideCheck, { passive: true });
-addEventListener("hashchange", () => setTimeout(sideCheck, 60));
 
 // ---------- background ----------
 const glc = document.getElementById("gl");
@@ -860,7 +991,7 @@ const toggle = document.querySelector(".tg");
 function applyMode(m, instant) {
   mode = m;
   root.dataset.mode = m;
-  if (reduce && root.dataset.view === "about") setTimeout(() => sigDraw(9000), 30);
+  if (reduce && sigSeen) setTimeout(() => sigDraw(9000), 30);
   darkTarget = m === "dark" ? 1 : 0;
   if (instant || reduce) darkNow = darkTarget;
   toggle.setAttribute("aria-label", m === "dark" ? "Switch to light mode" : "Switch to dark mode");
@@ -904,7 +1035,6 @@ addEventListener("resize", () => { resize(); if (reduce) frame(performance.now()
 applyMode(mode, true);
 route();
 setTimeout(sideCheck, 60);
-setTimeout(sigStart, 30);
 calmNow = calmTarget;
 requestAnimationFrame(frame);
 </script>
@@ -924,10 +1054,8 @@ requestAnimationFrame(frame);
     page.querySelectorAll(sel).forEach((el, i) => { el.classList.add("rvl", kind); el.style.setProperty("--d", (i % 4) * .09 + "s"); els.push(el); }));
   // checked by position on scroll, so the blur and clip can't hide an element from the check
   const check = () => { const lim = innerHeight * .92; els.forEach(el => { if (!el.classList.contains("shown") && el.getBoundingClientRect().top < lim) el.classList.add("shown"); }); };
-  addEventListener("scroll", () => { if (root.dataset.view === "services") check(); }, { passive: true });
-  const arm = () => { els.forEach(el => el.classList.remove("shown")); requestAnimationFrame(() => requestAnimationFrame(check)); };
-  addEventListener("hashchange", () => { if (location.hash === "#services") arm(); });
-  arm();
+  addEventListener("scroll", check, { passive: true });
+  requestAnimationFrame(() => requestAnimationFrame(check));
 })();
 </script>
 </body>
