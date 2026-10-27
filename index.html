@@ -88,6 +88,10 @@ header.top { position: fixed; top: 0; left: 0; right: 0; z-index: 5; display: fl
 .view { position: relative; overflow-x: hidden; display: block; box-sizing: border-box;
   padding: calc(env(safe-area-inset-top, 0px) + 112px) var(--gutter) clamp(40px, 6vw, 80px); }
 .view.home { min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; justify-content: center; }
+/* a section opened from a tab stands alone as its own page */
+:root[data-nav="page"] .view:not(.on) { display: none; }
+:root[data-nav="page"] .view.on { min-height: 100vh; min-height: 100svh; animation: page-in .5s var(--ease) both; }
+@keyframes page-in { from { opacity: 0; } to { opacity: 1; } }
 .view[data-view="contact"] { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 110px); }
 /* a quiet cue at the foot of the hero that there is more below */
 .scroll-cue { position: absolute; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 28px); transform: translateX(-50%); display: grid; justify-items: center; gap: 10px;
@@ -198,80 +202,35 @@ svg.jaba { fill: currentColor; display: block; }
 .f-ctiles.jaba-right > div:first-child { grid-auto-flow: column; align-items: center; gap: 1.4rem; text-align: left; }
 .f-ctiles.jaba-right > div:first-child svg.jaba { width: 80px; height: 80px; }
 .f-ctiles.jaba-bare > div:first-child { background: none; border-color: transparent; color: inherit; }
-@media (max-width: 860px) { .f-ctiles { grid-template-columns: minmax(0, 1fr); } .f-ctiles > div { min-height: 0; } }
-/* Our clients (2026-10-27): the client's name heads a set of engagement cards. Four card layouts on trial, switched by root data-cl. */
-.client { display: grid; gap: clamp(22px, 3vw, 34px); }
-.client-head { display: flex; align-items: center; gap: 18px; }
-.client-head svg.jaba { width: 56px; height: 56px; }
-.client-head .svc-name { font-size: clamp(1.6rem, 2.6vw, 2.2rem); }
-.egs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-.eg { border: 1px solid var(--line); background: color-mix(in srgb, var(--ink) 7%, var(--page)); padding: clamp(22px, 3vw, 32px); display: grid; gap: .9rem; align-content: start; position: relative; }
-.eg svg.ic { width: 30px; height: 30px; fill: none; stroke: currentColor; stroke-width: 1.1; stroke-linecap: round; stroke-linejoin: round; }
-.eg .eg-tag { font-size: .66rem; font-weight: 500; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
-.eg .eg-n { font-family: var(--f-display); font-size: clamp(2.6rem, 4vw, 3.6rem); line-height: 1; display: none; }
-.eg .svc-name { font-size: clamp(1.25rem, 1.8vw, 1.55rem); }
-@media (max-width: 860px) { .egs { grid-template-columns: minmax(0, 1fr); } .egs .eg { min-height: 0 !important; } }
-/* A Numbered: a large serif number, a hairline, then the title; the label sits at the foot */
-:root[data-cl="num"] .eg { grid-template-rows: auto auto auto 1fr auto; min-height: 330px; }
-:root[data-cl="num"] .eg .eg-n { display: block; padding-bottom: 1.1rem; border-bottom: 1px solid var(--line); margin-bottom: .4rem; }
-:root[data-cl="num"] .eg svg.ic { display: none; }
-:root[data-cl="num"] .eg .eg-tag { order: 9; align-self: end; padding-top: 1rem; }
-/* B Ledger: no boxes, one engagement per row across the page, split by hairlines */
-:root[data-cl="ledger"] .egs { grid-template-columns: minmax(0, 1fr); gap: 0; border-top: 1px solid var(--ink); }
-:root[data-cl="ledger"] .eg { background: none; border: 0; border-bottom: 1px solid var(--line); padding: clamp(22px, 3vw, 34px) 0;
-  grid-template-columns: minmax(70px, .35fr) minmax(0, 1.3fr) minmax(0, 1.4fr); column-gap: clamp(20px, 4vw, 60px); align-items: baseline; }
-:root[data-cl="ledger"] .eg svg.ic { display: none; }
-:root[data-cl="ledger"] .eg .eg-n { display: block; font-size: 1rem; font-family: var(--f-mono); color: var(--muted); grid-column: 1; grid-row: 1; }
-:root[data-cl="ledger"] .eg .eg-tag { grid-column: 1; grid-row: 2; }
-:root[data-cl="ledger"] .eg .svc-name { grid-column: 2; grid-row: 1 / span 2; font-size: clamp(1.5rem, 2.4vw, 2.1rem); }
-:root[data-cl="ledger"] .eg .svc-desc { grid-column: 3; grid-row: 1 / span 2; }
-@media (max-width: 860px) { :root[data-cl="ledger"] .eg { grid-template-columns: minmax(0, 1fr); } :root[data-cl="ledger"] .eg > * { grid-column: 1 !important; grid-row: auto !important; } }
-/* C Corner icon: the title leads, a larger icon in the top corner, the label under a hairline at the foot */
-:root[data-cl="corner"] .eg { grid-template-rows: auto 1fr auto; min-height: 300px; padding-right: clamp(70px, 7vw, 90px); }
-:root[data-cl="corner"] .eg svg.ic { position: absolute; top: clamp(22px, 3vw, 32px); right: clamp(22px, 3vw, 32px); width: 40px; height: 40px; stroke-width: .9; }
-:root[data-cl="corner"] .eg .svc-name { order: 1; font-size: clamp(1.4rem, 2vw, 1.75rem); }
-:root[data-cl="corner"] .eg .svc-desc { order: 2; }
-:root[data-cl="corner"] .eg .eg-tag { order: 3; align-self: end; border-top: 1px solid var(--line); padding-top: 1rem; margin-right: calc(-1 * clamp(48px, 4vw, 58px)); }
-/* D Stacked: full-width cards, the icon in a ring on the left, the words on the right */
-:root[data-cl="stack"] .egs { grid-template-columns: minmax(0, 1fr); }
-:root[data-cl="stack"] .eg { grid-template-columns: auto minmax(0, 1fr); column-gap: clamp(20px, 3vw, 40px); row-gap: .6rem; align-items: start; }
-:root[data-cl="stack"] .eg svg.ic { grid-row: 1 / span 3; width: 64px; height: 64px; padding: 16px; border: 1px solid var(--line); border-radius: 50%; box-sizing: border-box; stroke-width: 1.2; }
-:root[data-cl="stack"] .eg .svc-desc { max-width: 70ch; }
-:root[data-cl="stack"] .eg > :not(svg) { grid-column: 2; }
+@media (max-width: 860px) { .f-ctiles, .f-ctiles.four { grid-template-columns: minmax(0, 1fr); } .f-ctiles > div { min-height: 0; } }
+/* Our clients (2026-10-27): the earlier tiles, now four across (Jaba + three engagements). Icon and label sit side by side; four looks on trial via root data-tag, two icon sets via data-icset. */
+.f-ctiles.four { grid-template-columns: minmax(0, .9fr) repeat(3, minmax(0, 1fr)); }
+@media (max-width: 1100px) and (min-width: 861px) { .f-ctiles.four { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 860px) { .f-ctiles.four { grid-template-columns: minmax(0, 1fr); } }
+.eg-head { display: flex; align-items: center; gap: 10px; margin-bottom: .3rem; }
+.eg-head svg.ic { width: 20px; height: 20px; }
+.eg-head .mono { letter-spacing: .14em; text-transform: uppercase; font-size: .68rem; }
+:root[data-icset="1"] .eg-head .s2, :root[data-icset="2"] .eg-head .s1 { display: none; }
+/* A Inline: small icon, then the label */
+/* B Pill: icon and label together in a hairline pill */
+:root[data-tag="pill"] .eg-head { justify-self: start; border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px 6px 10px; gap: 8px; }
+:root[data-tag="pill"] .eg-head svg.ic { width: 16px; height: 16px; }
+/* C Rule: icon on the left, a hairline running across, the label at the right edge */
+:root[data-tag="rule"] .eg-head .mono { order: 3; }
+:root[data-tag="rule"] .eg-head::after { content: ""; order: 2; flex: 1; height: 1px; background: var(--line); }
+/* D Boxed: a larger icon in a square outline, the label beside it */
+:root[data-tag="box"] .eg-head { gap: 14px; }
+:root[data-tag="box"] .eg-head svg.ic { width: 44px; height: 44px; padding: 11px; border: 1px solid var(--line); box-sizing: border-box; }
 
-/* "precision." (2026-10-27): the word carries a mark of precision. Five treatments on trial, switched by root data-prec. Marks draw in once when About us comes into view (.prec.go). */
-.prec { position: relative; display: inline-block; white-space: nowrap; }
-.prec .pd { position: relative; display: inline-block; }
-.prec .pm { position: absolute; pointer-events: none; display: none; color: var(--accent); }
-.prec .pm svg { display: block; width: 100%; height: 100%; overflow: visible; fill: none; stroke: currentColor; stroke-width: 1.2; vector-effect: non-scaling-stroke; }
-/* 1 Bullseye: the full stop becomes a small target */
-:root[data-prec="eye"] .prec .pd { color: transparent; margin-left: .1em; }
-:root[data-prec="eye"] .prec .m-eye { display: block; width: .5em; height: .5em; left: 50%; bottom: .01em; transform: translateX(-50%); color: var(--ink); }
-.m-eye .r1, .m-eye .r2 { transform-origin: 50% 50%; transform-box: fill-box; }
-.m-eye .dot { fill: currentColor; stroke: none; }
-:root[data-prec="eye"] .prec.go .m-eye .r1 { animation: ring 1.2s var(--ease) .1s both; }
-:root[data-prec="eye"] .prec.go .m-eye .r2 { animation: ring 1.2s var(--ease) .3s both; }
-@keyframes ring { from { transform: scale(2.4); opacity: 0; } to { transform: none; opacity: 1; } }
-/* 2 Reticle: fine cross-hairs centred on the full stop */
-:root[data-prec="reticle"] .prec .m-ret { display: block; width: .9em; height: .9em; left: 50%; bottom: -.23em; transform: translateX(-50%); }
-:root[data-prec="reticle"] .prec.go .m-ret svg { animation: spin-in 1.3s var(--ease) both; }
-@keyframes spin-in { from { transform: rotate(-90deg) scale(1.6); opacity: 0; } to { transform: none; opacity: 1; } }
-/* 3 Focus frame: four corner marks close in around the word */
-:root[data-prec="frame"] .prec .m-frame { display: block; inset: .2em -.16em -.12em -.12em; }
-.m-frame b { position: absolute; width: .2em; height: .2em; border: 0 solid currentColor; }
-.m-frame b:nth-child(1) { top: 0; left: 0; border-width: 1px 0 0 1px; } .m-frame b:nth-child(2) { top: 0; right: 0; border-width: 1px 1px 0 0; }
-.m-frame b:nth-child(3) { bottom: 0; left: 0; border-width: 0 0 1px 1px; } .m-frame b:nth-child(4) { bottom: 0; right: 0; border-width: 0 1px 1px 0; }
-:root[data-prec="frame"] .prec.go .m-frame { animation: focus-in 1.1s var(--ease) both; }
-@keyframes focus-in { from { inset: -.25em -.5em -.45em -.46em; opacity: 0; } to { inset: .2em -.16em -.12em -.12em; opacity: 1; } }
-/* 4 Caliper: a measured line under the word, with end stops and a centre tick */
-:root[data-prec="caliper"] .prec .m-cal { display: block; left: .02em; right: .02em; bottom: -.2em; height: .16em; }
-:root[data-prec="caliper"] .prec.go .m-cal svg { animation: measure 1.2s var(--ease) both; transform-origin: 50% 50%; }
-@keyframes measure { from { transform: scaleX(0); } to { transform: none; } }
-/* 5 Plumb line: a fine line drops onto the full stop */
-:root[data-prec="plumb"] .prec .m-plumb { display: block; width: 1px; left: 50%; bottom: .14em; height: .95em; transform: translateX(-.5px); background: currentColor; transform-origin: top; }
-:root[data-prec="plumb"] .prec.go .m-plumb { animation: drop 1.1s var(--ease) both; }
-@keyframes drop { from { transform: translateX(-.5px) scaleY(0); } to { transform: translateX(-.5px); } }
-@media (prefers-reduced-motion: reduce) { .prec .pm, .prec .pm svg, .prec .pm circle { animation: none !important; } }
+/* rotating word (2026-10-27): "precision." gives way to other words. The box keeps the widest word's width so the headline never reflows. Four animation styles on trial via root data-rw. */
+.rw { position: relative; display: inline-grid; white-space: nowrap; vertical-align: baseline; }
+.rw-size { grid-area: 1 / 1; visibility: hidden; display: inline-grid; }
+.rw-size > span { grid-area: 1 / 1; }
+.rw-stage { position: absolute; left: 0; top: 0; }
+.rw-stage .w { position: absolute; left: 0; top: 0; white-space: nowrap; }
+.rw-stage .ch { display: inline-block; white-space: pre; }
+.rw-stage.goo { filter: url(#rw-goo); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
 /* contact */
 .contact { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: clamp(32px, 6vw, 96px); max-width: 1240px; }
@@ -422,7 +381,7 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
   <div class="inner">
     <div class="x-hero">
       <div class="txt">
-        <h2 class="display">Engineering for organisations that expect <span class="prec">precision<span class="pd">.<span class="pm m-eye" aria-hidden="true"><svg viewBox="0 0 20 20"><circle class="r1" cx="10" cy="10" r="9"/><circle class="r2" cx="10" cy="10" r="5.6"/><circle class="dot" cx="10" cy="10" r="2.4"/></svg></span><span class="pm m-ret" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M10 0v7M10 13v7M0 10h7M13 10h7"/><circle cx="10" cy="10" r="6.2"/></svg></span><span class="pm m-plumb" aria-hidden="true"></span></span><span class="pm m-frame" aria-hidden="true"><b></b><b></b><b></b><b></b></span><span class="pm m-cal" aria-hidden="true"><svg viewBox="0 0 100 10" preserveAspectRatio="none"><path d="M0 0v10M100 0v10M0 5h100M50 2v6"/></svg></span></span></h2>
+        <h2 class="display">Engineering for organisations that expect <span class="sr">precision.</span><span class="rw" aria-hidden="true" data-words="precision.|clarity.|efficiency.|resilience.|integrity."><span class="rw-size"><span>precision.</span><span>clarity.</span><span>efficiency.</span><span>resilience.</span><span>integrity.</span></span><span class="rw-stage"></span></span></h2>
       </div>
       <div class="duo">
         <div><p class="lede">Blank State Labs is a Bahrain-based software engineering and consultancy firm specialising in AI automation, intelligent systems and bespoke software. We advise, architect, engineer, audit and test end to end, with every engagement held to the highest standard.</p><button type="button" class="jump" data-go="services">See what we do</button></div>
@@ -489,13 +448,11 @@ SOFTWARE.
     <div class="stack">
       <h2 class="display">Selected engagements</h2>
     </div>
-    <div class="client">
-      <div class="client-head"><svg class="jaba" role="img" aria-label="Jaba logo"><use href="#jaba" width="100%" height="100%"/></svg><h3 class="svc-name">Jaba</h3></div>
-      <div class="egs">
-        <article class="eg"><span class="eg-n">01</span><svg class="ic" aria-hidden="true"><use href="#i-web"/></svg><span class="eg-tag">Web</span><h3 class="svc-name">Corporate website</h3><p class="svc-desc">Design and engineering of the company's public website, with ongoing maintenance and support.</p></article>
-        <article class="eg"><span class="eg-n">02</span><svg class="ic" aria-hidden="true"><use href="#i-layers"/></svg><span class="eg-tag">System</span><h3 class="svc-name">Internal operations system</h3><p class="svc-desc">A bespoke platform the team uses to run and manage day-to-day operations behind the scenes.</p></article>
-        <article class="eg"><span class="eg-n">03</span><svg class="ic" aria-hidden="true"><use href="#i-advise"/></svg><span class="eg-tag">Advisory</span><h3 class="svc-name">Technical advisory and continued engineering</h3><p class="svc-desc">Retained as technical advisor, guiding technology decisions while continuing to develop the website and internal operations system, with ad hoc engineering support as needs arise.</p></article>
-      </div>
+    <div class="f-ctiles jaba-bare four">
+      <div><svg class="jaba" role="img" aria-label="Jaba logo"><use href="#jaba" width="100%" height="100%"/></svg><h3 class="svc-name">Jaba</h3></div>
+      <div><span class="eg-head"><svg class="ic s1" aria-hidden="true"><use href="#i-web"/></svg><svg class="ic s2" aria-hidden="true"><use href="#i-web2"/></svg><span class="mono">Web</span></span><h3 class="svc-name">Corporate website</h3><p class="svc-desc">Design and engineering of the company's public website, with ongoing maintenance and support.</p></div>
+      <div><span class="eg-head"><svg class="ic s1" aria-hidden="true"><use href="#i-layers"/></svg><svg class="ic s2" aria-hidden="true"><use href="#i-sys2"/></svg><span class="mono">System</span></span><h3 class="svc-name">Internal operations system</h3><p class="svc-desc">A bespoke platform the team uses to run and manage day-to-day operations behind the scenes.</p></div>
+      <div><span class="eg-head"><svg class="ic s1" aria-hidden="true"><use href="#i-advise"/></svg><svg class="ic s2" aria-hidden="true"><use href="#i-adv2"/></svg><span class="mono">Advisory</span></span><h3 class="svc-name">Technical advisory and continued engineering</h3><p class="svc-desc">Retained as technical advisor, guiding technology decisions while continuing to develop the website and internal operations system, with ad hoc engineering support as needs arise.</p></div>
     </div>
   </div>
 </section>
@@ -510,12 +467,16 @@ SOFTWARE.
   <symbol id="i-link" viewBox="0 0 24 24"><circle cx="5" cy="12" r="2.4"/><circle cx="19" cy="5" r="2.4"/><circle cx="19" cy="19" r="2.4"/><path class="a-wire" pathLength="1" d="M7.2 11 16.8 6"/><path class="a-wire" pathLength="1" style="--w:.6s" d="M7.2 13l9.6 5"/></symbol>
   <symbol id="i-app" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="1.5"/><path d="M3 8.5h18"/><path class="a-type" pathLength="1" d="M7 13h6"/><path class="a-type" pathLength="1" style="--w:.7s" d="M7 16h4"/></symbol>
   <symbol id="i-advise" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15.2 8.8 13.4 13.4 8.8 15.2 10.6 10.6z"/><circle cx="12" cy="12" r=".9"/></symbol>
+  <filter id="rw-goo"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 255 -140"/></filter>
+  <symbol id="i-web2" viewBox="0 0 24 24"><rect x="2.5" y="4" width="19" height="16" rx="1.5"/><path d="M2.5 8.5h19"/><path d="M5.5 6.25h.01M7.8 6.25h.01M10.1 6.25h.01"/></symbol>
+  <symbol id="i-sys2" viewBox="0 0 24 24"><rect x="3" y="3" width="7.5" height="7.5" rx="1"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1"/></symbol>
+  <symbol id="i-adv2" viewBox="0 0 24 24"><path d="M3.5 5.5h11v7.5h-6l-3 2.5V13h-2z"/><path d="M17.5 9h3v7.5h-2v2.5l-3-2.5h-5.5V15"/></symbol>
   <symbol id="i-web" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path class="a-mer" d="M12 3c2.5 2.6 3.7 5.6 3.7 9s-1.2 6.4-3.7 9c-2.5-2.6-3.7-5.6-3.7-9S9.5 5.6 12 3z"/></symbol>
 </svg>
 
 
-<!-- preview only: pick a card layout for Our clients and a treatment for "precision" -->
-<div class="pv-pick"><div data-k="cl"><span>Cards</span><button type="button" data-v="num">A · Numbered</button><button type="button" data-v="ledger">B · Ledger</button><button type="button" data-v="corner">C · Corner icon</button><button type="button" data-v="stack">D · Stacked</button></div><div data-k="prec"><span>Precision</span><button type="button" data-v="eye">1 · Bullseye</button><button type="button" data-v="reticle">2 · Reticle</button><button type="button" data-v="frame">3 · Focus frame</button><button type="button" data-v="caliper">4 · Caliper</button><button type="button" data-v="plumb">5 · Plumb line</button></div><button type="button" class="pv-x" aria-label="Hide options">×</button></div>
+<!-- preview only: pick the Jaba card label look, icon set, and how the rotating word changes -->
+<div class="pv-pick"><div data-k="tag"><span>Card label</span><button type="button" data-v="inline">A · Inline</button><button type="button" data-v="pill">B · Pill</button><button type="button" data-v="rule">C · Rule</button><button type="button" data-v="box">D · Boxed</button></div><div data-k="icset"><span>Icons</span><button type="button" data-v="1">Set 1 (now)</button><button type="button" data-v="2">Set 2</button></div><div data-k="rw"><span>Word change</span><button type="button" data-v="blur">1 · Blur morph</button><button type="button" data-v="roll">2 · Letter roll</button><button type="button" data-v="decode">3 · Decode</button><button type="button" data-v="shared">4 · Shared letters</button></div><button type="button" class="pv-x" aria-label="Hide options">×</button></div>
 
 <!-- Contact -->
 <section class="view" data-view="contact" aria-label="Contact">
@@ -577,41 +538,52 @@ const objNow = 0, mNow = [.78, .62];
 const views = document.querySelectorAll(".view");
 const tabLinks = document.querySelectorAll(".tabs a");
 let calmTarget = 0, calmNow = 0, sideTarget = 0, sideNow = 0;
-// the open section is whichever one crosses a line a third of the way down the screen
+// Two ways to read the site (2026-10-27). From home, scrolling runs through every section on one page.
+// A top tab (or any link to #about, #services, #clients, #contact) opens that section as its own page instead.
 function setView(name) {
   if (root.dataset.view === name) return;
   root.dataset.view = name;
   tabLinks.forEach(a => { if (a.getAttribute("href") === "#" + name) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
   calmTarget = name === "home" ? 0 : 1;
   if (reduce) { calmNow = calmTarget; frame(performance.now()); }
-  history.replaceState(null, "", name === "home" ? location.pathname + location.search : "#" + name);
   dispatchEvent(new Event("viewchange"));
 }
+// on the long page, the open section is whichever one crosses a line a third of the way down the screen
 function spy() {
+  if (root.dataset.nav === "page") return;
   const line = innerHeight * .34; let name = "home";
   views.forEach(v => { if (v.getBoundingClientRect().top <= line) name = v.dataset.view; });
   // at the very bottom the last section counts as open, even if it is short
   if (innerHeight + scrollY >= document.documentElement.scrollHeight - 4) name = views[views.length - 1].dataset.view;
   setView(name);
 }
+// glide to a section on the long page
 function goTo(name, smooth = true) {
+  if (root.dataset.nav === "page") { location.hash = name === "home" ? "" : name; return; }
   const v = document.querySelector(`.view[data-view="${name}"]`);
   const top = !v || name === "home" ? 0 : v.getBoundingClientRect().top + scrollY;
   scrollTo({ top, behavior: smooth && !reduce ? "smooth" : "auto" });
 }
-function route() { goTo((location.hash || "#home").slice(1), false); spy(); }
-// web fonts can shift the page once they arrive, so an opening link to a section is re-aimed after that
-if (document.fonts) document.fonts.ready.then(() => { if (location.hash) route(); });
-addEventListener("hashchange", () => goTo((location.hash || "#home").slice(1)));
+function route() {
+  const name = location.hash.slice(1), v = name && name !== "home" && document.querySelector(`.view[data-view="${name}"]`);
+  views.forEach(x => x.classList.toggle("on", x === v));
+  root.dataset.nav = v ? "page" : "scroll";
+  scrollTo(0, 0);
+  if (v) setView(name); else spy();
+  dispatchEvent(new Event("scroll"));
+}
+addEventListener("hashchange", route);
 addEventListener("scroll", spy, { passive: true });
 addEventListener("resize", spy);
-// links to a section glide there, even when the address already shows it
+// the logo always returns to the long page; the "Scroll" hint glides down it
 document.addEventListener("click", e => {
-  const a = e.target.closest('a[href^="#"]'); if (!a) return;
-  const name = a.getAttribute("href").slice(1);
-  if (!document.querySelector(`.view[data-view="${name}"]`)) return;
-  e.preventDefault(); goTo(name);
+  const a = e.target.closest('a[href="#home"], a.scroll-cue'); if (!a) return;
+  e.preventDefault();
+  if (a.classList.contains("scroll-cue")) return goTo("about");
+  if (location.hash) history.pushState(null, "", location.pathname + location.search);
+  route();
 });
+addEventListener("popstate", route);
 
 // ---------- About us: a noisy line settles into a clean wave ----------
 const sig = document.getElementById("signal"), sc = sig.getContext("2d");
@@ -623,7 +595,8 @@ const smoothstep = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b
 let loomT0 = 0;
 const lerp = (a, b, k) => a + (b - a) * k;
 const ease = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
-const cyc = (t, len) => { const p = (t / len) % 1; return p < .12 ? 0 : p < .45 ? ease((p - .12) / .33) : p < .85 ? 1 : 1 - ease((p - .85) / .15); };
+// straightening takes 1.65s (doubled pace, 2026-10-27); the straight bundle then holds longer
+const cyc = (t, len) => { const p = (t / len) % 1; return p < .12 ? 0 : p < .285 ? ease((p - .12) / .165) : p < .85 ? 1 : 1 - ease((p - .85) / .15); };
 function sigDraw(now) {
   const cs = getComputedStyle(root), ink = cs.getPropertyValue("--ink-rgb").trim(), W = sW, H = sH, n = 9;
   const t = reduce ? 6000 : now - loomT0, k = cyc(t, 10000);
@@ -648,15 +621,61 @@ function sigStart() { if (!sigSeen) return; sigSize(); if (!sRun) { sRun = true;
 new IntersectionObserver(([e]) => { sigSeen = e.isIntersecting; sigStart(); }).observe(sig);
 addEventListener("resize", () => { if (sigSeen) { sigSize(); if (reduce) sigDraw(9000); } });
 
-// ---------- "precision.": the mark draws in when the headline comes into view ----------
-(() => {
-  const w = document.querySelector(".prec");
-  new IntersectionObserver(([e]) => { if (e.isIntersecting) { w.classList.remove("go"); void w.offsetWidth; w.classList.add("go"); } }, { threshold: .6 }).observe(w);
+// ---------- rotating word: "precision." gives way to other words, one every ~2.4s while in view ----------
+const rw = (() => {
+  const box = document.querySelector(".rw"), stage = box.querySelector(".rw-stage");
+  const words = box.dataset.words.split("|"), T = 700, HOLD = 1700;
+  let i = 0, timer = 0, seen = false;
+  const word = (w, hidden) => { const n = document.createElement("span"); n.className = "w"; n.innerHTML = [...w].map(c => `<span class="ch">${c}</span>`).join(""); if (hidden) n.style.visibility = "hidden"; stage.append(n); return n; };
+  const after = (ms, f) => setTimeout(f, ms);
+  const modes = {
+    // 1 Blur morph: the old word melts into the new one (blur with an alpha threshold, the "gooey" text-morph technique)
+    blur(a, b) {
+      const n = word(b); stage.classList.add("goo");
+      a.animate([{ filter: "blur(0)", opacity: 1 }, { filter: "blur(9px)", opacity: 0 }], { duration: T, easing: "ease-in", fill: "forwards" });
+      n.animate([{ filter: "blur(9px)", opacity: 0 }, { filter: "blur(0)", opacity: 1 }], { duration: T, easing: "ease-out" });
+      after(T + 20, () => { a.remove(); stage.classList.remove("goo"); });
+    },
+    // 2 Letter roll: letters lift away one after another, the new ones rise into place
+    roll(a, b) {
+      const n = word(b), st = 26;
+      [...a.children].forEach((c, k) => c.animate([{ transform: "none", opacity: 1 }, { transform: "translateY(-.35em)", opacity: 0 }], { duration: 380, delay: k * st, easing: "cubic-bezier(.5,0,.75,0)", fill: "forwards" }));
+      [...n.children].forEach((c, k) => c.animate([{ transform: "translateY(.35em)", opacity: 0, filter: "blur(3px)" }, { transform: "none", opacity: 1, filter: "blur(0)" }], { duration: 520, delay: 200 + k * st, easing: "cubic-bezier(.2,.7,.2,1)", fill: "backwards" }));
+      after(200 + b.length * st + 540, () => a.remove());
+    },
+    // 3 Decode: the letters cycle through random characters and lock in from left to right
+    decode(a, b) {
+      const from = a.textContent, pool = "abcdefghijklmnopqrstuvwxyz", t0 = performance.now(), D = 800;
+      const step = now => {
+        const k = Math.min(1, (now - t0) / D), len = Math.round(from.length + (b.length - from.length) * Math.min(1, k * 1.6)), lock = Math.floor(k * b.length);
+        let out = ""; for (let j = 0; j < len; j++) out += j < lock ? b[j] : (b[j] === "." ? "." : pool[(Math.random() * 26) | 0]);
+        a.textContent = out;
+        if (k < 1) requestAnimationFrame(step); else { a.remove(); word(b); }
+      };
+      requestAnimationFrame(step);
+    },
+    // 4 Shared letters: letters both words share glide to their new places, the rest fade out and in
+    shared(a, b) {
+      const n = word(b, true), old = [...a.children], used = new Set();
+      [...n.children].forEach((c, k) => {
+        const j = old.findIndex((o, x) => !used.has(x) && o.textContent.toLowerCase() === c.textContent.toLowerCase());
+        if (j >= 0) { used.add(j); const dx = old[j].offsetLeft - c.offsetLeft; old[j].style.opacity = 0; c.animate([{ transform: `translateX(${dx}px)` }, { transform: "none" }], { duration: T, easing: "cubic-bezier(.65,0,.35,1)" }); }
+        else c.animate([{ opacity: 0, transform: "translateY(.2em)" }, { opacity: 0, offset: .35 }, { opacity: 1, transform: "none" }], { duration: T + 100, easing: "ease-out" });
+      });
+      old.forEach((o, x) => { if (!used.has(x)) o.animate([{ opacity: 1 }, { opacity: 0, transform: "translateY(-.2em)" }], { duration: T * .5, fill: "forwards" }); });
+      n.style.visibility = ""; after(T + 120, () => a.remove());
+    }
+  };
+  const tick = () => { timer = 0; if (!seen) return; const a = stage.lastElementChild; i = (i + 1) % words.length; (modes[root.dataset.rw] || modes.blur)(a, words[i]); timer = setTimeout(tick, T + HOLD); };
+  const reset = () => { clearTimeout(timer); timer = 0; stage.textContent = ""; stage.classList.remove("goo"); i = 0; word(words[0]); if (seen && !reduce) timer = setTimeout(tick, HOLD); };
+  word(words[0]);
+  if (!reduce) new IntersectionObserver(([e]) => { seen = e.isIntersecting; if (seen && !timer) timer = setTimeout(tick, HOLD); }, { threshold: .6 }).observe(box);
+  return { reset, stop: () => { seen = false; clearTimeout(timer); timer = 0; }, show: (m, a, b) => { stage.textContent = ""; modes[m](word(a), b); } };
 })();
 
 // ---------- preview only: option switcher ----------
 document.querySelectorAll(".pv-pick [data-k]").forEach(g => {
-  const set = v => { root.dataset[g.dataset.k] = v; g.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.dataset.v === v)); if (g.dataset.k === "prec") { const w = document.querySelector(".prec"); w.classList.remove("go"); void w.offsetWidth; w.classList.add("go"); } };
+  const set = v => { root.dataset[g.dataset.k] = v; g.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.dataset.v === v)); if (g.dataset.k === "rw") rw.reset(); };
   g.addEventListener("click", e => { const b = e.target.closest("button"); if (b) set(b.dataset.v); });
   set(g.querySelector("button").dataset.v);
 });
@@ -685,6 +704,7 @@ document.querySelectorAll(".totop").forEach(b => b.addEventListener("click", () 
   // "See what we do" glides to Our services, "See how we work" to the Pillars
   document.querySelectorAll(".jump[data-go]").forEach(b => b.addEventListener("click", () => {
     if (b.dataset.go === "services") return goTo("services");
+    if (root.dataset.nav === "page" && root.dataset.view !== "services") { addEventListener("hashchange", () => { const el = document.getElementById("pillars"); scrollTo(0, el.getBoundingClientRect().top + scrollY - 96); }, { once: true }); location.hash = "services"; return; }
     const el = document.getElementById("pillars");
     scrollTo({ top: el.getBoundingClientRect().top + scrollY - 96, behavior: reduce ? "auto" : "smooth" });
   }));
