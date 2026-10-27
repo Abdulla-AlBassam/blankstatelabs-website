@@ -368,6 +368,14 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
 
 @media (prefers-reduced-motion: reduce) { body, .view, .tg::before, .tabs a, .tabs a::after, .cta, .cta::before, .brand .name, .dd-menu, .dd-btn .chev, .chips span { transition: none !important; } }
 
+
+/* Our network: heading and line on the left, the three kinds of specialist listed on the right */
+.net { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(32px, 6vw, 96px); max-width: 1240px; align-items: start; }
+.net-list > div { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: .5rem 20px; padding: 24px 0; border-top: 1px solid var(--line); }
+.net-list > div:last-child { border-bottom: 1px solid var(--line); }
+.net-list svg.ic { width: 30px; height: 30px; grid-row: span 2; }
+@media (max-width: 860px) { .net { grid-template-columns: minmax(0, 1fr); } }
+
 /* ---------- section separation trial (2026-10-27): three options on the long page, switched from the panel at the bottom left ----------
    A Bands: About and Contact stay on the grain, Services sits on a grey band, Our clients on a brown band.
    B Chapters: a hairline rule across the screen and a numbered label open each section.
@@ -496,6 +504,18 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 --><svg class="pi c-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21c-.667-.667 3.262-6.236 11.785-16.709a3.5 3.5 0 1 1 5.078 4.791c-10.575 8.612-16.196 12.585-16.863 11.918"/><path d="M17.5 6.5l-1 1"/><path class="c-draw" pathLength="1" d="M17 7c-2.333-2.667-3.5-4-5-4s-2 1-2 2c0 4 8.161 8.406 6 11c-1.056 1.268-3.363 1.285-5.75.808"/><path d="M5.739 15.425c-1.393-.565-3.739-1.925-3.739-3.425"/><path d="M19.5 9.5l1.5 1.5"/></svg></div><span></span><h3>Craftsmanship</h3><p>Every system and interface is refined for clarity, usability and long-term reliability.</p></div>
+      </div>
+    </div>
+    <!-- Our network (2026-10-27): specialists brought in per project -->
+    <div class="net" id="network">
+      <div class="stack" style="gap:1.4rem">
+        <h2 class="display" style="font-size:clamp(1.8rem,3.4vw,3rem)">Our Network</h2>
+        <p class="lede">Depending on the project, we bring in industry experts. Experienced professionals in software development and cybersecurity join on a project-by-project basis, so every engagement has the right specialists behind it.</p>
+      </div>
+      <div class="net-list">
+        <div><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 7 3 12l5 5M16 7l5 5-5 5"/><path class="lp-write" pathLength="1" d="M13.5 5l-3 14"/></svg><h3 class="svc-name">Software engineers</h3><p class="svc-desc">Senior developers and architects who join when a project calls for added depth or pace.</p></div>
+        <div><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5 4 5.5v6c0 5 3.4 8.6 8 10 4.6-1.4 8-5 8-10v-6z"/><path class="lp-write" pathLength="1" d="M8.5 12l2.5 2.5 4.5-5"/></svg><h3 class="svc-name">Cybersecurity specialists</h3><p class="svc-desc">Security professionals who review, test and harden what we build.</p></div>
+        <div><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="2.6"/><path d="M7.5 18.5c0-2.6 2-4.5 4.5-4.5s4.5 1.9 4.5 4.5"/><g class="lp-led"><circle cx="4.5" cy="10" r="1.9"/><path d="M1.5 18c0-2 1.3-3.4 3-3.6"/></g><g class="lp-led"><circle cx="19.5" cy="10" r="1.9"/><path d="M22.5 18c0-2-1.3-3.4-3-3.6"/></g></svg><h3 class="svc-name">Assembled per project</h3><p class="svc-desc">The team is shaped around each engagement, and you still speak directly with the lead engineer.</p></div>
       </div>
     </div>
   </div>
