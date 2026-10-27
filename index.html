@@ -18,7 +18,7 @@
   --line: rgba(32, 24, 19, .22);
   --tint: rgba(32, 24, 19, .06);
   --page: #d6d2cc;
-  --solid: var(--ink); --on-solid: var(--page);
+  --solid: var(--ink); --on-solid: var(--page); --grey-tile: #5f5953;
   --ink-rgb: 32, 24, 19; --accent: #85786d; --accent-rgb: 133, 120, 109;
   --card: rgba(222, 218, 212, .97);
   --field: rgba(255, 255, 255, .18);
@@ -33,7 +33,7 @@
   --ease: cubic-bezier(.65, 0, .35, 1);
   --speck: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><filter id='f'><feTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='4'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 9 -4.2'/></filter><rect width='40' height='40' filter='url(%23f)'/></svg>");
 }
-:root[data-mode="dark"] { --ink: #efe7dc; --muted: rgba(239, 231, 220, .64); --line: rgba(239, 231, 220, .2); --tint: rgba(239, 231, 220, .07); --page: #1a1512; --solid: #5a4334; --on-solid: #efe7dc; --ink-rgb: 239, 231, 220; --accent: #b5a99e; --accent-rgb: 181, 169, 158; --card: rgba(34, 28, 24, .97); --field: rgba(255, 255, 255, .03); color-scheme: dark; }
+:root[data-mode="dark"] { --ink: #efe7dc; --muted: rgba(239, 231, 220, .64); --line: rgba(239, 231, 220, .2); --tint: rgba(239, 231, 220, .07); --page: #1a1512; --solid: #5a4334; --on-solid: #efe7dc; --grey-tile: #3b3632; --ink-rgb: 239, 231, 220; --accent: #b5a99e; --accent-rgb: 181, 169, 158; --card: rgba(34, 28, 24, .97); --field: rgba(255, 255, 255, .03); color-scheme: dark; }
 /* The page itself scrolls (not a fixed box inside it), so phone browsers can run the page under their see-through toolbars.
    The background canvas is sized to the tallest the screen gets (100lvh), so it still covers once the toolbars shrink away. */
 html { background: var(--page); transition: background .6s ease; }
@@ -144,8 +144,18 @@ svg.jaba { fill: currentColor; display: block; }
 .f-tiles > div:first-child .svc-desc { color: inherit; opacity: .72; }
 .f-tiles > div:first-child .svc-name { font-size: clamp(1.6rem, 2.6vw, 2.3rem); }
 .f-tiles > div:first-child svg.ic { width: 34px; height: 34px; }
-@media (max-width: 1000px) { .f-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 520px) { .f-tiles { grid-template-columns: minmax(0, 1fr); } .f-tiles > div { min-height: 0; } .f-tiles > div:first-child { grid-column: auto; grid-row: auto; } }
+/* AI agents and assistants (2026-10-27): moved to the foot, three tiles wide, in a warm grey to set it apart */
+.f-tiles > .wide { grid-column: span 3; background: var(--grey-tile); color: var(--on-solid); border-color: var(--grey-tile); }
+.f-tiles > .wide .svc-desc { color: inherit; opacity: .78; max-width: 52ch; }
+/* hover: the card lifts a little, its edge firms up and its icon grows slightly (nothing is clickable) */
+.f-tiles > div { transition: transform .45s var(--ease), box-shadow .45s var(--ease), border-color .35s ease, opacity .9s ease, filter .9s ease; }
+.f-tiles > div:hover { transform: translateY(-4px); box-shadow: 0 18px 34px -22px rgba(20, 14, 10, .55); border-color: color-mix(in srgb, var(--ink) 38%, transparent); }
+.f-tiles > div:first-child:hover, .f-tiles > .wide:hover { border-color: transparent; }
+.f-tiles svg.ic { transition: transform .45s var(--ease); }
+.f-tiles > div:hover svg.ic { transform: scale(1.12); transform-origin: left center; }
+@media (prefers-reduced-motion: reduce) { .f-tiles > div:hover, .f-tiles > div:hover svg.ic { transform: none; } }
+@media (max-width: 1000px) { .f-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } .f-tiles > .wide { grid-column: span 1; } }
+@media (max-width: 520px) { .f-tiles { grid-template-columns: minmax(0, 1fr); } .f-tiles > div { min-height: 0; } .f-tiles > div:first-child { grid-column: auto; grid-row: auto; } .f-tiles > .wide { grid-column: auto; } }
 /* Our Pillars (signed off 2026-10-15: "Pillars" style, no vertical lines, animated icon beside each numeral) */
 .pA { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
 .pA > div { display: grid; grid-template-rows: auto 1fr auto auto; gap: 1rem; min-height: 360px; padding: 0 clamp(14px, 1.6vw, 22px); background: color-mix(in srgb, var(--ink) 7%, var(--page));
@@ -423,13 +433,12 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
       <h2 class="display">Our Services</h2>
       <div class="f-tiles">
     <div><svg class="ic" aria-hidden="true"><use href="#i-auto"/></svg><h3 class="svc-name">AI automation</h3><p class="svc-desc">Design and deployment of automated workflows that remove repetitive manual processes from daily operations.</p></div>
-    <div><svg class="ic" aria-hidden="true"><use href="#i-agent"/></svg><h3 class="svc-name">AI agents and assistants</h3><p class="svc-desc">Intelligent agents and assistants built around an organisation's own data, systems and procedures.</p></div>
+    <div><svg class="ic" aria-hidden="true"><use href="#i-web-cursor"/></svg><h3 class="svc-name">Corporate websites</h3><p class="svc-desc">Considered, high-performance websites that represent the organisation with clarity.</p></div>
     <div><svg class="ic" aria-hidden="true"><use href="#i-layers"/></svg><h3 class="svc-name">Enterprise and internal platforms</h3><p class="svc-desc">Bespoke operational systems that support teams behind the scenes.</p></div>
     <div><svg class="ic" aria-hidden="true"><use href="#i-doc"/></svg><h3 class="svc-name">Document and data intelligence</h3><p class="svc-desc">Automated extraction, classification and analysis of documents and records at scale.</p></div>
-    <div><svg class="ic" aria-hidden="true"><use href="#i-shield"/></svg><h3 class="svc-name">Secure systems engineering</h3><p class="svc-desc">Software designed with security as a founding requirement, informed by a background in cybersecurity.</p></div>
     <div><svg class="ic" aria-hidden="true"><use href="#i-link"/></svg><h3 class="svc-name">Systems integration</h3><p class="svc-desc">Connection of existing software, APIs and data sources into a single, coherent workflow.</p></div>
     <div><svg class="ic" aria-hidden="true"><use href="#i-app"/></svg><h3 class="svc-name">Web and mobile applications</h3><p class="svc-desc">Customer-facing applications engineered for reliability and ease of use.</p></div>
-    <div><svg class="ic" aria-hidden="true"><use href="#i-web-cursor"/></svg><h3 class="svc-name">Corporate websites</h3><p class="svc-desc">Considered, high-performance websites that represent the organisation with clarity.</p></div>
+    <div class="wide"><svg class="ic" aria-hidden="true"><use href="#i-agent"/></svg><h3 class="svc-name">AI agents and assistants</h3><p class="svc-desc">Intelligent agents and assistants built around an organisation's own data, systems and procedures.</p></div>
       </div>
     </div>
     <div class="stack pillars" id="pillars" style="gap:1.6rem">
@@ -486,7 +495,6 @@ SOFTWARE.
   <symbol id="i-auto" viewBox="0 0 24 24"><g class="lp-spin"><path d="M20 12a8 8 0 0 1-14.3 4.9M4 12a8 8 0 0 1 14.3-4.9"/><path d="M18.6 3.4v3.9h-3.9M5.4 20.6v-3.9h3.9"/></g><circle cx="12" cy="12" r="1.6"/></symbol>
   <symbol id="i-agent" viewBox="0 0 24 24"><circle class="lp-pulse" cx="12" cy="12" r="3.2"/><circle class="lp-spin slow" cx="12" cy="12" r="8.4" stroke-dasharray="1.6 2.8"/><path d="M12 1.6v2.6M12 19.8v2.6M1.6 12h2.6M19.8 12h2.6"/></symbol>
   <symbol id="i-doc" viewBox="0 0 24 24"><path d="M6 2.5h8.5l3.5 3.5v15.5H6z"/><path d="M14.5 2.5V6H18"/><path d="M9 9.5h4M9 17h6"/><path class="lp-scan" d="M3 13.5h18"/></symbol>
-  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 2.5 4.5 5.4v6.1c0 4.5 3.2 8.4 7.5 10 4.3-1.6 7.5-5.5 7.5-10V5.4z"/><path class="lp-write" pathLength="1" d="M9 12.2l2.1 2.1 4-4.2"/></symbol>
   <symbol id="i-layers" viewBox="0 0 24 24"><path class="lp-float" style="--dy:-1.8px" d="M12 3 2.5 8 12 13l9.5-5z"/><path class="lp-float b" style="--dy:-.8px" d="M2.5 12 12 17l9.5-5"/><path d="M2.5 16 12 21l9.5-5"/></symbol>
   <symbol id="i-link" viewBox="0 0 24 24"><circle cx="5" cy="12" r="2.4"/><circle cx="19" cy="5" r="2.4"/><circle cx="19" cy="19" r="2.4"/><path d="M7.2 11 16.8 6M7.2 13l9.6 5" opacity=".35"/><path class="lp-flow" pathLength="1" d="M7.2 11 16.8 6"/><path class="lp-flow b" pathLength="1" d="M7.2 13l9.6 5"/></symbol>
   <symbol id="i-app" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="1.5"/><path d="M3 8.5h18"/><path class="lp-write" pathLength="1" d="M7 13h6"/><path class="lp-write" pathLength="1" d="M7 16h4"/></symbol>
@@ -550,7 +558,13 @@ const CONTACT_EMAIL = "enquire@blankstatelabs.com";
 document.getElementById("addr").textContent = CONTACT_EMAIL;
 
 // the shader still takes the old object and pointer inputs; the plain hero keeps them fixed
-const objNow = 0, mNow = [.78, .62];
+const objNow = 0, mNow = [.7, .3], mTarget = [.7, .3];
+// the grain is alive: it swells toward the pointer (or finger), and moving or scrolling stirs it into ripples
+let stir = 0, lastScroll = scrollY;
+const aim = (x, y) => { const nx = x / innerWidth, ny = 1 - y / innerHeight; stir = Math.min(1, stir + Math.hypot(nx - mTarget[0], ny - mTarget[1]) * 2.5); mTarget[0] = nx; mTarget[1] = ny; };
+addEventListener("pointermove", e => aim(e.clientX, e.clientY), { passive: true });
+addEventListener("touchmove", e => { const t = e.touches[0]; if (t) aim(t.clientX, t.clientY); }, { passive: true });
+addEventListener("scroll", () => { stir = Math.min(1, stir + Math.abs(scrollY - lastScroll) / innerHeight * 1.2); lastScroll = scrollY; }, { passive: true });
 
 // the top bar gets its background once the open page is scrolled
 
@@ -576,6 +590,8 @@ function spy() {
   // at the very bottom the last section counts as open, even if it is short
   if (innerHeight + scrollY >= document.documentElement.scrollHeight - 4) name = views[views.length - 1].dataset.view;
   setView(name);
+  // the grain drops behind the content as soon as scrolling starts
+  calmTarget = scrollY > 24 ? 1 : 0;
 }
 // glide to a section on the long page
 function goTo(name, smooth = true) {
@@ -958,8 +974,9 @@ void main(){
  vec3 low=mix(vec3(.55,.42,.32),vec3(.42,.31,.23),dark);
  float line=-.26+.64*x-calm*.4+.06*sin(x*3.1+tt*3.)+.035*sin(x*7.3-tt*5.);
  line+=(fbm(vec2(x*2.,tt))-.5)*.12;
- float fv=fol*(1.-calm);
- line+=fv*.035*exp(-pow((x-m.x)*a/.18,2.));
+ // the edge swells toward the pointer, more while it moves, with ripples running out from it (fol = how stirred it is)
+ float mx=mix(m.x,1.-m.x,side), near=exp(-pow((x-mx)*a/.24,2.)), lift=smoothstep(.0,.6,1.-abs(m.y-line-.1));
+ line+=near*(.025+.07*fol)*(.5+.5*lift)+fol*.022*near*sin((x-mx)*a*24.-t*6.);
  float d=uv.y-line;
  float v=smoothstep(0.,.3,d);
  vec3 col=mix(band,top,mix(v,step(grs(0.),v),.72));
@@ -994,13 +1011,6 @@ void main(){
   }
  }
 
- if(fv>.01){
-  vec2 md=(uv-m)*vec2(a,1.);
-  float g=exp(-dot(md,md)/.006)*.8+exp(-dot(md,md)/.03)*.25;
-  g*=.85+.3*fbm(uv*9.+t*.4);
-  vec3 ink3=mix(vec3(.15,.12,.10),vec3(.93,.91,.87),dark);
-  col=mix(col,ink3,step(grs(3.),g*fv)*.92);
- }
  col+=(grs(2.)-.5)*mix(.035,.05,dark);
  gl_FragColor=vec4(col,1.);
 }`;
@@ -1048,17 +1058,19 @@ function frame(now) {
   const dt = Math.min(.05, (now - last) / 1000); last = now;
   darkNow += (darkTarget - darkNow) * Math.min(1, dt * 5);
   if (Math.abs(darkTarget - darkNow) < .002) darkNow = darkTarget;
-  calmNow += (calmTarget - calmNow) * Math.min(1, dt * 3);
+  calmNow += (calmTarget - calmNow) * Math.min(1, dt * 5);
   if (Math.abs(calmTarget - calmNow) < .002) calmNow = calmTarget;
   sideNow += (sideTarget - sideNow) * Math.min(1, dt * 2.2);
   if (Math.abs(sideTarget - sideNow) < .002) sideNow = sideTarget;
+  const ease = Math.min(1, dt * 4); mNow[0] += (mTarget[0] - mNow[0]) * ease; mNow[1] += (mTarget[1] - mNow[1]) * ease;
+  stir *= Math.exp(-dt * 1.4);
   if (gl) {
     gl.uniform2f(U.r, W, H);
     gl.uniform1f(U.t, reduce ? 12 : (now - t0) / 1000);
     gl.uniform1f(U.dark, darkNow);
     gl.uniform1f(U.obj, objNow);
     gl.uniform1f(U.calm, calmNow);
-    gl.uniform1f(U.fol, 0);
+    gl.uniform1f(U.fol, reduce ? 0 : stir);
     gl.uniform1f(U.side, sideNow);
     gl.uniform2f(U.m, mNow[0], mNow[1]);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
