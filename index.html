@@ -241,30 +241,38 @@ svg.jaba { fill: currentColor; display: block; }
 /* a globe turning: the meridian narrows and widens */
 .lp-globe { transform-box: view-box; transform-origin: 12px 12px; animation: lp-globe 3.2s ease-in-out infinite alternate; }
 @keyframes lp-globe { from { transform: scaleX(1); } to { transform: scaleX(.12); } }
+/* Corporate websites icon: four options on trial via root data-wi (he disliked the globe, 11:46Z) */
+.f-tiles svg.wi { display: none; }
+:root[data-wi="cursor"] svg.wi-cursor, :root[data-wi="build"] svg.wi-build, :root[data-wi="scroll"] svg.wi-scroll, :root[data-wi="link"] svg.wi-link { display: block; }
+/* a pointer moves in and clicks, a ring spreads from the click */
+.lp-click { animation: lp-click 3s cubic-bezier(.5,0,.3,1) infinite; }
+@keyframes lp-click { 0% { transform: translate(-6px, 5px); } 40%, 52% { transform: none; } 46% { transform: scale(.9); transform-origin: 13px 11.5px; } 100% { transform: translate(-6px, 5px); } }
+.lp-ring { transform-box: fill-box; transform-origin: center; opacity: 0; animation: lp-ring 3s ease-out infinite; }
+@keyframes lp-ring { 0%, 44% { transform: scale(.2); opacity: 0; } 48% { opacity: .9; } 70%, 100% { transform: scale(1.3); opacity: 0; } }
+/* a page layout assembles: the image block fades in while the lines write */
+.lp-blk { animation: lp-blk 3.6s ease-in-out infinite; }
+@keyframes lp-blk { 0%, 100% { opacity: .15; } 40%, 60% { opacity: 1; } }
+/* a page scrolling past inside the window */
+.lp-page { animation: lp-page 4s linear infinite; }
+@keyframes lp-page { to { transform: translateY(-13px); } }
+/* a link being underlined, again and again */
+.lp-ul { stroke-dasharray: 1; stroke-dashoffset: 1; animation: lp-write 2.8s ease-in-out infinite; }
+.lp-dot { animation: lp-led 2.8s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) { [class*="lp-"] { animation: none !important; stroke-dashoffset: 0 !important; opacity: 1 !important; } }
 
-/* "Bahrain" (2026-10-27): four ways to nod to the flag, on trial via root data-bh. Flag geometry from Decree-Law No. 4 of 2002:
-   the white band is a quarter of the length, and its five white points reach a fifth of the way into the red. #ce1126 is the common web value for the flag's crimson. */
-@property --bx { syntax: "<percentage>"; inherits: false; initial-value: 40%; }
-.bh { position: relative; display: inline-block; white-space: nowrap; }
-.bh-flag, .bh-ul { display: none; }
-.bh-w { position: relative; display: inline-block; }
-.bh-w::after { content: attr(data-w); position: absolute; inset: 0; color: #ce1126; display: none; pointer-events: none; }
-/* A Waving flag: a small flag before the word, rippling in strips */
-:root[data-bh="wave"] .bh-flag { display: inline-flex; width: 1.25em; height: .78em; margin: 0 .38em 0 .05em; vertical-align: -.06em; outline: 1px solid var(--line); outline-offset: 0; }
+/* "Bahrain" (2026-10-27): a small Bahrain flag waves before the word (picked 11:48Z). Two wave styles on trial via root data-fw:
+   ripple (CSS strips bobbing) and wind (canvas, the cloth folds toward and away from you, more toward the fly end).
+   Flag geometry from Decree-Law No. 4 of 2002: the white band is a quarter of the length, and its five white points reach a fifth of the way into the red.
+   #ce1126 is the common web value for the flag's crimson. */
+.bh { white-space: nowrap; }
+.bh-flag { position: relative; display: inline-flex; width: 1.25em; height: .78em; margin: 0 .38em 0 .05em; vertical-align: -.06em; }
 .bh-flag i { flex: 1; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 30' preserveAspectRatio='none'%3E%3Crect width='50' height='30' fill='%23ce1126'/%3E%3Cpath fill='%23fff' d='M0 0h12.5L20 3l-7.5 3L20 9l-7.5 3L20 15l-7.5 3L20 21l-7.5 3L20 27l-7.5 3H0z'/%3E%3C/svg%3E") no-repeat; background-size: 1400% 100%; background-position: calc(var(--k) * 100% / 13) 0;
   animation: bh-wave 2.4s ease-in-out infinite; animation-delay: calc(var(--k) * -.12s); }
 @keyframes bh-wave { 0%, 100% { transform: translateY(-.045em); filter: brightness(1); } 50% { transform: translateY(.045em); filter: brightness(.86); } }
-/* B Serrated line: the flag's serrated edge, in crimson, draws under the word and clears again */
-:root[data-bh="edge"] .bh-ul { display: block; position: absolute; left: 0; right: 0; bottom: -.32em; width: 100%; height: .3em; overflow: visible; }
-.bh-ul path { fill: none; stroke: #ce1126; stroke-width: 1.4; vector-effect: non-scaling-stroke; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; animation: lp-write 5s ease-in-out infinite; }
-/* C Flag split: the word is ink up to a serrated edge and crimson after it, the edge drifting slowly */
-:root[data-bh="split"] .bh-w::after { display: block; clip-path: polygon(100% 0, 100% 100%, calc(var(--bx)) 100%, calc(var(--bx) + 7%) 90%, calc(var(--bx)) 80%, calc(var(--bx) + 7%) 70%, calc(var(--bx)) 60%, calc(var(--bx) + 7%) 50%, calc(var(--bx)) 40%, calc(var(--bx) + 7%) 30%, calc(var(--bx)) 20%, calc(var(--bx) + 7%) 10%, calc(var(--bx)) 0%); animation: bh-drift 6s ease-in-out infinite alternate; }
-@keyframes bh-drift { from { --bx: 22%; } to { --bx: 46%; } }
-/* D Crimson sweep: a band of crimson with the flag's serrated edge passes through the word */
-:root[data-bh="sweep"] .bh-w::after { display: block; clip-path: polygon(calc(var(--bx)) 100%, calc(var(--bx) + 7%) 90%, calc(var(--bx)) 80%, calc(var(--bx) + 7%) 70%, calc(var(--bx)) 60%, calc(var(--bx) + 7%) 50%, calc(var(--bx)) 40%, calc(var(--bx) + 7%) 30%, calc(var(--bx)) 20%, calc(var(--bx) + 7%) 10%, calc(var(--bx)) 0%, calc(var(--bx) - 34%) 0%, calc(var(--bx) - 34% + 7%) 10%, calc(var(--bx) - 34%) 20%, calc(var(--bx) - 34% + 7%) 30%, calc(var(--bx) - 34%) 40%, calc(var(--bx) - 34% + 7%) 50%, calc(var(--bx) - 34%) 60%, calc(var(--bx) - 34% + 7%) 70%, calc(var(--bx) - 34%) 80%, calc(var(--bx) - 34% + 7%) 90%, calc(var(--bx) - 34%) 100%); animation: bh-sweep 4.5s cubic-bezier(.6,0,.4,1) infinite; }
-@keyframes bh-sweep { 0% { --bx: -6%; } 60%, 100% { --bx: 140%; } }
-@media (prefers-reduced-motion: reduce) { .bh-flag i, .bh-ul path, .bh-w::after { animation: none !important; stroke-dashoffset: 0; } }
+.bh-cv { display: none; position: absolute; left: 0; top: -.12em; width: 100%; height: calc(100% + .24em); }
+:root[data-fw="wind"] .bh-flag i { visibility: hidden; animation: none; }
+:root[data-fw="wind"] .bh-cv { display: block; }
+@media (prefers-reduced-motion: reduce) { .bh-flag i { animation: none !important; } }
 
 /* second About paragraph (2026-10-27): three versions on trial via root data-pl */
 .lede.pl { display: none; }
@@ -432,7 +440,7 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
         <h2 class="display">Engineering for organisations that expect <span class="sr">precision.</span><span class="rw" aria-hidden="true" data-words="precision.|clarity.|efficiency.|resilience.|integrity."><span class="rw-size"><span>precision.</span><span>clarity.</span><span>efficiency.</span><span>resilience.</span><span>integrity.</span></span><span class="rw-stage"></span></span></h2>
       </div>
       <div class="duo">
-        <div><p class="lede">Blank State Labs is a <span class="bh"><span class="bh-flag" aria-hidden="true"><i style="--k:0"></i><i style="--k:1"></i><i style="--k:2"></i><i style="--k:3"></i><i style="--k:4"></i><i style="--k:5"></i><i style="--k:6"></i><i style="--k:7"></i><i style="--k:8"></i><i style="--k:9"></i><i style="--k:10"></i><i style="--k:11"></i><i style="--k:12"></i><i style="--k:13"></i></span><span class="bh-w" data-w="Bahrain">Bahrain</span><svg class="bh-ul" viewBox="0 0 100 6" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M0 1 5 5 10 1 15 5 20 1 25 5 30 1 35 5 40 1 45 5 50 1 55 5 60 1 65 5 70 1 75 5 80 1 85 5 90 1 95 5 100 1"/></svg></span>-based software engineering and consultancy firm specialising in AI automation, intelligent systems and bespoke software. We advise, architect, engineer, audit and test end to end, with every engagement held to the highest standard.</p><button type="button" class="jump" data-go="services">What we do</button></div>
+        <div><p class="lede">Blank State Labs is a <span class="bh"><span class="bh-flag" aria-hidden="true"><i style="--k:0"></i><i style="--k:1"></i><i style="--k:2"></i><i style="--k:3"></i><i style="--k:4"></i><i style="--k:5"></i><i style="--k:6"></i><i style="--k:7"></i><i style="--k:8"></i><i style="--k:9"></i><i style="--k:10"></i><i style="--k:11"></i><i style="--k:12"></i><i style="--k:13"></i></span>Bahrain</span>-based software engineering and consultancy firm specialising in AI automation, intelligent systems and bespoke software. We advise, architect, engineer, audit and test end to end, with every engagement held to the highest standard.</p><button type="button" class="jump" data-go="services">What we do</button></div>
         <div><p class="lede pl" data-pl="1">Fast iteration is built into how we work. You see working progress early and often, your feedback shapes every round, and the finished product arrives quickly without cutting corners. Your taste and opinions guide each decision, until the result is your vision, realised.</p><p class="lede pl" data-pl="2">We move quickly and we listen closely. Short cycles put working software in front of you from the first days, so your taste and judgement steer every step. The result is delivered fast, built properly, and unmistakably yours: your vision, realised.</p><p class="lede pl" data-pl="3">Speed and fidelity, together. We work in short, visible rounds and deliver quickly, turning your preferences, opinions and instincts into a finished product. Nothing is lost between what you imagine and what you receive. Your vision, realised.</p><button type="button" class="jump" data-go="pillars">How we work</button></div>
       </div>
       <div class="s-viz"><canvas id="signal" aria-hidden="true"></canvas></div>
@@ -453,7 +461,7 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
     <div><svg class="ic" aria-hidden="true"><use href="#i-shield"/></svg><h3 class="svc-name">Secure systems engineering</h3><p class="svc-desc">Software designed with security as a founding requirement, informed by a background in cybersecurity.</p></div>
     <div><svg class="ic" aria-hidden="true"><use href="#i-link"/></svg><h3 class="svc-name">Systems integration</h3><p class="svc-desc">Connection of existing software, APIs and data sources into a single, coherent workflow.</p></div>
     <div><svg class="ic" aria-hidden="true"><use href="#i-app"/></svg><h3 class="svc-name">Web and mobile applications</h3><p class="svc-desc">Customer-facing applications engineered for reliability and ease of use.</p></div>
-    <div><svg class="ic" aria-hidden="true"><use href="#i-web"/></svg><h3 class="svc-name">Corporate websites</h3><p class="svc-desc">Considered, high-performance websites that represent the organisation with clarity.</p></div>
+    <div><svg class="ic wi wi-cursor" aria-hidden="true"><use href="#i-web-cursor"/></svg><svg class="ic wi wi-build" aria-hidden="true"><use href="#i-web-build"/></svg><svg class="ic wi wi-scroll" aria-hidden="true"><use href="#i-web-scroll"/></svg><svg class="ic wi wi-link" aria-hidden="true"><use href="#i-web-link"/></svg><h3 class="svc-name">Corporate websites</h3><p class="svc-desc">Considered, high-performance websites that represent the organisation with clarity.</p></div>
       </div>
     </div>
     <div class="stack pillars" id="pillars" style="gap:1.6rem">
@@ -516,12 +524,16 @@ SOFTWARE.
   <symbol id="i-app" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="1.5"/><path d="M3 8.5h18"/><path class="lp-write" pathLength="1" d="M7 13h6"/><path class="lp-write" pathLength="1" d="M7 16h4"/></symbol>
   <symbol id="i-advise" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15.2 8.8 13.4 13.4 8.8 15.2 10.6 10.6z"/><circle cx="12" cy="12" r=".9"/></symbol>
   <filter id="rw-goo"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 255 -140"/></filter>
+  <symbol id="i-web-cursor" viewBox="0 0 24 24"><rect x="2.5" y="4" width="19" height="14" rx="1.5"/><path d="M2.5 8h19"/><g class="lp-click"><path d="M13 11.5v7.2l1.9-1.7 1.3 2.8 1.2-.6-1.3-2.7 2.5-.2z" fill="currentColor" stroke-width=".8"/></g><circle class="lp-ring" cx="13" cy="11.5" r="2.4"/></symbol>
+  <symbol id="i-web-build" viewBox="0 0 24 24"><rect x="2.5" y="3.5" width="19" height="17" rx="1.5"/><path d="M2.5 7.5h19"/><rect class="lp-blk" x="5.5" y="10" width="6" height="7.5" rx=".5"/><path class="lp-write" pathLength="1" d="M14 11h4.5"/><path class="lp-write" pathLength="1" d="M14 14h4.5"/><path class="lp-write" pathLength="1" d="M14 17h3"/></symbol>
+  <symbol id="i-web-scroll" viewBox="0 0 24 24"><rect x="4" y="2.5" width="16" height="19" rx="1.5"/><clipPath id="ws-clip"><rect x="4" y="6" width="16" height="15.5"/></clipPath><path d="M4 6h16"/><g clip-path="url(#ws-clip)"><g class="lp-page"><rect x="7" y="8.5" width="10" height="4" rx=".5"/><path d="M7 15.5h10M7 18.5h7"/><rect x="7" y="21.5" width="10" height="4" rx=".5"/><path d="M7 28.5h10M7 31.5h7"/></g></g></symbol>
+  <symbol id="i-web-link" viewBox="0 0 24 24"><rect x="2.5" y="4" width="19" height="16" rx="1.5"/><path d="M2.5 8.5h19"/><path d="M6 12.5h4" opacity=".55"/><path d="M12 12.5h6" opacity=".55"/><path d="M6 16h12" opacity=".2"/><path class="lp-ul" pathLength="1" d="M12 14h6"/><circle class="lp-dot" cx="5" cy="6.25" r=".7" fill="currentColor" stroke="none"/></symbol>
   <symbol id="i-web" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path class="lp-globe" d="M12 3c2.5 2.6 3.7 5.6 3.7 9s-1.2 6.4-3.7 9c-2.5-2.6-3.7-5.6-3.7-9S9.5 5.6 12 3z"/></symbol>
 </svg>
 
 
-<!-- preview only: pick a Bahrain treatment and the second About paragraph -->
-<div class="pv-pick"><div data-k="bh"><span>Bahrain</span><button type="button" data-v="wave">A · Waving flag</button><button type="button" data-v="edge">B · Serrated line</button><button type="button" data-v="split">C · Flag split</button><button type="button" data-v="sweep">D · Crimson sweep</button></div><div data-k="pl"><span>Paragraph</span><button type="button" data-v="1">1</button><button type="button" data-v="2">2</button><button type="button" data-v="3">3</button></div><button type="button" class="pv-x" aria-label="Hide options">×</button></div>
+<!-- preview only: pick the websites icon, the flag wave and the second About paragraph -->
+<div class="pv-pick"><div data-k="wi"><span>Websites icon</span><button type="button" data-v="cursor">1 · Click</button><button type="button" data-v="build">2 · Layout</button><button type="button" data-v="scroll">3 · Scroll</button><button type="button" data-v="link">4 · Link</button></div><div data-k="fw"><span>Flag wave</span><button type="button" data-v="wind">A · Wind</button><button type="button" data-v="ripple">B · Ripple (before)</button></div><div data-k="pl"><span>Paragraph</span><button type="button" data-v="1">1</button><button type="button" data-v="2">2</button><button type="button" data-v="3">3</button></div><button type="button" class="pv-x" aria-label="Hide options">×</button></div>
 
 <!-- Contact -->
 <section class="view" data-view="contact" aria-label="Contact">
@@ -685,6 +697,40 @@ addEventListener("resize", () => { if (sigSeen) { sigSize(); if (reduce) sigDraw
   const tick = () => { timer = 0; if (!seen) return; const a = stage.lastElementChild; i = (i + 1) % words.length; modes.blur(a, words[i]); timer = setTimeout(tick, T + HOLD); };
   word(words[0]);
   if (!reduce) new IntersectionObserver(([e]) => { seen = e.isIntersecting; if (seen && !timer) timer = setTimeout(tick, HOLD); }, { threshold: .6 }).observe(box);
+})();
+
+// ---------- Bahrain flag, wind style: the cloth is drawn column by column; each column tilts toward or away
+// from the viewer as a wave travels from the hoist to the fly, so it narrows and shades like real fabric ----------
+(() => {
+  const host = document.querySelector(".bh-flag"); if (!host) return;
+  const cv = document.createElement("canvas"); cv.className = "bh-cv"; cv.setAttribute("aria-hidden", "true"); host.append(cv);
+  const src = document.createElement("canvas"); src.width = 200; src.height = 120;
+  const g = src.getContext("2d");
+  g.fillStyle = "#ce1126"; g.fillRect(0, 0, 200, 120); g.fillStyle = "#fff"; g.beginPath(); g.moveTo(0, 0); g.lineTo(50, 0);
+  for (let k = 0; k < 5; k++) { g.lineTo(80, k * 24 + 12); g.lineTo(50, (k + 1) * 24); }
+  g.lineTo(0, 120); g.closePath(); g.fill();
+  const c = cv.getContext("2d"), N = 48; let W = 0, H = 0, run = false, seen = false;
+  const size = () => { const r = cv.getBoundingClientRect(), d = Math.min(2, devicePixelRatio || 1); W = cv.width = Math.max(1, Math.round(r.width * d)); H = cv.height = Math.max(1, Math.round(r.height * d)); };
+  function draw(t) {
+    c.clearRect(0, 0, W, H);
+    const pad = H * .13, fh = H - 2 * pad, s = W / N; let x = 0;
+    // one smooth light-and-shadow gradient laid over the whole cloth afterwards, so the columns never show seams
+    const grad = c.createLinearGradient(0, 0, W, 0);
+    for (let i = 0; i < N; i++) {
+      const u = i / N, ph = u * 2.1 * Math.PI - t * .0045;
+      const th = .75 * Math.pow(u, .8) * Math.sin(ph), w = Math.cos(th) * s, dy = pad * .8 * u * Math.sin(ph - 1.2);
+      c.drawImage(src, u * 200, 0, 200 / N + .4, 120, x, pad + dy, w + .7, fh);
+      const sh = Math.sin(th) * .42;
+      grad.addColorStop(Math.min(1, (x + w / 2) / W), sh > 0 ? `rgba(0,0,0,${sh})` : `rgba(255,255,255,${-sh * .55})`);
+      x += w;
+    }
+    c.globalCompositeOperation = "source-atop"; c.fillStyle = grad; c.fillRect(0, 0, W, H); c.globalCompositeOperation = "source-over";
+  }
+  const loop = t => { if (!seen || root.dataset.fw !== "wind") { run = false; return; } draw(t); requestAnimationFrame(loop); };
+  const start = () => { size(); if (reduce) return draw(0); if (seen && !run && root.dataset.fw === "wind") { run = true; requestAnimationFrame(loop); } };
+  new IntersectionObserver(([e]) => { seen = e.isIntersecting; start(); }).observe(host);
+  addEventListener("resize", () => { if (seen) { size(); if (reduce) draw(0); } });
+  new MutationObserver(start).observe(root, { attributes: true, attributeFilter: ["data-fw"] });
 })();
 
 // ---------- preview only: option switcher ----------
