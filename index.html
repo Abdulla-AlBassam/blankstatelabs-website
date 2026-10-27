@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Hanken+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400&display=swap">
 <style>
-/* Layout: fixed header (logo, name that slides in on inner pages, two tabs, contact button, grain-moon toggle) over one live dune background.
+/* Layout: fixed header (logo, name that slides in on inner pages, contact button, grain-moon toggle, burger menu) over one live dune background.
    Four views swap in place: home, About us, Our clients, Contact. */
 :root {
   --ink: #201813;
@@ -40,11 +40,13 @@ html { background: var(--page); transition: background .6s ease; }
 body { margin: 0; background: var(--page); color: var(--ink); font-family: var(--f-body); overflow-x: hidden; transition: background .6s ease, color .6s ease; }
 /* Safari on iPhone (2026-10-27) left a hard edge above its floating bottom toolbar: it did not draw the fixed background canvas under the toolbar.
    So the canvas now lives in the page itself: a layer as tall as the whole page, with the canvas pinned to the top of the screen inside it (sticky).
-   Ordinary page content is drawn under the toolbar, so the grain now reaches the very bottom of the screen. */
+   Ordinary page content is drawn under the toolbar, so the grain now reaches the very bottom of the screen.
+   Then (2026-10-27, his iPhone again) the grain still stopped at the toolbar's top edge, because Safari's screen height there ends above the toolbar.
+   So the canvas is also 160px taller than the screen; the extra strip sits behind the toolbar, and the drawing is laid out on the visible part only. */
 body { position: relative; }
-.bg { position: absolute; inset: 0; pointer-events: none; }
+.bg { position: absolute; inset: 0; pointer-events: none; overflow: clip; }
 canvas { display: block; }
-#gl { position: sticky; top: 0; left: 0; width: 100%; height: 100vh; height: 100lvh; }
+#gl { position: sticky; top: 0; left: 0; width: 100%; height: calc(100vh + 160px); height: calc(100lvh + 160px); }
 ::selection { background: var(--ink); color: var(--page); }
 
 /* ---------- header ---------- */
@@ -61,16 +63,6 @@ header.top { position: fixed; top: 0; left: 0; right: 0; z-index: 5; display: fl
 :root:not([data-view="home"]) .brand .name { max-width: 16em; opacity: 1; margin-left: 14px; transform: none; }
 
 .right { display: flex; align-items: center; gap: clamp(14px, 3vw, 40px); }
-.tabs { display: flex; gap: clamp(14px, 3vw, 40px); }
-.tabs a { position: relative; color: inherit; text-decoration: none; font-size: .72rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; opacity: var(--tab-o, .8); padding-block: 4px; white-space: nowrap; transition: opacity .35s ease; }
-/* the page you're on: full strength and bold; the other tab steps back. The hidden bold copy keeps the width steady so nothing shifts. */
-.tabs:has([aria-current="page"]) { --tab-o: .45; }
-.tabs a { display: inline-flex; flex-direction: column; }
-.tabs a::after { content: attr(data-t); font-weight: 700; height: 0; overflow: hidden; visibility: hidden; }
-.tabs a[aria-current="page"] { opacity: 1; font-weight: 700; }
-.tabs:hover a, .tabs:focus-within a { opacity: .28; }
-.tabs a:hover, .tabs a:focus-visible { opacity: 1; outline: none; }
-
 /* grain moon */
 .tg { appearance: none; border: 0; background: transparent; color: inherit; cursor: pointer; position: relative; flex: none;
   width: 20px; height: 20px; border-radius: 50%; box-shadow: inset 0 0 0 1px currentColor; overflow: hidden; padding: 0; }
@@ -349,8 +341,7 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
   .brand .name { font-size: .78rem; letter-spacing: .1em; }
   :root:not([data-view="home"]) .brand .name { margin-left: 10px; }
   .logo { height: 15px; }
-  .tabs a { font-size: .62rem; letter-spacing: .08em; }
-  .right, .tabs { gap: 10px; }
+  .right { gap: 10px; }
   .principles, .pair { grid-template-columns: minmax(0, 1fr); }
   .view { padding-top: calc(env(safe-area-inset-top, 0px) + 92px); }
   .view.home { padding-top: calc(env(safe-area-inset-top, 0px) + 92px); }
@@ -360,19 +351,16 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
 /* tablets: a slightly smaller header so the name and three tabs fit side by side */
 @media (min-width: 641px) and (max-width: 860px) {
   .brand .name { font-size: .84rem; letter-spacing: .14em; }
-  .tabs a { font-size: .64rem; letter-spacing: .1em; }
-  .right, .tabs { gap: 16px; }
+  .right { gap: 16px; }
 }
 /* three tabs since Our services got its own page (2026-10-27): tighter header on narrow phones so nothing touches the logo */
 @media (max-width: 480px) {
   header.top { gap: 10px; }
   .right { gap: 9px; }
-  .tabs { gap: 9px; }
-  .tabs a { font-size: .56rem; letter-spacing: .05em; }
   .cta-slot .cta { font-size: .56rem; letter-spacing: .06em; padding: 6px 8px; }
 }
 
-@media (prefers-reduced-motion: reduce) { body, .view, .tg::before, .tabs a, .tabs a::after, .cta, .cta::before, .brand .name, .dd-menu, .dd-btn .chev, .chips span { transition: none !important; } }
+@media (prefers-reduced-motion: reduce) { body, .view, .tg::before, .mnav a, .menu, .burger span, .cta, .cta::before, .brand .name, .dd-menu, .dd-btn .chev, .chips span { transition: none !important; } }
 
 
 /* Our network: heading and line on the left, the three kinds of specialist listed on the right */
@@ -381,6 +369,30 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
 .net-list > div:last-child { border-bottom: 1px solid var(--line); }
 .net-list svg.ic { width: 30px; height: 30px; grid-row: span 2; }
 @media (max-width: 860px) { .net { grid-template-columns: minmax(0, 1fr); } }
+
+
+/* ---------- burger menu (2026-10-27): replaces the three header tabs; Enquire stays in the bar ---------- */
+.burger { appearance: none; border: 0; background: transparent; color: inherit; cursor: pointer; flex: none; width: 26px; height: 26px; padding: 0; position: relative; }
+.burger span { position: absolute; left: 3px; right: 3px; height: 1.5px; background: currentColor; border-radius: 1px; transition: transform .45s var(--ease), top .45s var(--ease); }
+.burger span:first-child { top: 9px; } .burger span:last-child { top: 16px; }
+.burger[aria-expanded="true"] span:first-child { top: 12.25px; transform: rotate(45deg); }
+.burger[aria-expanded="true"] span:last-child { top: 12.25px; transform: rotate(-45deg); }
+.burger:focus-visible { outline: 1px solid currentColor; outline-offset: 4px; }
+.menu { position: fixed; inset: 0; z-index: 4; background: color-mix(in srgb, var(--page) 94%, transparent); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+  display: flex; align-items: center; padding: 96px var(--gutter) calc(env(safe-area-inset-bottom, 0px) + 48px); opacity: 0; transition: opacity .45s ease; }
+.menu[hidden] { display: none; }
+.menu.open { opacity: 1; }
+.mnav { display: grid; gap: clamp(10px, 2vh, 22px); }
+.mnav a { color: inherit; text-decoration: none; font-family: var(--f-display); font-size: clamp(2.2rem, 7vw, 4.4rem); line-height: 1.05; display: flex; align-items: baseline; gap: clamp(14px, 2vw, 26px);
+  opacity: 0; transform: translateY(14px); transition: opacity .5s ease, transform .6s var(--ease), color .3s ease; }
+.mnav a i { font-style: normal; font-family: var(--f-mono); font-size: .74rem; color: var(--muted); }
+.menu.open .mnav a { opacity: 1; transform: none; }
+.menu.open .mnav a:nth-child(2) { transition-delay: .05s; } .menu.open .mnav a:nth-child(3) { transition-delay: .1s; } .menu.open .mnav a:nth-child(4) { transition-delay: .15s; }
+.mnav:hover a { color: var(--muted); } .mnav a:hover, .mnav a:focus-visible { color: var(--ink); outline: none; }
+.mnav a[aria-current="page"] i { color: var(--ink); }
+:root[data-menu] body { overflow: hidden; }
+/* the pale top bar over the brown band goes back to normal while the menu is open */
+:root[data-menu][data-hdr="pale"] header.top { --ink: inherit; color: var(--ink); }
 
 /* ---------- section bands (picked 2026-10-27) ----------
    On the long page, About and Contact stay on the grain, Services sits on a grey band and Our clients on a brown band.
@@ -408,11 +420,16 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
     <span class="name">Blank State Labs</span>
   </a>
   <div class="right">
-    <nav class="tabs" aria-label="Main"><a href="#about" data-t="About us">About us</a><a href="#services" data-t="Our services">Our services</a><a href="#clients" data-t="Our clients">Our clients</a></nav>
     <div class="cta-slot"><a class="cta" href="#contact">Enquire</a></div>
     <button type="button" class="tg" aria-label="Switch to dark mode"></button>
+    <button type="button" class="burger" aria-label="Open menu" aria-expanded="false" aria-controls="menu"><span></span><span></span></button>
   </div>
 </header>
+
+<!-- the burger menu (2026-10-27): the section links open over the page -->
+<div class="menu" id="menu" hidden>
+  <nav class="mnav" aria-label="Main"><a href="#about"><i>01</i>About us</a><a href="#services"><i>02</i>Our services</a><a href="#clients"><i>03</i>Our clients</a><a href="#contact"><i>04</i>Contact</a></nav>
+</div>
 
 <!-- Home -->
 <main class="view home" data-view="home" aria-label="Home">
@@ -591,7 +608,7 @@ const objNow = 0, mNow = [.78, .62];
 
 // ---------- views ----------
 const views = document.querySelectorAll(".view");
-const tabLinks = document.querySelectorAll(".tabs a");
+const tabLinks = document.querySelectorAll(".mnav a");
 let calmTarget = 0, calmNow = 0, sideTarget = 0, sideNow = 0;
 // Two ways to read the site (2026-10-27). From home, scrolling runs through every section on one page.
 // A top tab (or any link to #about, #services, #clients, #contact) opens that section as its own page instead.
@@ -640,6 +657,18 @@ document.addEventListener("click", e => {
   route();
 });
 addEventListener("popstate", route);
+
+// ---------- burger menu ----------
+const burger = document.querySelector(".burger"), menu = document.getElementById("menu");
+function setMenu(open) {
+  burger.setAttribute("aria-expanded", open); burger.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+  if (open) { root.dataset.menu = ""; menu.hidden = false; requestAnimationFrame(() => menu.classList.add("open")); menu.querySelector("a").focus({ preventScroll: true }); }
+  else { delete root.dataset.menu; menu.classList.remove("open"); setTimeout(() => { if (!menu.classList.contains("open")) menu.hidden = true; }, 450); }
+}
+burger.addEventListener("click", () => setMenu(burger.getAttribute("aria-expanded") !== "true"));
+menu.addEventListener("click", e => { if (e.target.closest("a") || e.target === menu) setMenu(false); });
+addEventListener("keydown", e => { if (e.key === "Escape" && root.dataset.menu !== undefined) { setMenu(false); burger.focus(); } });
+document.querySelector(".brand").addEventListener("click", () => setMenu(false));
 
 // on the long page the top bar turns pale while the brown Our clients band passes under it (light mode only; dark mode is already pale)
 function hdrTone() {
@@ -847,7 +876,7 @@ const gl = glc.getContext("webgl", { antialias: false });
 
 const FRAG = `
 precision highp float;
-uniform vec2 r; uniform float t; uniform float dark; uniform float obj; uniform float calm; uniform vec2 m; uniform float fol; uniform float side;
+uniform vec2 r; uniform float oy; uniform float t; uniform float dark; uniform float obj; uniform float calm; uniform vec2 m; uniform float fol; uniform float side;
 float h(vec2 p){vec3 q=fract(vec3(p.xyx)*.1031);q+=dot(q,q.yzx+33.33);return fract((q.x+q.y)*q.z);}
 float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x),f.y);}
 float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<5;i++){v+=a*n(p);p=p*2.03+vec2(3.1,1.7);a*=.5;}return v;}
@@ -994,7 +1023,7 @@ float traces(vec3 p){
 }
 
 void main(){
- vec2 uv=gl_FragCoord.xy/r; float a=r.x/r.y; float x=mix(uv.x,1.-uv.x,side); float tt=t*.04;
+ vec2 uv=(gl_FragCoord.xy-vec2(0.,oy))/r; float a=r.x/r.y; float x=mix(uv.x,1.-uv.x,side); float tt=t*.04;
 
  vec3 topL=mix(vec3(.80,.78,.75),vec3(.87,.85,.82),uv.y), topD=mix(vec3(.10,.085,.075),vec3(.15,.125,.105),uv.y);
  vec3 top=mix(topL,topD,dark);
@@ -1050,7 +1079,7 @@ if (gl) {
   gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
   const pl = gl.getAttribLocation(prog, "p"); gl.enableVertexAttribArray(pl); gl.vertexAttribPointer(pl, 2, gl.FLOAT, false, 0, 0);
-  ["r", "t", "dark", "obj", "calm", "m", "fol", "side"].forEach(k => U[k] = gl.getUniformLocation(prog, k));
+  ["r", "oy", "t", "dark", "obj", "calm", "m", "fol", "side"].forEach(k => U[k] = gl.getUniformLocation(prog, k));
 }
 
 // ---------- light / dark ----------
@@ -1073,8 +1102,9 @@ toggle.addEventListener("click", hdrTone);
 addEventListener("hashchange", hdrTone);
 
 // ---------- render loop ----------
+let dprNow = 1;
 function resize() {
-  const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+  const dpr = dprNow = Math.min(window.devicePixelRatio || 1, 1.5);
   // the buffer matches the canvas itself, which is as tall as the screen with its toolbars hidden
   W = Math.floor(glc.clientWidth * dpr); H = Math.floor(glc.clientHeight * dpr);
   glc.width = W; glc.height = H;
@@ -1091,7 +1121,9 @@ function frame(now) {
   sideNow += (sideTarget - sideNow) * Math.min(1, dt * 2.2);
   if (Math.abs(sideTarget - sideNow) < .002) sideNow = sideTarget;
   if (gl) {
-    gl.uniform2f(U.r, W, H);
+    // the strip below the visible screen (behind a phone toolbar) carries on the same drawing
+    const oy = Math.max(0, H - Math.floor(innerHeight * dprNow));
+    gl.uniform2f(U.r, W, H - oy); gl.uniform1f(U.oy, oy);
     gl.uniform1f(U.t, reduce ? 12 : (now - t0) / 1000);
     gl.uniform1f(U.dark, darkNow);
     gl.uniform1f(U.obj, objNow);
