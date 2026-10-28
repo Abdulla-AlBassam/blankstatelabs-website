@@ -412,22 +412,14 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
 
 
 
-/* background texture trial (2026-10-28, preview only): a worn, chalky or woody surface instead of flat colour, across the whole site */
-body { background-image: var(--tex, none); }
-.tx-pick { position: fixed; left: 12px; bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); z-index: 6; display: flex; align-items: center; gap: 2px; flex-wrap: wrap;
-  background: var(--chrome-bg); color: var(--chrome-fg); border: 1px solid var(--chrome-line); border-radius: 999px; padding: 4px 4px 4px 14px;
-  font-size: .62rem; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; }
-.tx-pick button { appearance: none; border: 0; background: transparent; color: var(--chrome-dim); font: inherit; letter-spacing: inherit; text-transform: inherit; padding: 7px 10px; border-radius: 999px; cursor: pointer; }
-.tx-pick button[aria-pressed="true"] { background: var(--chrome-fg); color: #1a1512; }
-
 /* ---------- section bands (picked 2026-10-27) ----------
    On the long page, About and Contact stay on the grain, Services sits on a grey band and Our clients on a brown band.
    A section opened from a tab keeps the plain background. */
 :root { --band-grey: #bcb5ad; --band-brown: #4a3628; }
 :root[data-mode="dark"] { --band-grey: #2a2421; --band-brown: #3a2a20; }
 .view { transition: background .6s ease; }
-:root[data-nav="scroll"] .view[data-view="services"] { background: var(--band-grey) var(--tex, none); }
-:root[data-nav="scroll"] .view[data-view="clients"] { background: var(--band-brown) var(--tex, none); --page: var(--band-brown); color: var(--ink);
+:root[data-nav="scroll"] .view[data-view="services"] { background: var(--band-grey); }
+:root[data-nav="scroll"] .view[data-view="clients"] { background: var(--band-brown); --page: var(--band-brown); color: var(--ink);
   --ink: #efe7dc; --muted: rgba(239, 231, 220, .66); --line: rgba(239, 231, 220, .2); --tint: rgba(239, 231, 220, .07); --ink-rgb: 239, 231, 220; }
 /* the top bar turns pale while it sits over the brown band */
 :root[data-hdr="pale"] header.top { --ink: #efe7dc; --line: rgba(239, 231, 220, .3); color: var(--ink); transition: color .3s ease; }
@@ -618,9 +610,6 @@ SOFTWARE.
   </div>
 </section>
 
-<div class="tx-pick" role="group" aria-label="Background texture">Background
-  <button type="button" data-tx="solid">Solid</button><button type="button" data-tx="chalk">A Chalk</button><button type="button" data-tx="plaster">B Plaster</button><button type="button" data-tx="wood">C Wood</button>
-</div>
 
 <script>
 // a back-to-top button at the very end of the page
@@ -1199,29 +1188,6 @@ setTimeout(sideCheck, 60);
 calmNow = calmTarget;
 
 
-// background texture trial (preview only). Each texture is drawn by the browser from noise (an SVG filter), as soft light and dark patches laid over the page colour.
-// layer: [noise frequency, detail, seed, noise type, colour, strength in light mode, strength in dark mode, contrast]
-const TEX = {
-  chalk:   [[".006", 5, 3, "fractalNoise", "#fff", .3, .09, 3], [".02", 4, 9, "fractalNoise", "#000", .07, .2, 3], [".7", 2, 4, "fractalNoise", "#000", .06, .14, 2], [".55", 2, 17, "fractalNoise", "#fff", .1, .05, 2]],
-  plaster: [[".004", 6, 21, "fractalNoise", "#fff", .35, .12, 4], [".012", 5, 5, "turbulence", "#000", .1, .2, 3], [".04", 4, 13, "fractalNoise", "#fff", .18, .06, 4], [".75", 2, 8, "fractalNoise", "#000", .05, .14, 2]],
-  wood:    [[".0015 .022", 4, 2, "fractalNoise", "#000", .12, .22, 3], [".003 .07", 3, 6, "fractalNoise", "#fff", .25, .08, 3], [".004 .16", 3, 19, "fractalNoise", "#000", .06, .14, 5], [".02 .5", 2, 14, "fractalNoise", "#000", .05, .12, 2]]
-};
-const texUrl = (layers, dark) => {
-  const S = 640;
-  const body = layers.map(([f, o, seed, type, col, sl, sd, k], i) => {
-    const c = col === "#fff" ? 1 : 0;
-    return `<filter id="f${i}" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feTurbulence type="${type}" baseFrequency="${f}" numOctaves="${o}" seed="${seed}" stitchTiles="stitch"/>` +
-      `<feColorMatrix values="0 0 0 0 ${c} 0 0 0 0 ${c} 0 0 0 0 ${c} ${k} 0 0 0 ${-k * .5}"/></filter><rect width="100%" height="100%" filter="url(#f${i})" opacity="${dark ? sd : sl}"/>`;
-  }).join("");
-  return `url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="${S}" height="${S}">${body}</svg>`)}")`;
-};
-let txNow = "solid";
-const setTex = () => { const l = TEX[txNow]; if (l) document.documentElement.style.setProperty("--tex", texUrl(l, mode === "dark")); else document.documentElement.style.removeProperty("--tex"); };
-toggle.addEventListener("click", setTex);
-const txPick = document.querySelector(".tx-pick");
-const setTx = v => { txNow = v; txPick.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.dataset.tx === v)); try { localStorage.setItem("bsl-tx", v); } catch (e) {} setTex(); };
-if (/blankstatelabs\.com$/.test(location.hostname)) txPick.remove();
-else { txPick.addEventListener("click", e => { const b = e.target.closest("button"); if (b) setTx(b.dataset.tx); }); let v = "plaster"; try { v = localStorage.getItem("bsl-tx") || "plaster"; } catch (e) {} setTx(v); }
 requestAnimationFrame(frame);
 </script>
 
