@@ -47,13 +47,17 @@ body { position: relative; }
 .bg { position: absolute; inset: 0; pointer-events: none; overflow: clip; }
 canvas { display: block; }
 #gl { position: sticky; top: 0; left: 0; width: 100%; height: calc(100vh + 160px); height: calc(100lvh + 160px); }
-/* Hero-only grain (2026-10-28): first tried in Safari, then he wanted it everywhere ("much cleaner").
-   The grain is ordinary page content at the top of the page, behind the hero only: it scrolls away with the hero,
-   and the sections below sit on the plain background. Its foot fades out so no edge shows where it ends. */
-.bg { bottom: auto; height: calc(100vh + 160px); height: calc(100lvh + 160px); }
-#gl { position: absolute; height: 100%;
+/* Grain placement (2026-10-28).
+   Phones (touch screens): the grain is ordinary page content behind the hero only. Safari would not draw the pinned grain behind its toolbar,
+   and he liked the cleaner look. It scrolls away with the hero and its foot fades out; section pages have no grain.
+   Desktop: the grain stays pinned to the screen, but fades out while the middle sections are on screen and returns at the foot of the home page.
+   Section pages opened from the menu keep it throughout. */
+:root[data-touch] .bg { bottom: auto; height: calc(100vh + 160px); height: calc(100lvh + 160px); }
+:root[data-touch] #gl { position: absolute; height: 100%;
   -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 260px), transparent); mask-image: linear-gradient(to bottom, #000 calc(100% - 260px), transparent); }
-:root[data-nav="page"] .bg { display: none; }
+:root[data-touch][data-nav="page"] .bg { display: none; }
+#gl { transition: opacity .7s ease; }
+:root[data-grain="off"] #gl { opacity: 0; }
 ::selection { background: var(--ink); color: var(--page); }
 
 /* ---------- header ---------- */
@@ -407,6 +411,14 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
 
 
 
+
+/* sand look trial (2026-10-28, preview only) */
+.sd-pick { position: fixed; left: 12px; bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); z-index: 6; display: flex; align-items: center; gap: 2px; flex-wrap: wrap;
+  background: var(--chrome-bg); color: var(--chrome-fg); border: 1px solid var(--chrome-line); border-radius: 999px; padding: 4px 4px 4px 14px;
+  font-size: .62rem; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; }
+.sd-pick button { appearance: none; border: 0; background: transparent; color: var(--chrome-dim); font: inherit; letter-spacing: inherit; text-transform: inherit; padding: 7px 10px; border-radius: 999px; cursor: pointer; }
+.sd-pick button[aria-pressed="true"] { background: var(--chrome-fg); color: #1a1512; }
+
 /* ---------- section bands (picked 2026-10-27) ----------
    On the long page, About and Contact stay on the grain, Services sits on a grey band and Our clients on a brown band.
    A section opened from a tab keeps the plain background. */
@@ -605,10 +617,16 @@ SOFTWARE.
   </div>
 </section>
 
+<div class="sd-pick" role="group" aria-label="Sand look">Sand
+  <button type="button" data-sd="0">Now</button><button type="button" data-sd="1">A Ripples</button><button type="button" data-sd="2">B Drift</button><button type="button" data-sd="3">C Dunes</button>
+</div>
+
 <script>
 // a back-to-top button at the very end of the page
 document.querySelectorAll('.view[data-view="contact"]').forEach(v => v.insertAdjacentHTML("beforeend", '<button type="button" class="totop"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M5 9V1M1.5 4.5 5 1l3.5 3.5"/></svg>Back to top</button>'));
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+// touch screens get the hero-only grain (see the .bg styles)
+if (matchMedia("(pointer: coarse)").matches) document.documentElement.dataset.touch = "";
 const root = document.documentElement;
 // Change this one line to change the contact address everywhere on the page.
 const CONTACT_EMAIL = "enquire@blankstatelabs.com";
@@ -635,7 +653,7 @@ function setView(name) {
 }
 // on the long page, the open section is whichever one crosses a line a third of the way down the screen
 function spy() {
-  if (root.dataset.nav === "page") return;
+  if (root.dataset.nav === "page") { delete root.dataset.grain; return; }
   const line = innerHeight * .34; let name = "home";
   views.forEach(v => { if (v.getBoundingClientRect().top <= line) name = v.dataset.view; });
   // at the very bottom the last section counts as open, even if it is short
@@ -643,6 +661,9 @@ function spy() {
   setView(name);
   // the grain drops behind the content as soon as scrolling starts
   calmTarget = scrollY > 24 ? 1 : 0;
+  // desktop: the grain fades out over the middle sections and returns at the foot of the page
+  const home = views[0].getBoundingClientRect(), last = views[views.length - 1].getBoundingClientRect();
+  if (home.bottom < innerHeight * .25 && last.top > innerHeight * .5) root.dataset.grain = "off"; else delete root.dataset.grain;
 }
 // glide to a section on the long page
 function goTo(name, smooth = true) {
@@ -894,7 +915,7 @@ const gl = glc.getContext("webgl", { antialias: false });
 
 const FRAG = `
 precision highp float;
-uniform vec2 r; uniform float oy; uniform float t; uniform float dark; uniform float obj; uniform float calm; uniform vec2 m; uniform float fol; uniform float side;
+uniform vec2 r; uniform float oy; uniform float sand; uniform float t; uniform float dark; uniform float obj; uniform float calm; uniform vec2 m; uniform float fol; uniform float side;
 float h(vec2 p){vec3 q=fract(vec3(p.xyx)*.1031);q+=dot(q,q.yzx+33.33);return fract((q.x+q.y)*q.z);}
 float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x),f.y);}
 float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<5;i++){v+=a*n(p);p=p*2.03+vec2(3.1,1.7);a*=.5;}return v;}
@@ -1050,10 +1071,51 @@ void main(){
  float line=-.26+.64*x-calm*.4+.06*sin(x*3.1+tt*3.)+.035*sin(x*7.3-tt*5.);
  line+=(fbm(vec2(x*2.,tt))-.5)*.12;
  float d=uv.y-line;
- float v=smoothstep(0.,.3,d);
- vec3 col=mix(band,top,mix(v,step(grs(0.),v),.72));
- float b=smoothstep(0.,.32,-(d+.14));
- col=mix(col,low,mix(b,step(grs(1.),b),.62));
+ vec3 col;
+ if(sand<2.5){
+  float v=smoothstep(0.,.3,d);
+  col=mix(band,top,mix(v,step(grs(0.),v),.72));
+  float b=smoothstep(0.,.32,-(d+.14));
+  col=mix(col,low,mix(b,step(grs(1.),b),.62));
+ }
+ // sand trial (2026-10-28). 1 Ripples: wind ripples drift across the dune face, like raked sand.
+ if(sand>.5&&sand<1.5){
+  float inb=smoothstep(.0,.05,-d)*(1.-smoothstep(.15,.6,-d));
+  float w=fbm(vec2(x*2.6,uv.y*2.2)+vec2(tt*1.5,0.));
+  float rp=sin((d*1.15-x*.32)*150.+w*10.+t*.9);
+  float crest=smoothstep(.45,1.,rp)*inb;
+  col=mix(col,mix(band,top,.62),step(grs(2.),crest*.95));
+ }
+ // 2 Drift: grains stream off the crest in the wind and slide down the face.
+ if(sand>1.5&&sand<2.5){
+  vec2 p=vec2(x*a,uv.y);
+  vec2 dir=normalize(vec2(-1.,.42)), per=vec2(-dir.y,dir.x);
+  float al=dot(p,dir), ac=dot(p,per);
+  float st=n(vec2(al*5.+t*.45,ac*95.))*n(vec2(al*2.3+t*.3,ac*31.));
+  st=smoothstep(.16,.45,st);
+  float above=step(0.,d)*exp(-d*10.);
+  col=mix(col,band,step(grs(3.),st*above*.8));
+  float face=smoothstep(.0,.05,-d)*(1.-smoothstep(.1,.45,-d));
+  float st2=smoothstep(.45,.8,n(vec2(al*7.-t*.25,ac*230.)));
+  col=mix(col,mix(band,top,.45),step(grs(4.),st2*face*.35));
+ }
+ // 3 Dunes: three ridges one behind another, each with a gentle windward side and a steep shaded slip face; they creep slowly.
+ if(sand>2.5){
+  col=top;
+  for(int k=0;k<3;k++){
+   float fk=float(k);
+   float xs=x*(1.15+fk*.55)+fk*1.9+tt*(.5+fk*.25);
+   float ph=fract(xs);
+   float prof=ph<.72?smoothstep(0.,.72,ph):1.-smoothstep(.72,1.,ph);
+   float yk=line+.17-fk*.11+(prof-.5)*(.16-fk*.03);
+   float dk=uv.y-yk;
+   float e=smoothstep(0.,.14,-dk);
+   float lit=ph<.72?1.:0.;
+   vec3 base=mix(band,low,fk*.42);
+   vec3 lc=mix(base,mix(base,top,.3),lit*(1.-smoothstep(0.,.12,-dk)));
+   col=mix(col,lc,step(grs(5.+fk),e));
+  }
+ }
 
  float cv=step(.5,obj)*(1.-smoothstep(0.,.45,calm));
  if(cv>.02){
@@ -1097,7 +1159,7 @@ if (gl) {
   gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
   const pl = gl.getAttribLocation(prog, "p"); gl.enableVertexAttribArray(pl); gl.vertexAttribPointer(pl, 2, gl.FLOAT, false, 0, 0);
-  ["r", "oy", "t", "dark", "obj", "calm", "m", "fol", "side"].forEach(k => U[k] = gl.getUniformLocation(prog, k));
+  ["r", "oy", "sand", "t", "dark", "obj", "calm", "m", "fol", "side"].forEach(k => U[k] = gl.getUniformLocation(prog, k));
 }
 
 // ---------- light / dark ----------
@@ -1120,7 +1182,7 @@ toggle.addEventListener("click", hdrTone);
 addEventListener("hashchange", hdrTone);
 
 // ---------- render loop ----------
-let dprNow = 1;
+let dprNow = 1, sandNow = 0;
 function resize() {
   const dpr = dprNow = Math.min(window.devicePixelRatio || 1, 1.5);
   // the buffer matches the canvas itself, which is as tall as the screen with its toolbars hidden
@@ -1144,6 +1206,7 @@ function frame(now) {
     const oy = Math.max(0, H - Math.floor(innerHeight * dprNow));
     gl.uniform2f(U.r, W, H - oy); gl.uniform1f(U.oy, oy);
     gl.uniform1f(U.t, reduce ? 12 : (now - t0) / 1000);
+    gl.uniform1f(U.sand, sandNow);
     gl.uniform1f(U.dark, darkNow);
     gl.uniform1f(U.obj, objNow);
     gl.uniform1f(U.calm, calmNow + lowNow * .2);
@@ -1162,6 +1225,12 @@ route();
 setTimeout(sideCheck, 60);
 calmNow = calmTarget;
 
+
+// sand look trial (preview only): the live site keeps the current look and never shows the picker
+const sdPick = document.querySelector(".sd-pick");
+const setSd = v => { sandNow = +v; sdPick.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.dataset.sd === v)); try { localStorage.setItem("bsl-sd", v); } catch (e) {} if (reduce) frame(performance.now()); };
+if (/blankstatelabs\.com$/.test(location.hostname)) sdPick.remove();
+else { sdPick.addEventListener("click", e => { const b = e.target.closest("button"); if (b) { setSd(b.dataset.sd); scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" }); } }); let v = "1"; try { v = localStorage.getItem("bsl-sd") || "1"; } catch (e) {} setSd(v); }
 requestAnimationFrame(frame);
 </script>
 
