@@ -412,6 +412,25 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
 
 
 
+/* art beside Our services (2026-10-28 trial, preview only): fills the empty column left of the service cards on wide screens */
+.svc-art { position: absolute; pointer-events: none; display: none; }
+:root[data-art] .svc-art:not([hidden]) { display: block; }
+.svc-art canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+@media (min-width: 1100px) { :root[data-art] .inner > .svc-wrap { max-width: min(1240px, calc(100% - 250px)); } }
+@media (max-width: 1099px) { .svc-art { display: none !important; } }
+.svc-idx { position: sticky; top: 150px; list-style: none; margin: 0; padding: 0; display: none; gap: 1.05rem; font-size: .7rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--ink); }
+:root[data-art="4"] .svc-idx { display: grid; }
+:root[data-art="4"] .svc-art canvas { display: none; }
+.svc-idx li { display: flex; align-items: center; gap: 14px; opacity: .35; transition: opacity .5s ease; }
+.svc-idx li::before { content: ""; flex: none; width: 16px; height: 1px; background: currentColor; transition: width .5s var(--ease); }
+.svc-idx li.on { opacity: 1; }
+.svc-idx li.on::before { width: 40px; }
+.art-pick { position: fixed; left: 12px; bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); z-index: 6; display: flex; align-items: center; gap: 2px; flex-wrap: wrap;
+  background: var(--chrome-bg); color: var(--chrome-fg); border: 1px solid var(--chrome-line); border-radius: 999px; padding: 4px 4px 4px 14px;
+  font-size: .62rem; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; }
+.art-pick button { appearance: none; border: 0; background: transparent; color: var(--chrome-dim); font: inherit; letter-spacing: inherit; text-transform: inherit; padding: 7px 10px; border-radius: 999px; cursor: pointer; }
+.art-pick button[aria-pressed="true"] { background: var(--chrome-fg); color: #1a1512; }
+
 /* ---------- section bands (picked 2026-10-27) ----------
    On the long page, About and Contact stay on the grain, Services sits on a grey band and Our clients on a brown band.
    A section opened from a tab keeps the plain background. */
@@ -478,6 +497,7 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
 
 <!-- Our services (own page from 2026-10-27; was part of About us) -->
 <section class="view" data-view="services" aria-label="Our services">
+  <div class="svc-art" aria-hidden="true" hidden><canvas></canvas><ol class="svc-idx"></ol></div>
   <div class="inner">
     <div class="stack svc-wrap" id="svc" style="gap:1.6rem">
       <h2 class="display">Our Services</h2>
@@ -610,6 +630,10 @@ SOFTWARE.
   </div>
 </section>
 
+
+<div class="art-pick" role="group" aria-label="Art beside Our services">Services art
+  <button type="button" data-art="1">1 Dune</button><button type="button" data-art="2">2 Loom</button><button type="button" data-art="3">3 Arc</button><button type="button" data-art="4">4 Index</button><button type="button" data-art="5">5 Blocks</button>
+</div>
 
 <script>
 // a back-to-top button at the very end of the page
@@ -1187,6 +1211,138 @@ route();
 setTimeout(sideCheck, 60);
 calmNow = calmTarget;
 
+
+// ---------- art beside Our services (2026-10-28 trial, preview only) ----------
+// 1 Dune: the hero's dune stands up the left side.  2 Loom: threads run top to bottom and straighten as you scroll.
+// 3 Arc: the Scale logo, drawn in grain, fills like a sunrise.  4 Index: the service names, each lit as its card passes.
+// 5 Blocks: loose sand gathers into neat stacked blocks as you scroll (raw material becoming a structure).
+(() => {
+  const art = svcView.querySelector(".svc-art"), cv = art.querySelector("canvas"), cx = cv.getContext("2d"), idx = art.querySelector(".svc-idx");
+  const tiles = svcView.querySelector(".f-tiles"), inner = svcView.querySelector(".inner"), cards = [...tiles.children];
+  cards.forEach(c => { const li = document.createElement("li"); li.textContent = c.querySelector(".svc-name").textContent; idx.append(li); });
+  let W = 0, H = 0, seen = false, run = false, pNow = 0, rnd = null;
+  const sst = (a, b, x) => { const k = Math.min(1, Math.max(0, (x - a) / (b - a))); return k * k * (3 - 2 * k); };
+  const clamp = x => Math.min(1, Math.max(0, x));
+  function place() {
+    const v = svcView.getBoundingClientRect(), tr = tiles.getBoundingClientRect(), ir = inner.getBoundingClientRect();
+    const w = Math.floor(tr.left - ir.left - 56), h = Math.floor(tr.height);
+    art.hidden = !root.dataset.art || w < 150 || h < 50;
+    art.style.left = (ir.left - v.left) + "px"; art.style.top = (tr.top - v.top) + "px"; art.style.width = Math.max(0, w) + "px"; art.style.height = h + "px";
+    if (!art.hidden && (w !== W || h !== H)) { W = w; H = h; cv.width = W; cv.height = H; rnd = new Uint8Array(W * H + 4096); for (let i = 0; i < rnd.length; i++) rnd[i] = Math.random() * 255; blocks = null; mask = null; }
+  }
+  const inkRGB = () => getComputedStyle(root).getPropertyValue("--ink-rgb").trim().split(",").map(Number);
+  // scroll progress: 0 while the cards first come up, 1 once their foot reaches mid-screen
+  const prog = () => { const r = tiles.getBoundingClientRect(); return clamp((innerHeight * .5 - r.top) / Math.max(1, r.height)); };
+
+  // 1 Dune: three ridges climbing the left edge, wider at the foot, creeping slowly; grain like the hero's
+  function dune(t) {
+    const img = cx.createImageData(W, H), d = img.data, dark = root.dataset.mode === "dark";
+    const band = dark ? [209, 194, 173] : [31, 24, 20], low = dark ? [107, 79, 59] : [140, 107, 82];
+    const cols = [0, 1, 2].map(k => band.map((b, i) => b + (low[i] - b) * k * .42));
+    const sh = (Math.floor(t / 55) * 997) % 4096;
+    for (let y = 0; y < H; y++) {
+      const v = y / H, grow = .15 + .85 * v * v, xs = [];
+      for (let k = 0; k < 3; k++) {
+        const ph = ((v * (1.6 + k * .7) + k * 1.9 - t * .00002 * (1 + k * .5)) % 1 + 1) % 1;
+        const prof = ph < .72 ? sst(0, .72, ph) : 1 - sst(.72, 1, ph);
+        xs.push(W * grow * (.92 - k * .24) + (prof - .5) * W * .16 * grow);
+      }
+      for (let x = 0; x < W; x++) {
+        const i = y * W + x, r = rnd[i + sh] / 255; let c = null;
+        for (let k = 0; k < 3; k++) { const e = sst(0, W * .22, xs[k] - x); if (r < e) c = cols[k]; }
+        if (c) { const o = i * 4; d[o] = c[0]; d[o + 1] = c[1]; d[o + 2] = c[2]; d[o + 3] = 255; }
+      }
+    }
+    cx.putImageData(img, 0, 0);
+  }
+  // 2 Loom, standing: tangled at the top of the cards, straight by their foot
+  function loom(t, p) {
+    const [r, g, b] = inkRGB(), n = 9, k = sst(.05, .9, p), amp = W * .26;
+    cx.clearRect(0, 0, W, H);
+    for (let j = 0; j < n; j++) {
+      cx.beginPath();
+      for (let y = 0; y <= H; y += 4) {
+        const u = y / H, settle = lerp(sst(.15, .85, u + (k - .5) * .9), 1, sst(.6, 1, k)), ph = t * .0006 + j * 1.7;
+        const wild = (Math.sin(y * .011 + ph) * .55 + Math.sin(y * .027 - ph * 1.3 + j) * .35 + Math.sin(y * .006 + j * 2.1) * .5) * amp * .7;
+        const lane = W * .5 + (j - (n - 1) / 2) * Math.min(14, W * .05);
+        const x = lerp(W * .5 + wild, lane, settle);
+        y ? cx.lineTo(x, y) : cx.moveTo(x, y);
+      }
+      cx.strokeStyle = j === 4 ? `rgba(${r},${g},${b},.9)` : `rgba(${r},${g},${b},.36)`; cx.lineWidth = j === 4 ? 2.2 : 1.6; cx.stroke();
+    }
+  }
+  // 3 Arc: the logo in grain; the half circle and its curve fill from left to right, hold, then fade, on a 9s loop
+  let mask = null, mS = 0, mX = 0, mY = 0;
+  function arc(t) {
+    if (!mask) {
+      mS = W * .9 / 72; mX = (W - 72 * mS) / 2 - 14 * mS; mY = Math.min(H * .18, 160) - 40 * mS;
+      const o = document.createElement("canvas"); o.width = W; o.height = H; const c = o.getContext("2d");
+      c.setTransform(mS, 0, 0, mS, mX, mY); c.fill(new Path2D("M28.5 76A21.5 21.5 0 0 1 71.5 76Z"));
+      c.lineWidth = 7; c.stroke(new Path2D("M18 76A32 32 0 0 1 82 76"));
+      mask = c.getImageData(0, 0, W, H).data;
+    }
+    const img = cx.createImageData(W, H), d = img.data, [r, g, b] = inkRGB(), sh = (Math.floor(t / 70) * 997) % 4096;
+    const ph = (t % 9000) / 9000, fill = sst(0, .45, ph), fade = 1 - sst(.8, 1, ph);
+    const ox = 50 * mS + mX, oy = 76 * mS + mY;
+    const y1 = Math.min(H, Math.ceil(oy + 2));
+    for (let y = 0; y < y1; y++) for (let x = 0; x < W; x++) {
+      const i = y * W + x; if (mask[i * 4 + 3] < 128) continue;
+      const a = Math.atan2(oy - y, x - ox), s = 1 - a / Math.PI; // 0 at the left end, 1 at the right
+      const dens = .1 + .85 * sst(s - .06, s + .06, fill * 1.12) * fade;
+      if (rnd[i + sh] / 255 < dens) { const o = i * 4; d[o] = r; d[o + 1] = g; d[o + 2] = b; d[o + 3] = 255; }
+    }
+    cx.putImageData(img, 0, 0);
+  }
+  // 5 Blocks: each grain has a home in one block; the bottom blocks fill first
+  let blocks = null;
+  function build() {
+    const B = Math.floor(Math.min(W * .3, 92)), gap = Math.max(6, B * .1), cols = Math.max(2, Math.floor((W + gap) / (B + gap))), rows = 4, sp = 5;
+    const x0 = (W - (cols * B + (cols - 1) * gap)) / 2, list = [];
+    for (let rr = 0; rr < rows; rr++) for (let c = 0; c < cols - (rr % 2 && cols > 2 ? 1 : 0); c++) {
+      const off = rr % 2 && cols > 2 ? (B + gap) / 2 : 0, bx = x0 + off + c * (B + gap), by = H - 8 - (rr + 1) * B - rr * gap, order = rr / rows;
+      for (let gy = 0; gy < B; gy += sp) for (let gx = 0; gx < B; gx += sp)
+        list.push({ tx: bx + gx, ty: by + gy, sx: W * .5 + (Math.random() + Math.random() + Math.random() - 1.5) * W * .42, sy: H * .3 + (Math.random() + Math.random() + Math.random() - 1.5) * H * .3, w: Math.random() * 6.28, order });
+    }
+    blocks = list;
+  }
+  function blocksDraw(t, p) {
+    if (!blocks) build();
+    const [r, g, b] = inkRGB(); cx.clearRect(0, 0, W, H); cx.fillStyle = `rgba(${r},${g},${b},.8)`;
+    for (const q of blocks) {
+      const k = sst(0, 1, clamp((p * 1.5 - q.order * .9 - .05) / .45)), e = k * k * (3 - 2 * k);
+      const fx = q.sx + Math.sin(t * .0005 + q.w) * 14, fy = q.sy + Math.cos(t * .0004 + q.w * 1.3) * 10;
+      cx.globalAlpha = .45 + .55 * e; cx.fillRect(lerp(fx, q.tx, e), lerp(fy, q.ty, e), 2, 2);
+    }
+    cx.globalAlpha = 1;
+  }
+  function index() {
+    const mid = innerHeight * .5; let best = 0, bd = 1e9;
+    cards.forEach((c, i) => { const r = c.getBoundingClientRect(), dd = Math.abs(r.top + r.height / 2 - mid); if (dd < bd) { bd = dd; best = i; } });
+    [...idx.children].forEach((li, i) => li.classList.toggle("on", i === best));
+  }
+  function loop(now) {
+    if (!seen || !root.dataset.art) { run = false; return; }
+    place();
+    if (!art.hidden) {
+      const m = root.dataset.art, t = reduce ? 6000 : now;
+      pNow += (prog() - pNow) * (reduce ? 1 : .12);
+      if (m === "1") dune(t); else if (m === "2") loom(t, pNow); else if (m === "3") arc(t); else if (m === "4") index(); else blocksDraw(t, pNow);
+    }
+    if (reduce) { run = false; return; }
+    requestAnimationFrame(loop);
+  }
+  const start = () => { if (seen && root.dataset.art && !run) { run = true; requestAnimationFrame(loop); } };
+  new IntersectionObserver(([e]) => { seen = e.isIntersecting; start(); }).observe(svcView);
+  addEventListener("scroll", () => { if (reduce) { run = false; start(); } }, { passive: true });
+  addEventListener("resize", () => { place(); start(); });
+  const pick = document.querySelector(".art-pick");
+  const set = v => { root.dataset.art = v; pick.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.dataset.art === v)); try { localStorage.setItem("bsl-art", v); } catch (e) {} W = 0; place(); start(); };
+  if (/blankstatelabs\.com$/.test(location.hostname)) { pick.remove(); art.remove(); }
+  else {
+    pick.addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; set(b.dataset.art); const s = document.getElementById("svc"); if (s.getBoundingClientRect().top > innerHeight || s.getBoundingClientRect().bottom < 0) scrollTo({ top: s.getBoundingClientRect().top + scrollY - 96, behavior: reduce ? "auto" : "smooth" }); });
+    let v = "2"; try { v = localStorage.getItem("bsl-art") || "2"; } catch (e) {} set(v);
+  }
+})();
 
 requestAnimationFrame(frame);
 </script>
