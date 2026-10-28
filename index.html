@@ -405,6 +405,14 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
 @keyframes lp-tick { 0%, 8% { stroke-dashoffset: 1; } 35%, 100% { stroke-dashoffset: 0; } }
 
 
+
+/* grain speed trial (2026-10-28, preview only) */
+.gs-pick { position: fixed; left: 12px; bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); z-index: 6; display: flex; align-items: center; gap: 2px;
+  background: var(--chrome-bg); color: var(--chrome-fg); border: 1px solid var(--chrome-line); border-radius: 999px; padding: 4px 4px 4px 14px;
+  font-size: .62rem; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; }
+.gs-pick button { appearance: none; border: 0; background: transparent; color: var(--chrome-dim); font: inherit; letter-spacing: inherit; text-transform: inherit; padding: 7px 10px; border-radius: 999px; cursor: pointer; }
+.gs-pick button[aria-pressed="true"] { background: var(--chrome-fg); color: #1a1512; }
+
 /* ---------- section bands (picked 2026-10-27) ----------
    On the long page, About and Contact stay on the grain, Services sits on a grey band and Our clients on a brown band.
    A section opened from a tab keeps the plain background. */
@@ -602,6 +610,10 @@ SOFTWARE.
     </form>
   </div>
 </section>
+
+<div class="gs-pick" role="group" aria-label="Grain speed">Grain speed
+  <button type="button" data-gs="1">Now</button><button type="button" data-gs=".6">A Slower</button><button type="button" data-gs=".35">B Slow</button><button type="button" data-gs=".15">C Very slow</button>
+</div>
 
 <script>
 // a back-to-top button at the very end of the page
@@ -1120,7 +1132,7 @@ toggle.addEventListener("click", hdrTone);
 addEventListener("hashchange", hdrTone);
 
 // ---------- render loop ----------
-let dprNow = 1;
+let dprNow = 1, grainT = 0, grainSpeed = 1;
 function resize() {
   const dpr = dprNow = Math.min(window.devicePixelRatio || 1, 1.5);
   // the buffer matches the canvas itself, which is as tall as the screen with its toolbars hidden
@@ -1143,7 +1155,9 @@ function frame(now) {
     // the strip below the visible screen (behind a phone toolbar) carries on the same drawing
     const oy = Math.max(0, H - Math.floor(innerHeight * dprNow));
     gl.uniform2f(U.r, W, H - oy); gl.uniform1f(U.oy, oy);
-    gl.uniform1f(U.t, reduce ? 12 : (now - t0) / 1000);
+    // grain clock: runs at grainSpeed, so a slower speed slows both the drift and the shimmer
+    grainT += dt * grainSpeed;
+    gl.uniform1f(U.t, reduce ? 12 : grainT);
     gl.uniform1f(U.dark, darkNow);
     gl.uniform1f(U.obj, objNow);
     gl.uniform1f(U.calm, calmNow + lowNow * .2);
@@ -1161,6 +1175,12 @@ hdrTone();
 route();
 setTimeout(sideCheck, 60);
 calmNow = calmTarget;
+
+// grain speed trial (preview only): the live site keeps the current speed and never shows the picker
+const gsPick = document.querySelector(".gs-pick");
+const setGs = v => { grainSpeed = +v; gsPick.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.dataset.gs === v)); try { localStorage.setItem("bsl-gs", v); } catch (e) {} };
+if (/blankstatelabs\.com$/.test(location.hostname)) gsPick.remove();
+else { gsPick.addEventListener("click", e => { const b = e.target.closest("button"); if (b) setGs(b.dataset.gs); }); let g = "1"; try { g = localStorage.getItem("bsl-gs") || "1"; } catch (e) {} setGs(g); }
 requestAnimationFrame(frame);
 </script>
 
