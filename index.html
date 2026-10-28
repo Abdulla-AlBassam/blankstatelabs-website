@@ -47,6 +47,13 @@ body { position: relative; }
 .bg { position: absolute; inset: 0; pointer-events: none; overflow: clip; }
 canvas { display: block; }
 #gl { position: sticky; top: 0; left: 0; width: 100%; height: calc(100vh + 160px); height: calc(100lvh + 160px); }
+/* Safari (2026-10-28): the pinned grain still stopped at the toolbar on his iPhone, while it looked right in Chrome.
+   So in Safari the grain is ordinary page content at the top of the page, behind the hero only: it scrolls away with the hero,
+   and the sections below sit on the plain background. Its foot fades out so no edge shows where it ends. */
+:root[data-sf] .bg { bottom: auto; height: calc(100vh + 160px); height: calc(100lvh + 160px); }
+:root[data-sf] #gl { position: absolute; height: 100%;
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 260px), transparent); mask-image: linear-gradient(to bottom, #000 calc(100% - 260px), transparent); }
+:root[data-sf][data-nav="page"] .bg { display: none; }
 ::selection { background: var(--ink); color: var(--page); }
 
 /* ---------- header ---------- */
@@ -397,6 +404,63 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
 .lp-tick { stroke-dasharray: 1; animation: lp-tick 4s ease-in-out infinite; }
 @keyframes lp-tick { 0%, 8% { stroke-dashoffset: 1; } 35%, 100% { stroke-dashoffset: 0; } }
 
+
+/* ---------- the founder (trial 2026-10-28, end of About us) ----------
+   Layout A Split: photo left, text right. B Panel: a brown panel with the photo rising out of its top edge. C Centred: photo, name and credentials on one centre line.
+   Photo: black and white, warm grey, or colour (the picker swaps the file). */
+.founder { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(28px, 5vw, 80px); align-items: end; max-width: 1240px; margin-top: clamp(24px, 5vw, 64px); }
+.f-photo { margin: 0; align-self: end; position: relative; }
+.f-photo img { display: block; width: 100%; max-width: 440px; height: auto; margin-inline: auto;
+  -webkit-mask-image: linear-gradient(to bottom, #000 72%, transparent 100%); mask-image: linear-gradient(to bottom, #000 72%, transparent 100%); }
+.f-photo::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: var(--line); }
+.f-body { display: grid; gap: 1rem; align-content: start; padding-bottom: clamp(8px, 2vw, 24px); }
+.f-name { font-size: clamp(2rem, 4vw, 3.4rem); }
+.f-role { margin: -.3rem 0 .4rem; font-size: .74rem; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+.f-intro { max-width: 58ch; }
+.f-creds { list-style: none; margin: .6rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 28px; }
+.f-creds li { display: flex; align-items: center; gap: 14px; padding: 14px 0; border-top: 1px solid var(--line); font-size: .95rem; }
+.f-creds svg.ic { width: 24px; height: 24px; }
+.f-areas { display: grid; gap: .45rem; margin-top: .4rem; }
+.f-areas p:last-child { margin: 0; color: var(--muted); font-size: .94rem; line-height: 1.6; }
+.f-areas i { font-style: normal; opacity: .5; padding: 0 .25em; }
+.f-links { display: flex; gap: 10px; margin-top: .6rem; }
+.f-link { display: inline-flex; align-items: center; gap: 9px; color: inherit; text-decoration: none; border: 1px solid var(--line); border-radius: 999px; padding: 8px 16px 8px 10px;
+  font-size: .7rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; transition: border-color .3s ease, background .3s ease; }
+.f-link svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; }
+.f-link:hover { border-color: currentColor; background: var(--tint); }
+.f-link:focus-visible { outline: 1px solid currentColor; outline-offset: 3px; }
+@media (max-width: 860px) { .founder { grid-template-columns: minmax(0, 1fr); } .f-photo img { max-width: 340px; } .f-creds { grid-template-columns: minmax(0, 1fr); } }
+
+/* B Panel */
+:root[data-fl="b"] .founder { background: var(--band-brown); color: #efe7dc; --ink: #efe7dc; --muted: rgba(239, 231, 220, .66); --line: rgba(239, 231, 220, .2); --tint: rgba(239, 231, 220, .07);
+  padding: 0 clamp(20px, 4vw, 56px); margin-top: clamp(80px, 10vw, 140px); grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
+:root[data-fl="b"] .f-body { order: -1; padding-block: clamp(28px, 4vw, 52px); }
+/* the photo stands on the panel's bottom edge, a little taller than the panel where there is room */
+:root[data-fl="b"] .f-photo { align-self: stretch; min-height: 260px; }
+:root[data-fl="b"] .f-photo img { position: absolute; right: 0; bottom: 0; height: min(calc(100% + 40px), 460px); width: auto; max-width: none; -webkit-mask-image: none; mask-image: none; }
+:root[data-fl="b"] .f-photo::after { display: none; }
+@media (max-width: 860px) { :root[data-fl="b"] .founder { grid-template-columns: minmax(0, 1fr); } :root[data-fl="b"] .f-body { order: 0; }
+  :root[data-fl="b"] .f-photo { min-height: 0; align-self: auto; } :root[data-fl="b"] .f-photo img { position: static; height: auto; width: 100%; max-width: 320px; margin: -70px auto 0; } }
+
+/* C Centred */
+:root[data-fl="c"] .founder { grid-template-columns: minmax(0, 1fr); justify-items: center; text-align: center; }
+:root[data-fl="c"] .f-photo img { max-width: 320px; }
+:root[data-fl="c"] .f-photo { width: min(100%, 560px); }
+:root[data-fl="c"] .f-body { justify-items: center; }
+:root[data-fl="c"] .f-intro { margin-inline: auto; }
+:root[data-fl="c"] .f-creds { grid-template-columns: repeat(4, minmax(0, 1fr)); width: 100%; max-width: 1040px; gap: 0 20px; }
+:root[data-fl="c"] .f-creds li { flex-direction: column; text-align: center; gap: 10px; padding: 20px 6px; }
+@media (max-width: 860px) { :root[data-fl="c"] .f-creds { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* founder trial picker (preview only) */
+.f-pick { position: fixed; left: 12px; bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); z-index: 6; display: grid; gap: 4px;
+  background: var(--chrome-bg); color: var(--chrome-fg); border: 1px solid var(--chrome-line); border-radius: 16px; padding: 8px 8px 8px 14px;
+  font-size: .62rem; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; }
+.f-pick div { display: flex; align-items: center; gap: 2px; }
+.f-pick b { font-weight: 500; width: 54px; }
+.f-pick button { appearance: none; border: 0; background: transparent; color: var(--chrome-dim); font: inherit; letter-spacing: inherit; text-transform: inherit; padding: 6px 9px; border-radius: 999px; cursor: pointer; }
+.f-pick button[aria-pressed="true"] { background: var(--chrome-fg); color: #1a1512; }
+
 /* ---------- section bands (picked 2026-10-27) ----------
    On the long page, About and Contact stay on the grain, Services sits on a grey band and Our clients on a brown band.
    A section opened from a tab keeps the plain background. */
@@ -457,6 +521,27 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
         <div><p class="lede">We work quickly and collaboratively. You speak directly with the engineer responsible for your product, keeping communication clear and decisions moving. We build in focused iterations, refining as we go, and shape every solution around the organisation it serves — considered, distinctive and built to last.</p><button type="button" class="jump" data-go="pillars">How we work</button></div>
       </div>
       <div class="s-viz"><canvas id="signal" aria-hidden="true"></canvas></div>
+    </div>
+    <!-- The founder (trial 2026-10-28): photo, credentials and links; layout and photo style picked from the preview panel -->
+    <div class="founder" id="founder">
+      <figure class="f-photo"><img src="assets/founder-bw.webp" alt="Abdulla AlBassam, founder of Blank State Labs" width="400" height="400" loading="lazy"></figure>
+      <div class="f-body">
+        <p class="lab">The founder</p>
+        <h2 class="display f-name">Abdulla AlBassam</h2>
+        <p class="f-role">Founder &amp; Lead Engineer</p>
+        <p class="lede f-intro">Abdulla founded Blank State Labs to give organisations direct access to the engineer building their systems. With a background in cybersecurity at the Central Bank of Bahrain, he leads every engagement personally, from architecture and development through to security review.</p>
+        <ul class="f-creds">
+          <li><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5 4 5.5v6c0 5 3.4 8.6 8 10 4.6-1.4 8-5 8-10v-6z"/></svg><span>Cybersecurity, Central Bank of Bahrain</span></li>
+          <li><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="9" r="6"/><path d="M8.5 13.9 7 21.5l5-2.6 5 2.6-1.5-7.6"/><path d="m9.6 9 1.6 1.6L14.6 7.4"/></svg><span>Claude Certified Architect</span></li>
+          <li><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4"/><path d="M12 1.5v4M12 18.5v4M1.5 12h4M18.5 12h4"/></svg><span>Certified Junior Penetration Tester</span></li>
+          <li><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 7 3 12l5 5M16 7l5 5-5 5"/><path d="M13.5 5l-3 14"/></svg><span>20+ software projects delivered</span></li>
+        </ul>
+        <div class="f-areas"><p class="lab">Project experience</p><p>Productivity tools <i>·</i> AI and programmatic automation <i>·</i> Interactive games <i>·</i> Social platforms <i>·</i> Email and communication systems</p></div>
+        <div class="f-links">
+          <a class="f-link" href="#" target="_blank" rel="noopener" aria-label="Abdulla on LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2.5"/><path d="M8 10.5v6"/><circle cx="8" cy="7.6" r=".6" fill="currentColor"/><path d="M11.5 16.5v-6M11.5 13.2c0-1.8 1-2.8 2.4-2.8s2.1 1 2.1 2.8v3.3"/></svg><span>LinkedIn</span></a>
+          <a class="f-link" href="#" target="_blank" rel="noopener" aria-label="Abdulla's portfolio" title="Portfolio"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4" width="19" height="16" rx="1.5"/><path d="M2.5 8h19"/><circle cx="12" cy="12.6" r="2.1"/><path d="M8.2 18.2c.5-1.9 2-3 3.8-3s3.3 1.1 3.8 3"/></svg><span>Portfolio</span></a>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -595,10 +680,17 @@ SOFTWARE.
   </div>
 </section>
 
+<div class="f-pick" role="group" aria-label="Founder section trial">
+  <div><b>Layout</b><button type="button" data-fl="a">A Split</button><button type="button" data-fl="b">B Panel</button><button type="button" data-fl="c">C Centred</button></div>
+  <div><b>Photo</b><button type="button" data-fp="bw">B&amp;W</button><button type="button" data-fp="grey">Warm grey</button><button type="button" data-fp="colour">Colour</button></div>
+</div>
+
 <script>
 // a back-to-top button at the very end of the page
 document.querySelectorAll('.view[data-view="contact"]').forEach(v => v.insertAdjacentHTML("beforeend", '<button type="button" class="totop"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M5 9V1M1.5 4.5 5 1l3.5 3.5"/></svg>Back to top</button>'));
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+// Safari (not Chrome, Firefox or Edge, which also say "Safari" in their name string) gets the hero-only grain; see the .bg styles
+if (/^((?!chrome|chromium|crios|fxios|edgios|android).)*safari/i.test(navigator.userAgent)) document.documentElement.dataset.sf = "";
 const root = document.documentElement;
 // Change this one line to change the contact address everywhere on the page.
 const CONTACT_EMAIL = "enquire@blankstatelabs.com";
@@ -660,6 +752,21 @@ document.addEventListener("click", e => {
   route();
 });
 addEventListener("popstate", route);
+
+// founder trial (preview only): layout A/B/C and photo style; the live site never shows the picker
+const fPick = document.querySelector(".f-pick"), fImg = document.querySelector(".f-photo img");
+const setF = (k, v) => {
+  root.dataset[k] = v; fPick.querySelectorAll(`[data-${k}]`).forEach(b => b.setAttribute("aria-pressed", b.dataset[k] === v));
+  if (k === "fp") fImg.src = `assets/founder-${v}.webp`;
+  try { localStorage.setItem("bsl-" + k, v); } catch (e) {}
+};
+// until he picks, the founder section stays off the live site
+if (/blankstatelabs\.com$/.test(location.hostname)) { fPick.remove(); document.getElementById("founder").remove(); }
+else {
+  fPick.addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; const k = b.dataset.fl ? "fl" : "fp"; setF(k, b.dataset[k]); document.getElementById("founder").scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" }); });
+  let fl = "a", fp = "bw"; try { fl = localStorage.getItem("bsl-fl") || "a"; fp = localStorage.getItem("bsl-fp") || "bw"; } catch (e) {}
+  setF("fl", fl); setF("fp", fp);
+}
 
 
 // ---------- burger menu ----------
@@ -1155,7 +1262,6 @@ requestAnimationFrame(frame);
 
 <style>
 /* scroll reveal on Our services (picked 2026-10-16): services sharpen from a soft blur, pillars unveil from the top down */
-.rvl { transition: opacity .9s ease, transform .9s var(--ease), filter .9s ease, clip-path 1s var(--ease); transition-delay: var(--d, 0s); }
 .rvl.focus:not(.shown) { opacity: 0; filter: blur(10px); }
 .rvl.unveil { clip-path: inset(0 0 0 0); }
 .rvl.unveil:not(.shown) { clip-path: inset(0 0 100% 0); opacity: .2; transform: translateY(10px); }
@@ -1167,7 +1273,15 @@ requestAnimationFrame(frame);
   [[".svc-wrap > .display", "unveil"], [".f-tiles > div", "focus"], [".pillars > .display", "unveil"], [".pA > div", "unveil"]].forEach(([sel, kind]) =>
     page.querySelectorAll(sel).forEach((el, i) => { el.classList.add("rvl", kind); el.style.setProperty("--d", (i % 4) * .09 + "s"); els.push(el); }));
   // checked by position on scroll, so the blur and clip can't hide an element from the check
-  const check = () => { const lim = innerHeight * .92; els.forEach(el => { if (!el.classList.contains("shown") && el.getBoundingClientRect().top < lim) el.classList.add("shown"); }); };
+  // Played with the Web Animations API (2026-10-28): Safari skipped the CSS transition on the Craftsmanship pillar, so it popped in instead of unveiling
+  const from = { focus: { opacity: 0, filter: "blur(10px)" }, unveil: { clipPath: "inset(0 0 100% 0)", opacity: .2, transform: "translateY(10px)" } };
+  const to = { focus: { opacity: 1, filter: "blur(0px)" }, unveil: { clipPath: "inset(0 0 0% 0)", opacity: 1, transform: "translateY(0px)" } };
+  const show = el => {
+    const kind = el.classList.contains("focus") ? "focus" : "unveil", delay = parseFloat(el.style.getPropertyValue("--d")) * 1000 || 0;
+    el.classList.add("shown");
+    if (!reduce && el.animate) el.animate([from[kind], to[kind]], { duration: kind === "focus" ? 900 : 1000, delay, easing: "cubic-bezier(.65, 0, .35, 1)", fill: "backwards" });
+  };
+  const check = () => { const lim = innerHeight * .92; els.forEach(el => { if (!el.classList.contains("shown") && el.getBoundingClientRect().top < lim) show(el); }); };
   addEventListener("scroll", check, { passive: true });
   requestAnimationFrame(() => requestAnimationFrame(check));
 })();
