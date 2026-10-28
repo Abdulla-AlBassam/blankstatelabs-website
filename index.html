@@ -415,16 +415,9 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
 /* art beside Our services (2026-10-28 trial, preview only): fills the empty column left of the service cards on wide screens */
 .svc-art { position: absolute; pointer-events: none; display: none; }
 :root[data-art] .svc-art:not([hidden]) { display: block; }
-.svc-art canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.svc-art canvas { position: sticky; top: 110px; display: block; width: 100%; }
 @media (min-width: 1100px) { :root[data-art] .inner > .svc-wrap { max-width: min(1240px, calc(100% - 250px)); } }
 @media (max-width: 1099px) { .svc-art { display: none !important; } }
-.svc-idx { position: sticky; top: 150px; list-style: none; margin: 0; padding: 0; display: none; gap: 1.05rem; font-size: .7rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--ink); }
-:root[data-art="4"] .svc-idx { display: grid; }
-:root[data-art="4"] .svc-art canvas { display: none; }
-.svc-idx li { display: flex; align-items: center; gap: 14px; opacity: .35; transition: opacity .5s ease; }
-.svc-idx li::before { content: ""; flex: none; width: 16px; height: 1px; background: currentColor; transition: width .5s var(--ease); }
-.svc-idx li.on { opacity: 1; }
-.svc-idx li.on::before { width: 40px; }
 .art-pick { position: fixed; left: 12px; bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); z-index: 6; display: flex; align-items: center; gap: 2px; flex-wrap: wrap;
   background: var(--chrome-bg); color: var(--chrome-fg); border: 1px solid var(--chrome-line); border-radius: 999px; padding: 4px 4px 4px 14px;
   font-size: .62rem; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; }
@@ -497,7 +490,7 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
 
 <!-- Our services (own page from 2026-10-27; was part of About us) -->
 <section class="view" data-view="services" aria-label="Our services">
-  <div class="svc-art" aria-hidden="true" hidden><canvas></canvas><ol class="svc-idx"></ol></div>
+  <div class="svc-art" aria-hidden="true" hidden><canvas></canvas></div>
   <div class="inner">
     <div class="stack svc-wrap" id="svc" style="gap:1.6rem">
       <h2 class="display">Our Services</h2>
@@ -631,8 +624,8 @@ SOFTWARE.
 </section>
 
 
-<div class="art-pick" role="group" aria-label="Art beside Our services">Services art
-  <button type="button" data-art="1">1 Dune</button><button type="button" data-art="2">2 Loom</button><button type="button" data-art="3">3 Arc</button><button type="button" data-art="4">4 Index</button><button type="button" data-art="5">5 Blocks</button>
+<div class="art-pick" role="group" aria-label="Art beside Our services">Blocks
+  <button type="button" data-art="a">A Cubes</button><button type="button" data-art="b">B Map</button><button type="button" data-art="c">C Pour</button>
 </div>
 
 <script>
@@ -916,7 +909,9 @@ const svcView = document.querySelector('section[data-view="services"]'), svcWrap
 const sideCheck = () => {
   const line = innerHeight * .55;
   const atNet = network.getBoundingClientRect().top < line;
-  sideTarget = (svcWrap.getBoundingClientRect().top < line && pillars.getBoundingClientRect().top > line) || atNet ? 1 : 0;
+  // while the sand blocks trial sits left of the cards, the grain stays right so the two don't meet
+  const artLeft = root.dataset.art && innerWidth >= 1100;
+  sideTarget = (!artLeft && svcWrap.getBoundingClientRect().top < line && pillars.getBoundingClientRect().top > line) || atNet ? 1 : 0;
   // at Our Network the grain also sinks a little lower, so it stays clear of the text (2026-10-28)
   lowTarget = atNet ? 1 : 0;
   if (reduce) { sideNow = sideTarget; lowNow = lowTarget; frame(performance.now()); }
@@ -1212,135 +1207,169 @@ setTimeout(sideCheck, 60);
 calmNow = calmTarget;
 
 
-// ---------- art beside Our services (2026-10-28 trial, preview only) ----------
-// 1 Dune: the hero's dune stands up the left side.  2 Loom: threads run top to bottom and straighten as you scroll.
-// 3 Arc: the Scale logo, drawn in grain, fills like a sunrise.  4 Index: the service names, each lit as its card passes.
-// 5 Blocks: loose sand gathers into neat stacked blocks as you scroll (raw material becoming a structure).
+// ---------- sand into blocks, beside Our services (2026-10-28 trial, preview only; he picked the Blocks idea) ----------
+// Loose grains of sand gather into a structure: raw material becoming something built. Three versions:
+// A Cubes: grains settle into stippled 3D cubes that stack into a stepped pyramid, lit from the top left.
+// B Map: a small map of the service cards beside them; each block fills with sand as its card comes up, and the card in the middle of the screen glows.
+// C Pour: grains pour down from a pile at the top and land as a neat stacked wall, bottom row first.
+// A and C loop: build, hold, blow apart back into sand, build again.
 (() => {
-  const art = svcView.querySelector(".svc-art"), cv = art.querySelector("canvas"), cx = cv.getContext("2d"), idx = art.querySelector(".svc-idx");
+  const art = svcView.querySelector(".svc-art"), cv = art.querySelector("canvas"), cx = cv.getContext("2d");
   const tiles = svcView.querySelector(".f-tiles"), inner = svcView.querySelector(".inner"), cards = [...tiles.children];
-  cards.forEach(c => { const li = document.createElement("li"); li.textContent = c.querySelector(".svc-name").textContent; idx.append(li); });
-  let W = 0, H = 0, seen = false, run = false, pNow = 0, rnd = null;
+  let W = 0, H = 0, seen = false, run = false, pNow = 0, grains = null, cubes = null, built = "";
+  const cardNow = cards.map(() => 0);
   const sst = (a, b, x) => { const k = Math.min(1, Math.max(0, (x - a) / (b - a))); return k * k * (3 - 2 * k); };
   const clamp = x => Math.min(1, Math.max(0, x));
+  const gauss = () => Math.random() + Math.random() + Math.random() - 1.5;
   function place() {
     const v = svcView.getBoundingClientRect(), tr = tiles.getBoundingClientRect(), ir = inner.getBoundingClientRect();
-    const w = Math.floor(tr.left - ir.left - 56), h = Math.floor(tr.height);
+    const w = Math.floor(tr.left - ir.left - 56), h = Math.floor(Math.min(tr.height, innerHeight - 260));
     art.hidden = !root.dataset.art || w < 150 || h < 50;
-    art.style.left = (ir.left - v.left) + "px"; art.style.top = (tr.top - v.top) + "px"; art.style.width = Math.max(0, w) + "px"; art.style.height = h + "px";
-    if (!art.hidden && (w !== W || h !== H)) { W = w; H = h; cv.width = W; cv.height = H; rnd = new Uint8Array(W * H + 4096); for (let i = 0; i < rnd.length; i++) rnd[i] = Math.random() * 255; blocks = null; mask = null; }
+    art.style.left = (ir.left - v.left) + "px"; art.style.top = (tr.top - v.top) + "px"; art.style.width = Math.max(0, w) + "px"; art.style.height = tr.height + "px"; cv.style.height = h + "px";
+    const dpr = Math.min(2, devicePixelRatio || 1);
+    if (!art.hidden && (w !== W || h !== H)) { W = w; H = h; cv.width = W * dpr; cv.height = H * dpr; cx.setTransform(dpr, 0, 0, dpr, 0, 0); grains = null; }
   }
-  const inkRGB = () => getComputedStyle(root).getPropertyValue("--ink-rgb").trim().split(",").map(Number);
-  // scroll progress: 0 while the cards first come up, 1 once their foot reaches mid-screen
-  const prog = () => { const r = tiles.getBoundingClientRect(); return clamp((innerHeight * .5 - r.top) / Math.max(1, r.height)); };
-
-  // 1 Dune: three ridges climbing the left edge, wider at the foot, creeping slowly; grain like the hero's
-  function dune(t) {
-    const img = cx.createImageData(W, H), d = img.data, dark = root.dataset.mode === "dark";
-    const band = dark ? [209, 194, 173] : [31, 24, 20], low = dark ? [107, 79, 59] : [140, 107, 82];
-    const cols = [0, 1, 2].map(k => band.map((b, i) => b + (low[i] - b) * k * .42));
-    const sh = (Math.floor(t / 55) * 997) % 4096;
-    for (let y = 0; y < H; y++) {
-      const v = y / H, grow = .15 + .85 * v * v, xs = [];
-      for (let k = 0; k < 3; k++) {
-        const ph = ((v * (1.6 + k * .7) + k * 1.9 - t * .00002 * (1 + k * .5)) % 1 + 1) % 1;
-        const prof = ph < .72 ? sst(0, .72, ph) : 1 - sst(.72, 1, ph);
-        xs.push(W * grow * (.92 - k * .24) + (prof - .5) * W * .16 * grow);
-      }
-      for (let x = 0; x < W; x++) {
-        const i = y * W + x, r = rnd[i + sh] / 255; let c = null;
-        for (let k = 0; k < 3; k++) { const e = sst(0, W * .22, xs[k] - x); if (r < e) c = cols[k]; }
-        if (c) { const o = i * 4; d[o] = c[0]; d[o + 1] = c[1]; d[o + 2] = c[2]; d[o + 3] = 255; }
-      }
-    }
-    cx.putImageData(img, 0, 0);
+  const inkRGB = () => getComputedStyle(root).getPropertyValue("--ink-rgb").trim();
+  const bgCol = () => { const c = getComputedStyle(svcView).backgroundColor; return c && c !== "rgba(0, 0, 0, 0)" && c !== "transparent" ? c : getComputedStyle(document.body).backgroundColor; };
+  
+  // A Cubes. Screen axes for a little 3D grid: x runs right-down, y runs left-down, z runs up.
+  function buildCubes() {
+    const s = Math.min(W * .86 / 5.2, 84), ex = [s * .866, s * .5], ey = [-s * .866, s * .5], ez = [0, -s];
+    const C = [W / 2, H - 12 - 3 * s];
+    const P = (x, y, z) => [C[0] + x * ex[0] + y * ey[0] + z * ez[0], C[1] + x * ex[1] + y * ey[1] + z * ez[1]];
+    const list = [];
+    for (let k = 0; k < 3; k++) for (let i = 0; i < 3 - k; i++) for (let j = 0; j < 3 - k; j++) list.push({ i, j, k });
+    // built bottom layer first, back to front; drawn back to front so nearer cubes cover farther ones
+    list.sort((a, b) => a.k - b.k || (a.i + a.j) - (b.i + b.j));
+    list.forEach((c, n) => { c.order = n / list.length; });
+    const sp = 3.1, gs = [];
+    list.forEach(c => {
+      const { i, j, k } = c;
+      c.hex = [P(i, j, k + 1), P(i + 1, j, k + 1), P(i + 1, j, k), P(i + 1, j + 1, k), P(i, j + 1, k), P(i, j + 1, k + 1)];
+      c.edges = [[P(i + 1, j + 1, k + 1), P(i + 1, j, k + 1)], [P(i + 1, j + 1, k + 1), P(i, j + 1, k + 1)], [P(i + 1, j + 1, k + 1), P(i + 1, j + 1, k)]];
+      c.grains = [];
+      // three visible faces: top (lit), left front (half lit), right front (shade)
+      const faces = [[P(i, j, k + 1), ex, ey, .92], [P(i, j + 1, k + 1), ex, ez.map(v => -v), .5], [P(i + 1, j, k + 1), ey, ez.map(v => -v), .24]];
+      faces.forEach(([o, a, b, keep]) => {
+        const n = Math.ceil(s / sp);
+        for (let u = 0; u < n; u++) for (let v = 0; v < n; v++) {
+          if (Math.random() > keep) continue;
+          const fu = (u + Math.random() * .6) / n, fv = (v + Math.random() * .6) / n;
+          c.grains.push({ tx: o[0] + a[0] * fu + b[0] * fv, ty: o[1] + a[1] * fu + b[1] * fv, sx: W / 2 + gauss() * W * .45, sy: H * .32 + gauss() * H * .34, w: Math.random() * 6.28, d: Math.random() * .25 });
+        }
+      });
+    });
+    return list;
   }
-  // 2 Loom, standing: tangled at the top of the cards, straight by their foot
-  function loom(t, p) {
-    const [r, g, b] = inkRGB(), n = 9, k = sst(.05, .9, p), amp = W * .26;
+  function cubesDraw(t, p) {
+    if (!grains) { cubes = buildCubes(); grains = 1; }
+    const ink = inkRGB(), bg = bgCol();
     cx.clearRect(0, 0, W, H);
-    for (let j = 0; j < n; j++) {
-      cx.beginPath();
-      for (let y = 0; y <= H; y += 4) {
-        const u = y / H, settle = lerp(sst(.15, .85, u + (k - .5) * .9), 1, sst(.6, 1, k)), ph = t * .0006 + j * 1.7;
-        const wild = (Math.sin(y * .011 + ph) * .55 + Math.sin(y * .027 - ph * 1.3 + j) * .35 + Math.sin(y * .006 + j * 2.1) * .5) * amp * .7;
-        const lane = W * .5 + (j - (n - 1) / 2) * Math.min(14, W * .05);
-        const x = lerp(W * .5 + wild, lane, settle);
-        y ? cx.lineTo(x, y) : cx.moveTo(x, y);
+    const arrive = c => sst(0, 1, clamp((p * 1.5 - c.order * .95 - .02) / .3));
+    // grains still in the air
+    cx.fillStyle = `rgba(${ink},.5)`;
+    for (const c of cubes) { const e0 = arrive(c); if (e0 >= 1) continue;
+      for (const q of c.grains) { const e = sst(q.d, 1, e0); if (e > .98) continue; const fx = q.sx + Math.sin(t * .0005 + q.w) * 12, fy = q.sy + Math.cos(t * .0004 + q.w * 1.3) * 9; cx.fillRect(lerp(fx, q.tx, e * e), lerp(fy, q.ty, e), 1.6, 1.6); } }
+    // settled cubes, back to front
+    for (const c of [...cubes].sort((a, b) => (a.i + a.j + a.k) - (b.i + b.j + b.k))) {
+      const e0 = arrive(c); if (e0 <= 0) continue;
+      const solid = sst(.75, 1, e0);
+      if (solid > 0) { cx.globalAlpha = solid; cx.fillStyle = bg; cx.beginPath(); c.hex.forEach(([x, y], n) => n ? cx.lineTo(x, y) : cx.moveTo(x, y)); cx.closePath(); cx.fill(); cx.globalAlpha = 1; }
+      cx.fillStyle = `rgba(${ink},.85)`;
+      for (const q of c.grains) { const e = sst(q.d, 1, e0); if (e > .98) cx.fillRect(q.tx, q.ty, 1.6, 1.6); }
+      if (solid > 0) { cx.strokeStyle = `rgba(${ink},${.28 * solid})`; cx.lineWidth = 1; cx.beginPath(); c.edges.forEach(([a, b]) => { cx.moveTo(a[0], a[1]); cx.lineTo(b[0], b[1]); }); cx.stroke(); }
+    }
+  }
+
+  // B Map: the service cards' layout in miniature (big card, four small, one small and one wide)
+  const MAP = [[0, 0, 2, 2], [2, 0, 1, 1], [3, 0, 1, 1], [2, 1, 1, 1], [3, 1, 1, 1], [0, 2, 1, 1], [1, 2, 3, 1]];
+  let mapG = null, mw = 0, mh = 0;
+  function buildMap() {
+    const g = 6, cw = (W * .94 - 3 * g) / 4, ch = cw * .95; mw = 4 * cw + 3 * g; mh = 3 * ch + 2 * g;
+    mapG = MAP.map(([c, r, sw, sh], n) => {
+      const x = (W - mw) / 2 + c * (cw + g), y = r * (ch + g), w = sw * cw + (sw - 1) * g, h = sh * ch + (sh - 1) * g, gr = [];
+      for (let gy = 2; gy < h - 1; gy += 3.4) for (let gx = 2; gx < w - 1; gx += 3.4) if (Math.random() < .8)
+        gr.push({ tx: x + gx, ty: y + gy, sx: W / 2 + gauss() * W * .5, sy: -mh * .45 + gauss() * mh * .5, w: Math.random() * 6.28, d: Math.random() * .3 });
+      return { x, y, w, h, gr };
+    });
+  }
+  function mapDraw(t) {
+    if (!grains) { buildMap(); grains = 1; }
+    const ink = inkRGB();
+    const oy = Math.max(4, H - mh - 8);
+    let best = 0, bd = 1e9;
+    cards.forEach((c, i) => {
+      const r = c.getBoundingClientRect(), dd = Math.abs(r.top + r.height / 2 - innerHeight * .5);
+      if (dd < bd) { bd = dd; best = i; }
+      const target = clamp((innerHeight * .95 - r.top) / (innerHeight * .25));
+      cardNow[i] += (target - cardNow[i]) * (reduce ? 1 : 1 - Math.exp(-dtArt * 4));
+    });
+    cx.clearRect(0, 0, W, H);
+    mapG.forEach((m, i) => {
+      const e0 = cardNow[i], on = i === best ? 1 : 0;
+      m.glow = (m.glow || 0) + (on - (m.glow || 0)) * (1 - Math.exp(-dtArt * 5));
+      cx.strokeStyle = `rgba(${ink},${.16 + .3 * m.glow})`; cx.lineWidth = 1; cx.strokeRect(m.x + .5, oy + m.y + .5, m.w - 1, m.h - 1);
+      for (const q of m.gr) {
+        const e = sst(q.d, 1, e0); if (e <= 0) continue;
+        const fx = q.sx + Math.sin(t * .0005 + q.w) * 12, fy = q.sy + Math.cos(t * .0004 + q.w * 1.3) * 9;
+        cx.fillStyle = e > .98 ? `rgba(${ink},${.42 + .5 * m.glow})` : `rgba(${ink},${.45 * e})`;
+        cx.fillRect(lerp(fx, q.tx, e), oy + lerp(fy, q.ty, e * e), 1.6, 1.6);
       }
-      cx.strokeStyle = j === 4 ? `rgba(${r},${g},${b},.9)` : `rgba(${r},${g},${b},.36)`; cx.lineWidth = j === 4 ? 2.2 : 1.6; cx.stroke();
-    }
+    });
   }
-  // 3 Arc: the logo in grain; the half circle and its curve fill from left to right, hold, then fade, on a 9s loop
-  let mask = null, mS = 0, mX = 0, mY = 0;
-  function arc(t) {
-    if (!mask) {
-      mS = W * .9 / 72; mX = (W - 72 * mS) / 2 - 14 * mS; mY = Math.min(H * .18, 160) - 40 * mS;
-      const o = document.createElement("canvas"); o.width = W; o.height = H; const c = o.getContext("2d");
-      c.setTransform(mS, 0, 0, mS, mX, mY); c.fill(new Path2D("M28.5 76A21.5 21.5 0 0 1 71.5 76Z"));
-      c.lineWidth = 7; c.stroke(new Path2D("M18 76A32 32 0 0 1 82 76"));
-      mask = c.getImageData(0, 0, W, H).data;
-    }
-    const img = cx.createImageData(W, H), d = img.data, [r, g, b] = inkRGB(), sh = (Math.floor(t / 70) * 997) % 4096;
-    const ph = (t % 9000) / 9000, fill = sst(0, .45, ph), fade = 1 - sst(.8, 1, ph);
-    const ox = 50 * mS + mX, oy = 76 * mS + mY;
-    const y1 = Math.min(H, Math.ceil(oy + 2));
-    for (let y = 0; y < y1; y++) for (let x = 0; x < W; x++) {
-      const i = y * W + x; if (mask[i * 4 + 3] < 128) continue;
-      const a = Math.atan2(oy - y, x - ox), s = 1 - a / Math.PI; // 0 at the left end, 1 at the right
-      const dens = .1 + .85 * sst(s - .06, s + .06, fill * 1.12) * fade;
-      if (rnd[i + sh] / 255 < dens) { const o = i * 4; d[o] = r; d[o + 1] = g; d[o + 2] = b; d[o + 3] = 255; }
-    }
-    cx.putImageData(img, 0, 0);
-  }
-  // 5 Blocks: each grain has a home in one block; the bottom blocks fill first
-  let blocks = null;
-  function build() {
-    const B = Math.floor(Math.min(W * .3, 92)), gap = Math.max(6, B * .1), cols = Math.max(2, Math.floor((W + gap) / (B + gap))), rows = 4, sp = 5;
+
+  // C Pour: a pile of grains at the top; each falls (speeding up, like gravity) into its place in a staggered wall
+  let wall = null;
+  function buildWall() {
+    const B = Math.floor(Math.min(W * .27, 84)), gap = Math.max(5, B * .08), cols = Math.max(2, Math.floor((W + gap) / (B + gap))), rows = 5, sp = 3.6;
     const x0 = (W - (cols * B + (cols - 1) * gap)) / 2, list = [];
-    for (let rr = 0; rr < rows; rr++) for (let c = 0; c < cols - (rr % 2 && cols > 2 ? 1 : 0); c++) {
-      const off = rr % 2 && cols > 2 ? (B + gap) / 2 : 0, bx = x0 + off + c * (B + gap), by = H - 8 - (rr + 1) * B - rr * gap, order = rr / rows;
-      for (let gy = 0; gy < B; gy += sp) for (let gx = 0; gx < B; gx += sp)
-        list.push({ tx: bx + gx, ty: by + gy, sx: W * .5 + (Math.random() + Math.random() + Math.random() - 1.5) * W * .42, sy: H * .3 + (Math.random() + Math.random() + Math.random() - 1.5) * H * .3, w: Math.random() * 6.28, order });
+    let nb = 0;
+    for (let rr = 0; rr < rows; rr++) { const odd = rr % 2 && cols > 2, n = cols - (odd ? 1 : 0); for (let c = 0; c < n; c++) {
+      const bx = x0 + (odd ? (B + gap) / 2 : 0) + c * (B + gap), by = H - 6 - (rr + 1) * B - rr * gap, order = nb++;
+      for (let gy = 0; gy < B; gy += sp) for (let gx = 0; gx < B; gx += sp) if (Math.random() < .86)
+        list.push({ tx: bx + gx, ty: by + gy, sx: W / 2 + gauss() * W * .3, sy: H * .06 + Math.abs(gauss()) * H * .12, w: Math.random() * 6.28, order, d: Math.random() * .5 });
+    } }
+    list.forEach(q => q.order /= nb);
+    wall = list;
+  }
+  function pourDraw(t, p) {
+    if (!grains) { buildWall(); grains = 1; }
+    const ink = inkRGB(); cx.clearRect(0, 0, W, H);
+    for (const q of wall) {
+      const k = clamp((p * 1.45 - q.order * .95) / .32), e = sst(q.d * .6, 1, k);
+      const fx = q.sx + Math.sin(t * .0007 + q.w) * 6, fy = q.sy + Math.cos(t * .0006 + q.w) * 4;
+      const x = lerp(fx, q.tx, sst(0, .7, e)), y = lerp(fy, q.ty, e * e);
+      cx.fillStyle = `rgba(${ink},${e > .99 ? .82 : .5})`; cx.fillRect(x, y, 1.7, 1.7);
     }
-    blocks = list;
   }
-  function blocksDraw(t, p) {
-    if (!blocks) build();
-    const [r, g, b] = inkRGB(); cx.clearRect(0, 0, W, H); cx.fillStyle = `rgba(${r},${g},${b},.8)`;
-    for (const q of blocks) {
-      const k = sst(0, 1, clamp((p * 1.5 - q.order * .9 - .05) / .45)), e = k * k * (3 - 2 * k);
-      const fx = q.sx + Math.sin(t * .0005 + q.w) * 14, fy = q.sy + Math.cos(t * .0004 + q.w * 1.3) * 10;
-      cx.globalAlpha = .45 + .55 * e; cx.fillRect(lerp(fx, q.tx, e), lerp(fy, q.ty, e), 2, 2);
-    }
-    cx.globalAlpha = 1;
-  }
-  function index() {
-    const mid = innerHeight * .5; let best = 0, bd = 1e9;
-    cards.forEach((c, i) => { const r = c.getBoundingClientRect(), dd = Math.abs(r.top + r.height / 2 - mid); if (dd < bd) { bd = dd; best = i; } });
-    [...idx.children].forEach((li, i) => li.classList.toggle("on", i === best));
-  }
+
+  let lastArt = 0, dtArt = 0;
   function loop(now) {
     if (!seen || !root.dataset.art) { run = false; return; }
+    dtArt = Math.min(.1, (now - (lastArt || now)) / 1000); lastArt = now;
     place();
     if (!art.hidden) {
       const m = root.dataset.art, t = reduce ? 6000 : now;
-      pNow += (prog() - pNow) * (reduce ? 1 : .12);
-      if (m === "1") dune(t); else if (m === "2") loom(t, pNow); else if (m === "3") arc(t); else if (m === "4") index(); else blocksDraw(t, pNow);
+      if (m !== built) { grains = null; built = m; }
+      // A and C play on a 14s loop that starts each time the section comes into view: build for 7s, hold for 5s, blow apart for 2s
+      const ph = reduce ? .6 : ((now - t0) % 14000) / 14000;
+      pNow = ph < .5 ? ph / .5 : ph < .857 ? 1 : 1 - (ph - .857) / .143;
+      if (m === "a") cubesDraw(t, pNow); else if (m === "b") mapDraw(t); else pourDraw(t, pNow);
     }
     if (reduce) { run = false; return; }
     requestAnimationFrame(loop);
   }
-  const start = () => { if (seen && root.dataset.art && !run) { run = true; requestAnimationFrame(loop); } };
-  new IntersectionObserver(([e]) => { seen = e.isIntersecting; start(); }).observe(svcView);
+  const start = () => { if (seen && root.dataset.art && !run) { run = true; lastArt = 0; requestAnimationFrame(loop); } };
+  let t0 = 0;
+  new IntersectionObserver(([e]) => { if (e.isIntersecting && !seen) t0 = performance.now(); seen = e.isIntersecting; start(); }, { threshold: .15 }).observe(tiles);
   addEventListener("scroll", () => { if (reduce) { run = false; start(); } }, { passive: true });
   addEventListener("resize", () => { place(); start(); });
   const pick = document.querySelector(".art-pick");
-  const set = v => { root.dataset.art = v; pick.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.dataset.art === v)); try { localStorage.setItem("bsl-art", v); } catch (e) {} W = 0; place(); start(); };
+  const set = v => { root.dataset.art = v; pick.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.dataset.art === v)); try { localStorage.setItem("bsl-blocks", v); } catch (e) {} pNow = 0; t0 = performance.now(); cardNow.fill(0); place(); start(); };
   if (/blankstatelabs\.com$/.test(location.hostname)) { pick.remove(); art.remove(); }
   else {
     pick.addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; set(b.dataset.art); const s = document.getElementById("svc"); if (s.getBoundingClientRect().top > innerHeight || s.getBoundingClientRect().bottom < 0) scrollTo({ top: s.getBoundingClientRect().top + scrollY - 96, behavior: reduce ? "auto" : "smooth" }); });
-    let v = "2"; try { v = localStorage.getItem("bsl-art") || "2"; } catch (e) {} set(v);
+    let v = "a"; try { v = localStorage.getItem("bsl-blocks") || "a"; } catch (e) {} if (!"abc".includes(v)) v = "a"; set(v);
   }
 })();
 
