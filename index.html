@@ -47,13 +47,13 @@ body { position: relative; }
 .bg { position: absolute; inset: 0; pointer-events: none; overflow: clip; }
 canvas { display: block; }
 #gl { position: sticky; top: 0; left: 0; width: 100%; height: calc(100vh + 160px); height: calc(100lvh + 160px); }
-/* Safari (2026-10-28): the pinned grain still stopped at the toolbar on his iPhone, while it looked right in Chrome.
-   So in Safari the grain is ordinary page content at the top of the page, behind the hero only: it scrolls away with the hero,
+/* Hero-only grain (2026-10-28): first tried in Safari, then he wanted it everywhere ("much cleaner").
+   The grain is ordinary page content at the top of the page, behind the hero only: it scrolls away with the hero,
    and the sections below sit on the plain background. Its foot fades out so no edge shows where it ends. */
-:root[data-sf] .bg { bottom: auto; height: calc(100vh + 160px); height: calc(100lvh + 160px); }
-:root[data-sf] #gl { position: absolute; height: 100%;
+.bg { bottom: auto; height: calc(100vh + 160px); height: calc(100lvh + 160px); }
+#gl { position: absolute; height: 100%;
   -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 260px), transparent); mask-image: linear-gradient(to bottom, #000 calc(100% - 260px), transparent); }
-:root[data-sf][data-nav="page"] .bg { display: none; }
+:root[data-nav="page"] .bg { display: none; }
 ::selection { background: var(--ink); color: var(--page); }
 
 /* ---------- header ---------- */
@@ -406,12 +406,6 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
 
 
 
-/* grain speed trial (2026-10-28, preview only) */
-.gs-pick { position: fixed; left: 12px; bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); z-index: 6; display: flex; align-items: center; gap: 2px;
-  background: var(--chrome-bg); color: var(--chrome-fg); border: 1px solid var(--chrome-line); border-radius: 999px; padding: 4px 4px 4px 14px;
-  font-size: .62rem; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; }
-.gs-pick button { appearance: none; border: 0; background: transparent; color: var(--chrome-dim); font: inherit; letter-spacing: inherit; text-transform: inherit; padding: 7px 10px; border-radius: 999px; cursor: pointer; }
-.gs-pick button[aria-pressed="true"] { background: var(--chrome-fg); color: #1a1512; }
 
 /* ---------- section bands (picked 2026-10-27) ----------
    On the long page, About and Contact stay on the grain, Services sits on a grey band and Our clients on a brown band.
@@ -611,16 +605,10 @@ SOFTWARE.
   </div>
 </section>
 
-<div class="gs-pick" role="group" aria-label="Grain speed">Grain speed
-  <button type="button" data-gs="1">Now</button><button type="button" data-gs=".6">A Slower</button><button type="button" data-gs=".35">B Slow</button><button type="button" data-gs=".15">C Very slow</button>
-</div>
-
 <script>
 // a back-to-top button at the very end of the page
 document.querySelectorAll('.view[data-view="contact"]').forEach(v => v.insertAdjacentHTML("beforeend", '<button type="button" class="totop"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M5 9V1M1.5 4.5 5 1l3.5 3.5"/></svg>Back to top</button>'));
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-// Safari (not Chrome, Firefox or Edge, which also say "Safari" in their name string) gets the hero-only grain; see the .bg styles
-if (/^((?!chrome|chromium|crios|fxios|edgios|android).)*safari/i.test(navigator.userAgent)) document.documentElement.dataset.sf = "";
 const root = document.documentElement;
 // Change this one line to change the contact address everywhere on the page.
 const CONTACT_EMAIL = "enquire@blankstatelabs.com";
@@ -1132,7 +1120,7 @@ toggle.addEventListener("click", hdrTone);
 addEventListener("hashchange", hdrTone);
 
 // ---------- render loop ----------
-let dprNow = 1, grainT = 0, grainSpeed = 1;
+let dprNow = 1;
 function resize() {
   const dpr = dprNow = Math.min(window.devicePixelRatio || 1, 1.5);
   // the buffer matches the canvas itself, which is as tall as the screen with its toolbars hidden
@@ -1155,9 +1143,7 @@ function frame(now) {
     // the strip below the visible screen (behind a phone toolbar) carries on the same drawing
     const oy = Math.max(0, H - Math.floor(innerHeight * dprNow));
     gl.uniform2f(U.r, W, H - oy); gl.uniform1f(U.oy, oy);
-    // grain clock: runs at grainSpeed, so a slower speed slows both the drift and the shimmer
-    grainT += dt * grainSpeed;
-    gl.uniform1f(U.t, reduce ? 12 : grainT);
+    gl.uniform1f(U.t, reduce ? 12 : (now - t0) / 1000);
     gl.uniform1f(U.dark, darkNow);
     gl.uniform1f(U.obj, objNow);
     gl.uniform1f(U.calm, calmNow + lowNow * .2);
@@ -1176,11 +1162,6 @@ route();
 setTimeout(sideCheck, 60);
 calmNow = calmTarget;
 
-// grain speed trial (preview only): the live site keeps the current speed and never shows the picker
-const gsPick = document.querySelector(".gs-pick");
-const setGs = v => { grainSpeed = +v; gsPick.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.dataset.gs === v)); try { localStorage.setItem("bsl-gs", v); } catch (e) {} };
-if (/blankstatelabs\.com$/.test(location.hostname)) gsPick.remove();
-else { gsPick.addEventListener("click", e => { const b = e.target.closest("button"); if (b) setGs(b.dataset.gs); }); let g = "1"; try { g = localStorage.getItem("bsl-gs") || "1"; } catch (e) {} setGs(g); }
 requestAnimationFrame(frame);
 </script>
 
