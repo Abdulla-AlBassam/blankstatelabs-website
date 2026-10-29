@@ -273,6 +273,9 @@ svg.jaba { fill: currentColor; display: block; }
 .rw-stage .w { position: absolute; left: 0; top: 0; white-space: nowrap; }
 .rw-stage .ch { display: inline-block; white-space: pre; }
 .rw-stage.goo { filter: url(#rw-goo); }
+/* mid-sentence ("something great together"): the box follows each word's own width so "together" sits right after it */
+.rw.fit { transition: width .7s var(--ease); }
+.rw.fit .rw-size { width: 0; overflow: hidden; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
 /* contact */
@@ -421,10 +424,28 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
 :root[data-touch] .svc-art { display: none !important; }
 @media (min-width: 1100px) { :root[data-touch] .inner > .svc-wrap { max-width: 1240px; } }
 
-/* client name links to the client's own website (2026-10-29) */
-.svc-name a.ext { color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .18em; }
-.svc-name a.ext:hover { text-decoration-thickness: 2px; }
-.svc-name a.ext:focus-visible { outline: 1px solid currentColor; outline-offset: 4px; }
+/* link to Jaba's website (2026-10-29 trial, preview only): A "Visit site" at the foot of the Corporate website card, B the whole card opens the site (arrow in its corner),
+   C a small "Visit jaba.com.sa" under the Jaba name, D the address itself at the foot of the card under a hairline */
+.jl { display: none; color: inherit; text-decoration: none; }
+.jl svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.6; flex: none; transition: transform .35s var(--ease); }
+.jl:hover svg, .web-card:hover .jl-b svg { transform: translate(2px, -2px); }
+.jl:focus-visible { outline: 1px solid currentColor; outline-offset: 4px; }
+.web-card { position: relative; grid-template-rows: auto auto auto 1fr; }
+:root[data-jl="a"] .jl-a { display: inline-flex; align-items: center; gap: 8px; align-self: end; justify-self: start; font-size: .72rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--ink); padding-top: .6rem; }
+:root[data-jl="a"] .jl-a span, :root[data-jl="a"] .jl-a { border-bottom: 0; }
+:root[data-jl="b"] .jl-b { display: block; position: absolute; inset: 0; }
+:root[data-jl="b"] .jl-b svg { position: absolute; top: clamp(20px, 3vw, 30px); right: clamp(20px, 3vw, 30px); width: 18px; height: 18px; color: var(--ink); }
+:root[data-jl="b"] .web-card { transition: border-color .3s ease, background .3s ease; cursor: pointer; }
+:root[data-jl="b"] .web-card:hover { border-color: color-mix(in srgb, var(--ink) 45%, transparent); }
+:root[data-jl="c"] .jl-c { display: inline-flex; align-items: center; gap: 8px; margin-top: .4rem; padding: 7px 14px; border: 1px solid var(--line); border-radius: 999px; font-size: .68rem; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; transition: border-color .3s ease; }
+:root[data-jl="c"] .jl-c:hover { border-color: currentColor; }
+:root[data-jl="d"] .jl-d { display: flex; align-items: center; justify-content: space-between; align-self: end; margin-top: .8rem; padding-top: .9rem; border-top: 1px solid var(--line); font-family: var(--f-mono); font-size: .78rem; color: var(--muted); transition: color .3s ease; }
+:root[data-jl="d"] .jl-d:hover { color: var(--ink); }
+.jl-pick { position: fixed; left: 12px; bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); z-index: 6; display: flex; align-items: center; gap: 2px; flex-wrap: wrap;
+  background: var(--chrome-bg); color: var(--chrome-fg); border: 1px solid var(--chrome-line); border-radius: 999px; padding: 4px 4px 4px 14px;
+  font-size: .62rem; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; }
+.jl-pick button { appearance: none; border: 0; background: transparent; color: var(--chrome-dim); font: inherit; letter-spacing: inherit; text-transform: inherit; padding: 7px 10px; border-radius: 999px; cursor: pointer; }
+.jl-pick button[aria-pressed="true"] { background: var(--chrome-fg); color: #1a1512; }
 
 /* sand art beside Our Network (Links) and Selected engagements (Steps), picked 2026-10-29; desktop only */
 .xart { position: absolute; pointer-events: none; display: block; }
@@ -564,8 +585,8 @@ SOFTWARE.
       <h2 class="display">Selected engagements</h2>
     </div>
     <div class="f-ctiles jaba-bare four">
-      <div><svg class="jaba" role="img" aria-label="Jaba logo"><use href="#jaba" width="100%" height="100%"/></svg><h3 class="svc-name"><a class="ext" href="https://jaba.com.sa" target="_blank" rel="noopener">Jaba</a></h3></div>
-      <div><span class="eg-head"><svg class="ic ia-web" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4" width="19" height="16" rx="1.5"/><path d="M2.5 8.5h19"/><path class="lp-write" pathLength="1" d="M6 12.5h9"/><path class="lp-write" pathLength="1" d="M6 16h6"/></svg><span class="lbl">Web</span></span><h3 class="svc-name">Corporate website</h3><p class="svc-desc">Design and engineering of Jaba’s public website, with ongoing maintenance and technical support.</p></div>
+      <div><svg class="jaba" role="img" aria-label="Jaba logo"><use href="#jaba" width="100%" height="100%"/></svg><h3 class="svc-name">Jaba</h3><a class="jl jl-c" href="https://jaba.com.sa" target="_blank" rel="noopener">Visit jaba.com.sa<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></div>
+      <div class="web-card"><span class="eg-head"><svg class="ic ia-web" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4" width="19" height="16" rx="1.5"/><path d="M2.5 8.5h19"/><path class="lp-write" pathLength="1" d="M6 12.5h9"/><path class="lp-write" pathLength="1" d="M6 16h6"/></svg><span class="lbl">Web</span></span><h3 class="svc-name">Corporate website</h3><p class="svc-desc">Design and engineering of Jaba’s public website, with ongoing maintenance and technical support.</p><a class="jl jl-a" href="https://jaba.com.sa" target="_blank" rel="noopener">Visit site<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a><a class="jl jl-d" href="https://jaba.com.sa" target="_blank" rel="noopener"><span>jaba.com.sa</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a><a class="jl jl-b" href="https://jaba.com.sa" target="_blank" rel="noopener" aria-label="Visit Jaba’s website"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></div>
       <div><span class="eg-head"><svg class="ic ia-sys" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="5" rx="1"/><rect x="3" y="9.5" width="18" height="5" rx="1"/><rect x="3" y="16" width="18" height="5" rx="1"/><circle class="lp-led" cx="17.5" cy="5.5" r=".9" fill="currentColor" stroke="none"/><circle class="lp-led" cx="17.5" cy="12" r=".9" fill="currentColor" stroke="none"/><circle class="lp-led" cx="17.5" cy="18.5" r=".9" fill="currentColor" stroke="none"/></svg><span class="lbl">System</span></span><h3 class="svc-name">Internal operations system</h3><p class="svc-desc">A bespoke internal platform designed to streamline and manage day-to-day operations.</p></div>
       <div><span class="eg-head"><svg class="ic ia-adv" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><g class="lp-sway"><path d="M12 5.5 14 12h-4z" fill="currentColor"/><path d="M12 18.5 10 12h4z"/></g><circle cx="12" cy="12" r=".8" fill="currentColor" stroke="none"/></svg><span class="lbl">Advisory</span></span><h3 class="svc-name">Technical advisory &amp; continued engineering</h3><p class="svc-desc">Ongoing technical advisory across systems and digital operations, alongside continued development of the website and internal platform as requirements evolve.</p></div>
     </div>
@@ -592,7 +613,7 @@ SOFTWARE.
 <section class="view" data-view="contact" aria-label="Contact">
   <div class="contact">
     <div class="stack">
-      <h2 class="display" data-pick="cta">Let's build something great together</h2>
+      <h2 class="display" data-pick="cta">Let's build something <span class="sr">great</span><span class="rw fit" aria-hidden="true" data-words="great|sustainable|intuitive|secure|dependable"><span class="rw-size"><span>great</span><span>sustainable</span><span>intuitive</span><span>secure</span><span>dependable</span></span><span class="rw-stage"></span></span> together</h2>
       <p class="body">Fill out the form and an engineer will be in touch within 24 hours.</p>
       <div class="mail">
         <p class="eyebrow" style="margin:0">Or email</p>
@@ -630,6 +651,10 @@ SOFTWARE.
   </div>
 </section>
 
+
+<div class="jl-pick" role="group" aria-label="Link to Jaba's website">Jaba link
+  <button type="button" data-jl="a">A Visit site</button><button type="button" data-jl="b">B Whole card</button><button type="button" data-jl="c">C Under name</button><button type="button" data-jl="d">D Address</button>
+</div>
 
 <script>
 // a back-to-top button at the very end of the page
@@ -761,8 +786,9 @@ new IntersectionObserver(([e]) => { sigSeen = e.isIntersecting; sigStart(); }).o
 addEventListener("resize", () => { if (sigSeen) { sigSize(); if (reduce) sigDraw(9000); } });
 
 // ---------- rotating word: "precision." gives way to other words, one every ~2.4s while in view ----------
-(() => {
-  const box = document.querySelector(".rw"), stage = box.querySelector(".rw-stage");
+// The Contact heading's "great" does the same (2026-10-29 trial).
+document.querySelectorAll(".rw").forEach(box => {
+  const stage = box.querySelector(".rw-stage");
   const words = box.dataset.words.split("|"), T = 700, HOLD = 1700;
   let i = 0, timer = 0, seen = false;
   const word = (w, hidden) => { const n = document.createElement("span"); n.className = "w"; n.innerHTML = [...w].map(c => `<span class="ch">${c}</span>`).join(""); if (hidden) n.style.visibility = "hidden"; stage.append(n); return n; };
@@ -776,10 +802,13 @@ addEventListener("resize", () => { if (sigSeen) { sigSize(); if (reduce) sigDraw
       after(T + 20, () => { a.remove(); stage.classList.remove("goo"); });
     }
   };
-  const tick = () => { timer = 0; if (!seen) return; const a = stage.lastElementChild; i = (i + 1) % words.length; modes.blur(a, words[i]); timer = setTimeout(tick, T + HOLD); };
-  word(words[0]);
+  const fit = n => { if (box.classList.contains("fit")) box.style.width = n.getBoundingClientRect().width + "px"; };
+  const tick = () => { timer = 0; if (!seen) return; const a = stage.lastElementChild; i = (i + 1) % words.length; modes.blur(a, words[i]); fit(stage.lastElementChild); timer = setTimeout(tick, T + HOLD); };
+  const first = word(words[0]); fit(first);
+  if (document.fonts) document.fonts.ready.then(() => fit(stage.lastElementChild));
+  addEventListener("resize", () => fit(stage.lastElementChild));
   if (!reduce) new IntersectionObserver(([e]) => { seen = e.isIntersecting; if (seen && !timer) timer = setTimeout(tick, HOLD); }, { threshold: .6 }).observe(box);
-})();
+});
 
 // ---------- Bahrain flag: the cloth is drawn column by column; each column tilts toward or away
 // from the viewer as a wave travels from the hoist to the fly, so it narrows and shades like real fabric ----------
@@ -1376,6 +1405,15 @@ calmNow = calmTarget;
   }
   slot(".net-list", svcView, NET, "links");
   slot(".f-ctiles", document.querySelector('.view[data-view="clients"]'), ENG, "steps");
+})();
+
+// link to Jaba's website trial (preview only)
+(() => {
+  const pick = document.querySelector(".jl-pick");
+  const set = v => { root.dataset.jl = v; pick.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.dataset.jl === v)); try { localStorage.setItem("bsl-jl", v); } catch (e) {} };
+  if (/blankstatelabs\.com$/.test(location.hostname)) { pick.remove(); return; }
+  pick.addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; set(b.dataset.jl); const c = document.querySelector('.view[data-view="clients"]'); if (root.dataset.nav !== "page") scrollTo({ top: c.offsetTop - 40, behavior: reduce ? "auto" : "smooth" }); });
+  let v = "a"; try { v = localStorage.getItem("bsl-jl") || "a"; } catch (e) {} set("abcd".includes(v) ? v : "a");
 })();
 
 requestAnimationFrame(frame);
