@@ -421,6 +421,11 @@ fieldset.f { border: 0; margin: 0; padding: 0; }
 :root[data-touch] .svc-art { display: none !important; }
 @media (min-width: 1100px) { :root[data-touch] .inner > .svc-wrap { max-width: 1240px; } }
 
+/* client name links to the client's own website (2026-10-29) */
+.svc-name a.ext { color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .18em; }
+.svc-name a.ext:hover { text-decoration-thickness: 2px; }
+.svc-name a.ext:focus-visible { outline: 1px solid currentColor; outline-offset: 4px; }
+
 /* sand art beside Our Network (Links) and Selected engagements (Steps), picked 2026-10-29; desktop only */
 .xart { position: absolute; pointer-events: none; display: block; }
 .xart[hidden] { display: none; }
@@ -559,7 +564,7 @@ SOFTWARE.
       <h2 class="display">Selected engagements</h2>
     </div>
     <div class="f-ctiles jaba-bare four">
-      <div><svg class="jaba" role="img" aria-label="Jaba logo"><use href="#jaba" width="100%" height="100%"/></svg><h3 class="svc-name">Jaba</h3></div>
+      <div><svg class="jaba" role="img" aria-label="Jaba logo"><use href="#jaba" width="100%" height="100%"/></svg><h3 class="svc-name"><a class="ext" href="https://jaba.com.sa" target="_blank" rel="noopener">Jaba</a></h3></div>
       <div><span class="eg-head"><svg class="ic ia-web" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4" width="19" height="16" rx="1.5"/><path d="M2.5 8.5h19"/><path class="lp-write" pathLength="1" d="M6 12.5h9"/><path class="lp-write" pathLength="1" d="M6 16h6"/></svg><span class="lbl">Web</span></span><h3 class="svc-name">Corporate website</h3><p class="svc-desc">Design and engineering of Jaba’s public website, with ongoing maintenance and technical support.</p></div>
       <div><span class="eg-head"><svg class="ic ia-sys" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="5" rx="1"/><rect x="3" y="9.5" width="18" height="5" rx="1"/><rect x="3" y="16" width="18" height="5" rx="1"/><circle class="lp-led" cx="17.5" cy="5.5" r=".9" fill="currentColor" stroke="none"/><circle class="lp-led" cx="17.5" cy="12" r=".9" fill="currentColor" stroke="none"/><circle class="lp-led" cx="17.5" cy="18.5" r=".9" fill="currentColor" stroke="none"/></svg><span class="lbl">System</span></span><h3 class="svc-name">Internal operations system</h3><p class="svc-desc">A bespoke internal platform designed to streamline and manage day-to-day operations.</p></div>
       <div><span class="eg-head"><svg class="ic ia-adv" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><g class="lp-sway"><path d="M12 5.5 14 12h-4z" fill="currentColor"/><path d="M12 18.5 10 12h4z"/></g><circle cx="12" cy="12" r=".8" fill="currentColor" stroke="none"/></svg><span class="lbl">Advisory</span></span><h3 class="svc-name">Technical advisory &amp; continued engineering</h3><p class="svc-desc">Ongoing technical advisory across systems and digital operations, alongside continued development of the website and internal platform as requirements evolve.</p></div>
