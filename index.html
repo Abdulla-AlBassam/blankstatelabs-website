@@ -273,9 +273,8 @@ svg.jaba { fill: currentColor; display: block; }
 .rw-stage .w { position: absolute; left: 0; top: 0; white-space: nowrap; }
 .rw-stage .ch { display: inline-block; white-space: pre; }
 .rw-stage.goo { filter: url(#rw-goo); }
-/* mid-sentence ("something great together"): the box follows each word's own width so "together" sits right after it */
-.rw.fit { transition: width .7s var(--ease); }
-.rw.fit .rw-size { width: 0; overflow: hidden; }
+/* Contact heading: the changing word has a line of its own, so the heading keeps the same lines whichever word shows (2026-10-29) */
+.rw.fit { display: grid; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
 /* contact */
@@ -783,11 +782,8 @@ document.querySelectorAll(".rw").forEach(box => {
       after(T + 20, () => { a.remove(); stage.classList.remove("goo"); });
     }
   };
-  const fit = n => { if (box.classList.contains("fit")) box.style.width = n.getBoundingClientRect().width + "px"; };
-  const tick = () => { timer = 0; if (!seen) return; const a = stage.lastElementChild; i = (i + 1) % words.length; modes.blur(a, words[i]); fit(stage.lastElementChild); timer = setTimeout(tick, T + HOLD); };
-  const first = word(words[0]); fit(first);
-  if (document.fonts) document.fonts.ready.then(() => fit(stage.lastElementChild));
-  addEventListener("resize", () => fit(stage.lastElementChild));
+  const tick = () => { timer = 0; if (!seen) return; const a = stage.lastElementChild; i = (i + 1) % words.length; modes.blur(a, words[i]); timer = setTimeout(tick, T + HOLD); };
+  word(words[0]);
   if (!reduce) new IntersectionObserver(([e]) => { seen = e.isIntersecting; if (seen && !timer) timer = setTimeout(tick, HOLD); }, { threshold: .6 }).observe(box);
 });
 
